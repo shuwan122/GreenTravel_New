@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/route_rg"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="horizontal">
+
+    <!-- android:paddingLeft="0dp"加这个是为了让内容能够剧中 -->
+    <RadioButton
+        android:id="@+id/route_rb_1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:button="@null"
+        android:drawableTop="@drawable/radio_button_style"
+        android:gravity="center"
+        android:paddingLeft="0dp"
+        android:checked="true"
+        android:text="@string/main_button_single" />
+
+    <RadioButton
+        android:id="@+id/route_rb_2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:button="@null"
+        android:drawableTop="@drawable/radio_button_style"
+        android:gravity="center"
+        android:paddingLeft="0dp"
+        android:checked="false"
+        android:text="@string/main_button_multi" />
+
+</RadioGroup>

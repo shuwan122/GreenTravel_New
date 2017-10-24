@@ -1,0 +1,154 @@
+[
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_textfield_search_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_textfield_search_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_list_selector_holo_light.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_list_selector_holo_light.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/adv_label_background.xml",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/adv_label_background.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_text_cursor_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_text_cursor_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_item_background_holo_dark.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_item_background_holo_dark.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/sale_img3.jpg",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/sale_img3.jpg"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_ratingbar_full_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_ratingbar_full_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/route.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/route.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_list_selector_background_transition_holo_light.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_list_selector_background_transition_holo_light.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/sale_img1.jpg",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/sale_img1.jpg"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_dialog_material_background_light.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_dialog_material_background_light.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/sale.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/sale.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_btn_check_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_btn_check_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/sale_img2.jpg",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/sale_img2.jpg"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_seekbar_track_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_seekbar_track_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/advice.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/advice.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_ratingbar_small_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_ratingbar_small_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_cab_background_internal_bg.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_cab_background_internal_bg.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_spinner_textfield_background_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_spinner_textfield_background_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_seekbar_thumb_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_seekbar_thumb_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_btn_borderless_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_btn_borderless_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_list_selector_background_transition_holo_dark.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_list_selector_background_transition_holo_dark.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_switch_thumb_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_switch_thumb_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/sale_button_use_shape.xml",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/sale_button_use_shape.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_tab_indicator_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_tab_indicator_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/route_search_background.xml",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/route_search_background.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/adv_label_text_color.xml",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/adv_label_text_color.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/adv_time_corner.xml",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/adv_time_corner.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/design_snackbar_background.xml",
+        "source": "/Users/zero/.android/build-cache/4aaae73db12c3028c73313ba36f24ad32b594a79/output/res/drawable/design_snackbar_background.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_btn_default_mtrl_shape.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_btn_default_mtrl_shape.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_ratingbar_indicator_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_ratingbar_indicator_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/sale_button_get_shape.xml",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable/sale_button_get_shape.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_dialog_material_background_dark.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_dialog_material_background_dark.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_item_background_holo_light.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_item_background_holo_light.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_cab_background_top_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_cab_background_top_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_btn_radio_material.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_btn_radio_material.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/abc_list_selector_holo_dark.xml",
+        "source": "/Users/zero/.android/build-cache/5082ab61544cffc25a3f1ef35d01c454ef5a7015/output/res/drawable/abc_list_selector_holo_dark.xml"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable/design_fab_background.xml",
+        "source": "/Users/zero/.android/build-cache/4aaae73db12c3028c73313ba36f24ad32b594a79/output/res/drawable/design_fab_background.xml"
+    }
+]

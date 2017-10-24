@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <LinearLayout
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/adv_destin_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:text="肯德基"
+                android:textColor="#000000"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <RatingBar
+                android:id="@+id/adv_destin_item_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ratingBar"
+                android:numStars="5"
+                android:rating="4.3"
+                android:isIndicator="true"
+                android:stepSize="0.1"/>
+                <TextView
+                    android:id="@+id/adv_destin_item_comments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="1000条评论"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="人均"/>
+                <TextView
+                    android:id="@+id/adv_destin_item_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="￥50"
+                    android:textColor="#FA565F"/>
+        </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/adv_destin_item_keyword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="14sp"
+                android:text="快餐 129米" />
+
+            <com.donkingliang.labels.LabelsView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/adv_destin_item_labels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:labelBackground="@drawable/adv_label_background_small"
+                app:labelTextColor="@drawable/adv_label_text_color_small"
+                app:labelTextPaddingBottom="3dp"
+                app:labelTextPaddingLeft="5dp"
+                app:labelTextPaddingRight="5dp"
+                app:labelTextPaddingTop="3dp"
+                app:labelTextSize="10sp"
+                app:lineMargin="3dp"
+                app:maxSelect="5"
+                app:selectType="SINGLE"
+                app:wordMargin="4dp" />
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/adv_destin_item_img"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="6dp"
+            android:layout_gravity="top|left" />
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#8a8a8a"></View>
+
+
+</LinearLayout>

@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/mipmap-hdpi/ic_launcher.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/mipmap-hdpi/ic_launcher_round.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
+    }
+]

@@ -1,0 +1,30 @@
+[
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable-hdpi/task.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable-hdpi/task.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable-hdpi/title_more.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable-hdpi/title_more.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable-hdpi/search_back.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable-hdpi/search_back.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable-hdpi/msg.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable-hdpi/msg.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable-hdpi/search_delete.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable-hdpi/search_delete.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable-hdpi/notice.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable-hdpi/notice.png"
+    },
+    {
+        "merged": "/Users/zero/AndroidStudioProjects/GreenTravel/app/build/intermediates/res/merged/debug/drawable-hdpi/route_find.png",
+        "source": "/Users/zero/AndroidStudioProjects/GreenTravel/app/src/main/res/drawable-hdpi/route_find.png"
+    }
+]

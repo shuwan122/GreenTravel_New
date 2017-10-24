@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+        <ImageView
+            android:id="@+id/adv_destin_station_img"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="6dp"
+            android:layout_gravity="top|left" />
+
+        <LinearLayout
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="13dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/adv_destin_station_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:text="西土城路"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/adv_destin_station_keyword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="14sp"
+                android:text="附近有100家商家" />
+
+            <com.donkingliang.labels.LabelsView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/adv_destin_station_labels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:labelBackground="@drawable/adv_label_background_small"
+                app:labelTextColor="@drawable/adv_label_text_color_small"
+                app:labelTextPaddingBottom="3dp"
+                app:labelTextPaddingLeft="5dp"
+                app:labelTextPaddingRight="5dp"
+                app:labelTextPaddingTop="3dp"
+                app:labelTextSize="10sp"
+                app:lineMargin="3dp"
+                app:maxSelect="5"
+                app:selectType="SINGLE"
+                app:wordMargin="4dp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/adv_destin_station_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/slide_down"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divideLine"></View>
+
+
+</LinearLayout>

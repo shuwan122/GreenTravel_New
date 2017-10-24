@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="blocks">
+        <item>全市</item>
+        <item>越秀区</item>
+        <item>海珠区</item>
+        <item>荔湾区</item>
+        <item>天河区</item>
+        <item>白云区</item>
+        <item>黄埔区</item>
+        <item>花都区</item>
+        <item>番禺区</item>
+        <item>萝岗区</item>
+        <item>南沙区</item>
+    </string-array>
+    <string-array name="prefers">
+        <item>综合排序</item>
+        <item>距离优先</item>
+        <item>热门优先</item>
+        <item>冷门优先</item>
+        <item>低价优先</item>
+        <item>高价优先</item>
+    </string-array>
+    <string-array name="mores">
+        <item>更多</item>
+        <item>可团购</item>
+        <item>有优惠</item>
+        <item>24小时营业</item>
+        <item>可排号</item>
+    </string-array>
+</resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:layout_marginBottom="56dp"
+    android:id="@+id/adv_rg"
+    android:orientation="horizontal" >
+
+    <!-- android:paddingLeft="0dp"加这个是为了让内容能够剧中 -->
+
+    <RadioButton
+        android:id="@+id/adv_rb_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="10dp"
+        android:button="@null"
+        android:drawableLeft="@drawable/destin_red32"
+        android:gravity="center_vertical"
+        android:paddingTop="5dp"
+        android:paddingLeft="50dp"
+        android:text="目的地"
+        android:textSize="15dp"
+        android:textColor="@color/red"/>
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#8a8a8a"
+        android:layout_gravity="center_horizontal"/>
+
+    <RadioButton
+        android:id="@+id/adv_rb_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="20dp"
+        android:button="@null"
+        android:drawableLeft="@drawable/plan_gray32"
+        android:gravity="center_vertical"
+        android:paddingTop="5dp"
+        android:paddingLeft="50dp"
+        android:text="出行规划"
+        android:textSize="15dp"
+        android:textColor="@color/nav_gray"/>
+
+</RadioGroup>

@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.zero.fragment.AdvFragment">
+
+    <FrameLayout
+        android:id="@+id/adv_frg_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <!--两个颜色条-->
+        <View
+            android:id="@+id/adv_color1"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:layout_weight="1.0"
+            android:background="@color/red" />
+
+        <View
+            android:id="@+id/adv_color2"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:layout_weight="1.0"
+            android:background="@color/divideLine" />
+    </LinearLayout>
+
+    <include layout="@layout/adv_bottom_radio" />
+
+
+</LinearLayout>
