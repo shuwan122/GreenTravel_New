@@ -175,6 +175,10 @@ Android App GreenTravel
 		<th>个人中心——添加okhttp网络请求，待测试</th>
 		<th>建议——文档和整理代码</th>
 	</tr>
+    <tr>
+		<th>171024</th>
+		<th colspan="3">第五次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -350,6 +354,10 @@ Android App GreenTravel
 		<th>无</th>
 		<th>http没有决定方式</th>
 	</tr>
+    <tr>
+		<th>171024</th>
+		<th colspan="3">个人中心常用联系人和扫一扫未完成</th>
+	</tr>
 </table>
 
 ## 参考
@@ -524,5 +532,9 @@ Android App GreenTravel
 		<th>http://bbs.lbsyun.baidu.com/forum.php?mod=viewthread&tid=109126&extra=page%3D1</th>
 		<th>http://www.cnblogs.com/whoislcj/p/5533548.html</th>
 		<th>http://blog.csdn.net/Lrici/article/details/56679996?locationNum=10&fps=1</th>
+	</tr>
+    <tr>
+		<th>171024</th>
+		<th colspan="3">无</th>
 	</tr>
 </table>
