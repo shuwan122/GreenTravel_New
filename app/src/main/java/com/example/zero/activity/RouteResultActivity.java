@@ -148,6 +148,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
 
         View.OnClickListener btnClickListener = new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 switch (mCurrentMode) {
                     case NORMAL:
@@ -548,6 +549,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             }
                         });
                         myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                            @Override
                             public void onItemClick(int position) {
                                 route = nowResultwalk.getRouteLines().get(position);
                                 WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaidumap);
@@ -615,8 +617,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             }
                         });
                         myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                            @Override
                             public void onItemClick(int position) {
-
                                 route = nowResultransit.getRouteLines().get(position);
                                 TransitRouteOverlay overlay = new MyTransitRouteOverlay(mBaidumap);
                                 mBaidumap.setOnMarkerClickListener(overlay);
@@ -688,8 +690,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     }
                 });
                 myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                    @Override
                     public void onItemClick(int position) {
-
                         MyMassTransitRouteOverlay overlay = new MyMassTransitRouteOverlay(mBaidumap);
                         mBaidumap.setOnMarkerClickListener(overlay);
                         routeOverlay = overlay;
@@ -709,7 +711,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         overlay.addToMap();
                         overlay.zoomToSpan();
                     }
-
                 });
                 myTransitDlg.show();
                 hasShownDialogue = true;
@@ -745,6 +746,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             }
                         });
                         myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                            @Override
                             public void onItemClick(int position) {
                                 route = nowResultdrive.getRouteLines().get(position);
                                 DrivingRouteOverlay overlay = new MyDrivingRouteOverlay(mBaidumap);
@@ -823,6 +825,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             }
                         });
                         myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                            @Override
                             public void onItemClick(int position) {
                                 route = nowResultbike.getRouteLines().get(position);
                                 BikingRouteOverlay overlay = new MyBikingRouteOverlay(mBaidumap);
@@ -1054,7 +1057,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             transitRouteList.setAdapter(mTransitAdapter);
 
             transitRouteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     onItemInDlgClickListener.onItemClick(position);

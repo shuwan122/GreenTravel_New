@@ -121,8 +121,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         initBottomNavBar();
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
+        if (actionBar != null) {
             actionBar.hide();
+        }
         Log.d(TAG, "onCreate: success");
     }
 
@@ -150,8 +151,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         btnLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                 } else {
                     changeMode();
                 }
@@ -163,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         mBaiduMap = mMapView.getMap();
         // 开启定位图层
         mBaiduMap.setMyLocationEnabled(true);
+        mBaiduMap.setTrafficEnabled(true);
         // 定位初始化
         mLocClient = new LocationClient(getApplicationContext());
         LocationClientOption option = new LocationClientOption();
@@ -215,16 +219,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
      * 初始化底部导航栏
      */
     private void initBottomNavBar() {
-        bottom_navigation_bar_container.setAutoHideEnabled(true);//自动隐藏
+        //自动隐藏
+        bottom_navigation_bar_container.setAutoHideEnabled(true);
 
         bottom_navigation_bar_container.setMode(BottomNavigationBar.MODE_FIXED);
         bottom_navigation_bar_container.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
 
-        bottom_navigation_bar_container.setBarBackgroundColor(R.color.white);//背景颜色
-        bottom_navigation_bar_container.setInActiveColor(R.color.nav_gray);//未选中时的颜色
-        bottom_navigation_bar_container.setActiveColor(R.color.colorPrimaryDark);//选中时的颜色
+        //背景颜色
+        bottom_navigation_bar_container.setBarBackgroundColor(R.color.white);
+        //未选中时的颜色
+        bottom_navigation_bar_container.setInActiveColor(R.color.nav_gray);
+        //选中时的颜色
+        bottom_navigation_bar_container.setActiveColor(R.color.colorPrimaryDark);
 
-        badgeItem = new BadgeItem().setBackgroundColor(Color.RED).setText("99").setHideOnSelect(true);//角标
+        //角标
+        badgeItem = new BadgeItem().setBackgroundColor(Color.RED).setText("99").setHideOnSelect(true);
 
         routeItem = new BottomNavigationItem(R.drawable.route, "路线");
         adviceItem = new BottomNavigationItem(R.drawable.advice, "建议");
@@ -281,6 +290,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 getSupportActionBar().setTitle("个人");
                 mMapView.setVisibility(View.GONE);
                 btnLocation.setVisibility(View.GONE);
+                break;
+            default:
                 break;
         }
     }
@@ -403,9 +414,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
+                    changeMode();
                 } else {
-                    // Permission Denied
                     Toast.makeText(MainActivity.this, "PERMISSION Denied", Toast.LENGTH_SHORT).show();
                 }
                 break;

@@ -263,8 +263,8 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         model.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //创建弹出式菜单对象
-                PopupMenu popup = new PopupMenu(getContext(), view);//第二个参数是绑定的那个view
+                //创建弹出式菜单对象，第二个参数是绑定的那个view
+                PopupMenu popup = new PopupMenu(getContext(), view);
                 //获取菜单填充器
                 MenuInflater inflater = popup.getMenuInflater();
                 //填充菜单
