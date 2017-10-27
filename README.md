@@ -179,6 +179,12 @@ Android App GreenTravel
 		<th>171024</th>
 		<th colspan="3">第五次程序合并</th>
 	</tr>
+	<tr>
+	 	<th>171026</th>
+	 	<th>路线——单人出行接口完成</th>
+	 	<th>销售——获取当前经纬度，用户头像改成圆形</th>
+	 	<th>个人中心——添加登录注册部分接口</th>
+	 </tr>
 </table>
 
 ## 遇到bug或难点
@@ -358,6 +364,12 @@ Android App GreenTravel
 		<th>171024</th>
 		<th colspan="3">个人中心常用联系人和扫一扫未完成</th>
 	</tr>
+	<tr>
+	 	<th>171026</th>
+	 	<th>路线——前后端无法联调</th>
+	 	<th>无</th>
+	 	<th>个人中心——没有测试</th>
+	 </tr>
 </table>
 
 ## 参考
@@ -537,4 +549,10 @@ Android App GreenTravel
 		<th>171024</th>
 		<th colspan="3">无</th>
 	</tr>
+	<tr>
+	 	<th>171026</th>
+	 	<th>http://blog.csdn.net/gaolei1201/article/details/50512265</th>
+	 	<th>无</th>
+	 	<th>无</th>
+	 </tr>
 </table>
