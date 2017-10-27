@@ -185,6 +185,12 @@ Android App GreenTravel
 	 	<th>销售——获取当前经纬度，用户头像改成圆形</th>
 	 	<th>个人中心——添加登录注册部分接口</th>
 	 </tr>
+	<tr>
+	 	<th>171027</th>
+	 	<th>路线——编写json解析函数</th>
+	 	<th>销售——连接服务器进行测试，解析返回的json数据</th>
+	 	<th>阅读解析JSON方法 PS展板</th>
+	 </tr>
 </table>
 
 ## 遇到bug或难点
@@ -369,6 +375,12 @@ Android App GreenTravel
 	 	<th>路线——前后端无法联调</th>
 	 	<th>无</th>
 	 	<th>个人中心——没有测试</th>
+	 </tr>
+	<tr>
+	 	<th>171027</th>
+	 	<th>无</th>
+	 	<th>无</th>
+	 	<th>之前参照的代码解析JSON封装过好 理解困难</th>
 	 </tr>
 </table>
 
@@ -555,4 +567,10 @@ Android App GreenTravel
 	 	<th>无</th>
 	 	<th>无</th>
 	 </tr>
+	<tr>
+		<th>171027</th>
+		<th>http://www.cnblogs.com/whoislcj/p/5526431.html</th>
+		<th>无</th>
+		<th>无</th>
+	</tr>
 </table>
