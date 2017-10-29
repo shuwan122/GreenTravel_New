@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -34,8 +35,14 @@ import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.Overlay;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
@@ -65,13 +72,20 @@ import com.example.zero.fragment.OverlayManager;
 import com.example.zero.fragment.RouteFragmentDouble;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.BikingRouteOverlay;
+import com.example.zero.util.CouponOverlay;
 import com.example.zero.util.DrivingRouteOverlay;
 import com.example.zero.util.MassTransitRouteOverlay;
 import com.example.zero.util.TransitRouteOverlay;
 import com.example.zero.util.WalkingRouteOverlay;
 
+import com.alibaba.fastjson.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class RouteResultActivity extends AppCompatActivity implements BaiduMap.OnMapClickListener, OnGetRoutePlanResultListener, SensorEventListener {
 
@@ -116,6 +130,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private double mCurrentLat = 0.0;
     private double mCurrentLon = 0.0;
     private float mCurrentAccracy;
+
     // UI相关
     Button requestLocButton;
     boolean isFirstLoc = true; // 是否首次定位
@@ -123,6 +138,9 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
     // 路线节点
     private List<String> mPathList = new ArrayList<String>();
+
+    //前后端接口
+
 
     int nowSearchType = -1; // 当前节点
 
@@ -258,65 +276,22 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             }
 
             // TODO: 2017/10/17 pathList规划路线
-//            PlanNode mStNode = PlanNode.withCityNameAndPlaceName("北京", mPathList.get(0));
-//            PlanNode mEnNode = PlanNode.withCityNameAndPlaceName("北京", mPathList.get(1));
+//            TransitRoutePlanOption transitRoutePlanOption = new TransitRoutePlanOption();
+//            if (mPathList.size() > 1) {
+//                for (int i = 0; i < mPathList.size() - 1; i++) {
+////                PlanNode.withLocation(new LatLng(120.0, 31.0));
+//                    mSearch.transitSearch(transitRoutePlanOption
+//                            .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
+//                            .city("北京")
+//                            .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
+//                }
+//                CouponOverlay couponOverlay = new CouponOverlay(mBaidumap);
 //
-//            if (v.getId() == R.id.mass) {
-//                PlanNode stMassNode = PlanNode.withCityNameAndPlaceName("北京", "天安门");
-//                PlanNode enMassNode = PlanNode.withCityNameAndPlaceName("上海", "东方明珠");
-//
-//                mSearch.masstransitSearch(new MassTransitRoutePlanOption().from(stMassNode).to(enMassNode));
-//                nowSearchType = 0;
-//            } else if (v.getId() == R.id.drive) {
-//                DrivingRoutePlanOption drivingRoutePlanOption = new DrivingRoutePlanOption();
-//                if (mPathList.size() > 1) {
-//                    for (int i = 0; i < mPathList.size() - 1; i++) {
-//                        mSearch.drivingSearch(drivingRoutePlanOption
-//                                .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
-//                                .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
-//                    }
-//                } else {
-//                    Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
-//                }
-//                nowSearchType = 1;
-//            } else if (v.getId() == R.id.transit) {
-//                TransitRoutePlanOption transitRoutePlanOption = new TransitRoutePlanOption();
-//                if (mPathList.size() > 1) {
-//                    for (int i = 0; i < mPathList.size() - 1; i++) {
-//                        mSearch.transitSearch(transitRoutePlanOption
-//                                .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
-//                                .city("北京")
-//                                .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
-//                    }
-//                } else {
-//                    Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
-//                }
-//                nowSearchType = 2;
-//            } else if (v.getId() == R.id.walk) {
-//                WalkingRoutePlanOption walkingRoutePlanOption = new WalkingRoutePlanOption();
-//                if (mPathList.size() > 1) {
-//                    for (int i = 0; i < mPathList.size() - 1; i++) {
-//                        mSearch.walkingSearch(walkingRoutePlanOption
-//                                .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
-//                                .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
-//                    }
-//                } else {
-//                    Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
-//                }
-//                nowSearchType = 3;
-//            } else if (v.getId() == R.id.bike) {
-//                BikingRoutePlanOption bikingRoutePlanOption = new BikingRoutePlanOption();
-//                if (mPathList.size() > 1) {
-//                    for (int i = 0; i < mPathList.size() - 1; i++) {
-//                        mSearch.bikingSearch(bikingRoutePlanOption
-//                                .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
-//                                .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
-//                    }
-//                } else {
-//                    Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
-//                }
-//                nowSearchType = 4;
+//            } else {
+//                Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
 //            }
+//            nowSearchType = 1;
+
         } else {
             ArrayList<PlanNode> stNodeList = new ArrayList<PlanNode>();
             PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", endStation);
@@ -718,7 +693,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         }
     }
 
-
     @Override
     public void onGetDrivingRouteResult(DrivingRouteResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
@@ -1069,6 +1043,5 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         public void setOnItemInDlgClickLinster(OnItemInDlgClickListener itemListener) {
             onItemInDlgClickListener = itemListener;
         }
-
     }
 }

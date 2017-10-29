@@ -54,12 +54,14 @@
             android:id="@+id/plan_search_results1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
             android:visibility="gone" />
 
         <ListView
             android:id="@+id/plan_search_results2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
             android:visibility="gone" />
 
         <LinearLayout
@@ -90,6 +92,7 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:gravity="bottom"
+            android:layout_marginTop="15dp"
             android:layout_gravity="center|bottom">
             <Button
                 android:id="@+id/plan_search_commit"
@@ -97,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="bottom|right"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:background="#1874CD"

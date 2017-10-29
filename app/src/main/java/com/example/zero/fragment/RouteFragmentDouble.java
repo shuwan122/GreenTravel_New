@@ -28,6 +28,7 @@ import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -46,14 +47,25 @@ import com.baidu.mapapi.model.LatLng;
 import com.example.zero.activity.RouteResultActivity;
 import com.example.zero.adapter.RouteSearchAdapter;
 import com.example.zero.bean.RouteSearchBean;
+import com.example.zero.entity.Route;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.view.SearchPopView;
 import com.example.zero.view.SearchView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class RouteFragmentDouble extends Fragment implements SearchPopView.SearchPopViewListener {
 
     /**
@@ -336,18 +348,43 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 2017/9/11 具体搜索
 //                Toast.makeText(getActivity(), "开始搜索", Toast.LENGT H_SHORT).show();
+                boolean JUD = false;
                 String beginStation = searchView.getText();
                 String endStation = searchView2.getText();
+                if (beginStation.equals(endStation)) {
+                    JUD = true;
+                }
                 Bundle mBundle = new Bundle();
                 mBundle.putString("origin", "Single");
                 mBundle.putString("beginStation", beginStation);
                 mBundle.putString("endStation", endStation);
                 if ((!beginStation.equals("")) & (!endStation.equals(""))) {
-                    Intent intent = new Intent(getActivity(), RouteResultActivity.class);
-                    intent.putExtras(mBundle);
-                    startActivity(intent);
+                    if (!JUD) {
+                        // TODO: 2017/10/29  前后端联调
+                        try {
+                            OkHttpClient client = new OkHttpClient();
+                            RequestBody requestBody = new FormBody.Builder()
+                                    .add("beginStation", beginStation)
+                                    .add("endStation", endStation)
+                                    .build();
+                            Request request = new Request.Builder()
+                                    .url("http://10.108.120.154:8088/route/single")
+                                    .post(requestBody)
+                                    .build();
+                            Response response = client.newCall(request).execute();
+                            String responseData = response.body().string();
+                            parseJSONWithJSONObject(responseData);
+                            Log.d(TAG, "onClick: " + responseData);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Intent intent = new Intent(getActivity(), RouteResultActivity.class);
+                        intent.putExtras(mBundle);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getActivity(), "起终点信息不能相同，请重新输入！", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(getActivity(), "搜索框消息不完善，请填充完整后在开始搜索！", Toast.LENGTH_LONG).show();
                 }
@@ -357,18 +394,21 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         btnSearch0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 2017/9/11 具体搜索
 //                Toast.makeText(getActivity(), "开始搜索", Toast.LENGTH_SHORT).show();String beginStation = searchView.getText();
+                int beginNum = 0;
+                boolean JUD = false;
                 String endStation = endSearchView0.getText();
                 ArrayList<String> beginStationList = new ArrayList<String>();
                 beginStationList.add(searchViewList0.get(0).getText());
                 beginStationList.add(searchViewList0.get(1).getText());
                 beginStationList.add(searchViewList0.get(2).getText());
-                int beginNum = 0;
                 for (String str : beginStationList) {
                     if (!str.equals("")) {
                         beginNum++;
                     }
+                }
+                if (endStation.equals(beginStationList.get(0)) | endStation.equals(beginStationList.get(1)) | endStation.equals(beginStationList.get(2))) {
+                    JUD = true;
                 }
                 Bundle mBundle = new Bundle();
                 mBundle.putString("origin", "Multi");
@@ -376,9 +416,13 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                 mBundle.putStringArrayList("beginStationList", beginStationList);
                 mBundle.putInt("beginNum", beginNum);
                 if ((!endStation.equals("")) & (beginNum != 0)) {
-                    Intent intent = new Intent(getActivity(), RouteResultActivity.class);
-                    intent.putExtras(mBundle);
-                    startActivity(intent);
+                    if (!JUD) {
+                        Intent intent = new Intent(getActivity(), RouteResultActivity.class);
+                        intent.putExtras(mBundle);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getActivity(), "起终点信息不能相同，请重新输入！", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(getActivity(), "搜索框消息不完善，请填充完整后在开始搜索！", Toast.LENGTH_LONG).show();
                 }
@@ -570,6 +614,23 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
             }
 
         });
+    }
+
+    /**
+     * json处理函数
+     *
+     * @param jsonData json字符串
+     */
+    private void parseJSONWithJSONObject(String jsonData) {
+        try {
+            JSONArray jsonArray = new JSONArray(jsonData);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String str = jsonObject.getString("");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

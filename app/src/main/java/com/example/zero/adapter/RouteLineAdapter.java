@@ -105,6 +105,12 @@ public class RouteLineAdapter extends BaseAdapter {
                 holder.dis.setText("总票价：" + massTransitRouteLine.getPrice() + "元");
                 break;
 
+            case SINGLE:
+                break;
+
+            case MULTI:
+                break;
+
             default:
                 break;
 
@@ -124,7 +130,8 @@ public class RouteLineAdapter extends BaseAdapter {
         TRANSIT_ROUTE, // 公交
         DRIVING_ROUTE, // 驾车
         WALKING_ROUTE, // 步行
-        BIKING_ROUTE // 骑行
-
+        BIKING_ROUTE, // 骑行
+        SINGLE, // 单人规划
+        MULTI // 多人规划
     }
 }
