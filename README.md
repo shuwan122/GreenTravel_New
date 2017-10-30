@@ -191,6 +191,12 @@ Android App GreenTravel
 	 	<th>销售——连接服务器进行测试，解析返回的json数据</th>
 	 	<th>阅读解析JSON方法 PS展板</th>
 	 </tr>
+	<tr>
+	 	<th>171030</th>
+	 	<th>路线——单人出行前后端连接</th>
+	 	<th>销售——从服务器获取热门优惠券，领取成功</th>
+	 	<th>个人中心——调试登录注册接口</th>
+	 </tr>
 </table>
 
 ## 遇到bug或难点
@@ -381,6 +387,12 @@ Android App GreenTravel
 	 	<th>无</th>
 	 	<th>无</th>
 	 	<th>之前参照的代码解析JSON封装过好 理解困难</th>
+	 </tr>
+	<tr>
+	 	<th>171030</th>
+	 	<th路线——更改地图类型</th>
+	 	<th>无</th>
+	 	<th>如何简便的存储用户信息</th>
 	 </tr>
 </table>
 
@@ -573,4 +585,10 @@ Android App GreenTravel
 		<th>无</th>
 		<th>无</th>
 	</tr>
+	<tr>
+	 	<th>171030</th>
+	 	<th>https://www.2cto.com/kf/201607/523539.html</th>
+	 	<th>http://blog.csdn.net/guolin_blog/article/details/53759439</th>
+	 	<th>http://www.cnblogs.com/zhujiabin/p/4546826.html</th>
+	 </tr>
 </table>
