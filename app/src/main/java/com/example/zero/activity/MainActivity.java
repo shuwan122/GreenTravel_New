@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -35,8 +36,10 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMapOptions;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
@@ -48,6 +51,11 @@ import com.example.zero.fragment.RouteFragmentDouble;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.view.TitleLayout;
 import com.example.zero.view.TitleRouteLayout;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static android.content.ContentValues.TAG;
 
@@ -95,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private double mCurrentLat = 0.0;
     private double mCurrentLon = 0.0;
     private float mCurrentAccracy;
+    private boolean mEnableCustomStyle = true;
     /**
      * 定位按钮
      */
@@ -110,11 +119,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private MyLocationData locData;
     private float direction;
 
+//    private static String PATH = "style_json.json";
+    private static String PATH = "only_subway.json";
+
     private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //个性化地图
+        setMapCustomFile(this, PATH);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
         initView();
@@ -160,13 +174,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 }
             }
         });
-
         // 地图初始化
         mMapView = (MapView) findViewById(R.id.map_main);
         mBaiduMap = mMapView.getMap();
+        MapView.setMapCustomEnable(true);
         // 开启定位图层
         mBaiduMap.setMyLocationEnabled(true);
-        mBaiduMap.setTrafficEnabled(true);
+//        mBaiduMap.setTrafficEnabled(true);
+
         // 定位初始化
         mLocClient = new LocationClient(getApplicationContext());
         LocationClientOption option = new LocationClientOption();
@@ -422,5 +437,43 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    /**
+     * 设置个性化地图config文件路径
+     */
+    private void setMapCustomFile(Context context, String PATH) {
+        FileOutputStream out = null;
+        InputStream inputStream = null;
+        String moduleName = null;
+        try {
+            inputStream = context.getAssets()
+                    .open("customConfigdir/" + PATH);
+            byte[] b = new byte[inputStream.available()];
+            inputStream.read(b);
+
+            moduleName = context.getFilesDir().getAbsolutePath();
+            File f = new File(moduleName + "/" + PATH);
+            if (f.exists()) {
+                f.delete();
+            }
+            f.createNewFile();
+            out = new FileOutputStream(f);
+            out.write(b);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        MapView.setCustomMapStylePath(moduleName + "/" + PATH);
     }
 }

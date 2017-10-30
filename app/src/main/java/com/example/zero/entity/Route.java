@@ -33,7 +33,9 @@ public class Route {
         LESSCHANGE // 最少换乘
     }
 
-    public void Route(){}
+    public Route(){
+
+    }
 
     public Route(ArrayList<String> stationList, ArrayList<String> routeLineList, ArrayList<String> infoList, RouteType type) {
         this.stationList = stationList;

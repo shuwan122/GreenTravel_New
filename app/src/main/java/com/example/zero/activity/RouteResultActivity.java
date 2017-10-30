@@ -33,6 +33,7 @@ import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
@@ -140,6 +141,14 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private List<String> mPathList = new ArrayList<String>();
 
     //前后端接口
+    private ArrayList<String> fastStationList = new ArrayList<String>();
+    private ArrayList<String> lessbusyStationList = new ArrayList<String>();
+    private ArrayList<String> lesschangeStationList = new ArrayList<String>();
+    private ArrayList<List<TransitRouteLine>> modelSelect = new ArrayList<List<TransitRouteLine>>();
+
+    private Button fastBtn = null;
+    private Button lessbusyBtn = null;
+    private Button lesschangeBtn = null;
 
 
     int nowSearchType = -1; // 当前节点
@@ -221,10 +230,128 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         mSearch = RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
 
+        fastBtn = (Button) findViewById(R.id.fastStation);
+        lessbusyBtn = (Button) findViewById(R.id.lessbusyStation);
+        lesschangeBtn = (Button) findViewById(R.id.lesschangeStation);
+
         if (mBundle.getString("origin").equals("Single")) {
-            beginStation = mBundle.getString("beginStation");
-            endStation = mBundle.getString("endStation");
-            JUD = 0;
+
+            fastBtn.setVisibility(View.VISIBLE);
+            lessbusyBtn.setVisibility(View.VISIBLE);
+            lesschangeBtn.setVisibility(View.VISIBLE);
+
+            fastStationList = mBundle.getStringArrayList("fastStationList");
+            lessbusyStationList = mBundle.getStringArrayList("lessbusyStationList");
+            lesschangeStationList = mBundle.getStringArrayList("lesschangeStationList");
+            JUD = 2;
+
+            fastBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mBaidumap.clear();
+                    TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+                    if (fastStationList.size() > 1) {
+                        for (int i = 0; i < fastStationList.size() - 1; i++) {
+//                            PlanNode.withLocation(new LatLng(120.0, 31.0));
+                            mSearch.transitSearch(transitRouteFast
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i)))
+                                    .city("广州")
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i + 1))));
+                        }
+                        List<OverlayOptions> options = new ArrayList<OverlayOptions>();
+                        LatLng point1 = PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(0)).getLocation();
+                        LatLng point2 = PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(fastStationList.size() - 1)).getLocation();
+                        OverlayOptions option1 = new MarkerOptions()
+                                .position(point1)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_station));
+                        OverlayOptions option2 = new MarkerOptions()
+                                .position(point2)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_station));
+                        options.add(option1);
+                        options.add(option2);
+                        //在地图上批量添加
+                        mBaidumap.addOverlays(options);
+
+                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                        mBaidumap.animateMapStatus(mapStatusUpdate);
+                    } else {
+                        Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
+                    }
+                    nowSearchType = 2;
+                }
+            });
+            lessbusyBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mBaidumap.clear();
+
+                    TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+                    if (lessbusyStationList.size() > 1) {
+                        for (int i = 0; i < lessbusyStationList.size() - 1; i++) {
+//                            PlanNode.withLocation(new LatLng(120.0, 31.0));
+                            mSearch.transitSearch(transitRouteFast
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i)))
+                                    .city("广州")
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i + 1))));
+                        }
+                        List<OverlayOptions> options = new ArrayList<OverlayOptions>();
+                        LatLng point1 = PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(0)).getLocation();
+                        LatLng point2 = PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(lessbusyStationList.size() - 1)).getLocation();
+                        OverlayOptions option1 = new MarkerOptions()
+                                .position(point1)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_station));
+                        OverlayOptions option2 = new MarkerOptions()
+                                .position(point2)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_station));
+                        options.add(option1);
+                        options.add(option2);
+                        //在地图上批量添加
+                        mBaidumap.addOverlays(options);
+
+                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                        mBaidumap.animateMapStatus(mapStatusUpdate);
+                    } else {
+                        Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
+                    }
+                    nowSearchType = 2;
+                }
+            });
+            lesschangeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mBaidumap.clear();
+
+                    TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+                    if (lesschangeStationList.size() > 1) {
+                        for (int i = 0; i < lesschangeStationList.size() - 1; i++) {
+//                            PlanNode.withLocation(new LatLng(120.0, 31.0));
+                            mSearch.transitSearch(transitRouteFast
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i)))
+                                    .city("广州")
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i + 1))));
+                        }
+                        List<OverlayOptions> options = new ArrayList<OverlayOptions>();
+                        LatLng point1 = PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(0)).getLocation();
+                        LatLng point2 = PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(lesschangeStationList.size() - 1)).getLocation();
+                        OverlayOptions option1 = new MarkerOptions()
+                                .position(point1)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_station));
+                        OverlayOptions option2 = new MarkerOptions()
+                                .position(point2)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_station));
+                        options.add(option1);
+                        options.add(option2);
+                        //在地图上批量添加
+                        mBaidumap.addOverlays(options);
+
+                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                        mBaidumap.animateMapStatus(mapStatusUpdate);
+                    } else {
+                        Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
+                    }
+                    nowSearchType = 2;
+                }
+            });
         } else {
             beginStationList = mBundle.getStringArrayList("beginStationList");
             endStation = mBundle.getString("endStation");
@@ -263,7 +390,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 nowSearchType = 1;
             } else if (v.getId() == R.id.transit) {
                 mSearch.transitSearch((new TransitRoutePlanOption())
-                        .from(stNode).city("北京").to(enNode));
+                        .from(stNode).city("广州").to(enNode));
                 nowSearchType = 2;
             } else if (v.getId() == R.id.walk) {
                 mSearch.walkingSearch((new WalkingRoutePlanOption())
@@ -274,30 +401,12 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         .from(stNode).to(enNode));
                 nowSearchType = 4;
             }
-
-            // TODO: 2017/10/17 pathList规划路线
-//            TransitRoutePlanOption transitRoutePlanOption = new TransitRoutePlanOption();
-//            if (mPathList.size() > 1) {
-//                for (int i = 0; i < mPathList.size() - 1; i++) {
-////                PlanNode.withLocation(new LatLng(120.0, 31.0));
-//                    mSearch.transitSearch(transitRoutePlanOption
-//                            .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
-//                            .city("北京")
-//                            .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
-//                }
-//                CouponOverlay couponOverlay = new CouponOverlay(mBaidumap);
-//
-//            } else {
-//                Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
-//            }
-//            nowSearchType = 1;
-
         } else {
             ArrayList<PlanNode> stNodeList = new ArrayList<PlanNode>();
-            PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", endStation);
-            stNodeList.add(PlanNode.withCityNameAndPlaceName("北京", beginStationList.get(0)));
-            stNodeList.add(PlanNode.withCityNameAndPlaceName("北京", beginStationList.get(1)));
-            stNodeList.add(PlanNode.withCityNameAndPlaceName("北京", beginStationList.get(2)));
+            PlanNode enNode = PlanNode.withCityNameAndPlaceName("广州", endStation);
+            stNodeList.add(PlanNode.withCityNameAndPlaceName("广州", beginStationList.get(0)));
+            stNodeList.add(PlanNode.withCityNameAndPlaceName("广州", beginStationList.get(1)));
+            stNodeList.add(PlanNode.withCityNameAndPlaceName("广州", beginStationList.get(2)));
 
             if (v.getId() == R.id.mass) {
                 Toast.makeText(RouteResultActivity.this, "抱歉，多人界面不提供该功能", Toast.LENGTH_SHORT).show();
@@ -320,15 +429,15 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 TransitRoutePlanOption transitRoutePlanOption = new TransitRoutePlanOption();
                 if (!beginStationList.get(0).equals("")) {
                     mSearch.transitSearch(transitRoutePlanOption
-                            .from(stNodeList.get(0)).city("北京").to(enNode));
+                            .from(stNodeList.get(0)).city("广州").to(enNode));
                 }
                 if (!beginStationList.get(1).equals("")) {
                     mSearch.transitSearch(transitRoutePlanOption
-                            .from(stNodeList.get(1)).city("北京").to(enNode));
+                            .from(stNodeList.get(1)).city("广州").to(enNode));
                 }
                 if (!beginStationList.get(2).equals("")) {
                     mSearch.transitSearch(transitRoutePlanOption
-                            .from(stNodeList.get(2)).city("北京").to(enNode));
+                            .from(stNodeList.get(2)).city("广州").to(enNode));
                 }
                 nowSearchType = 2;
             } else if (v.getId() == R.id.walk) {
@@ -602,7 +711,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                 overlay.addToMap();
                                 overlay.zoomToSpan();
                             }
-
                         });
                         myTransitDlg.show();
                         hasShownDialogue = true;
@@ -616,7 +724,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     overlay.setData(result.getRouteLines().get(0));
                     overlay.addToMap();
                     overlay.zoomToSpan();
-
                 } else {
                     Log.d("route result", "结果数<0");
                     return;

@@ -1,0 +1,38 @@
+[
+    {
+              "featureType": "arterial",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#ffffff"
+              }
+    },
+    {
+              "featureType": "highway",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#ffffff"
+              }
+    },
+    {
+              "featureType": "local",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#ffffff"
+              }
+    },
+    {
+              "featureType": "railway",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#ffffff"
+              }
+    },
+    {
+              "featureType": "subway",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#0b5394",
+                        "weight": "5"
+              }
+    }
+]

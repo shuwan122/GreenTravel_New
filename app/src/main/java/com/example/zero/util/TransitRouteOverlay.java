@@ -23,6 +23,8 @@ import com.example.zero.fragment.OverlayManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * 用于显示换乘路线的Overlay，自3.4.0版本起可实例化多个添加在地图中显示
  */
@@ -72,20 +74,20 @@ public class TransitRouteOverlay extends OverlayManager {
         }
 
         if (mRouteLine.getStarting() != null) {
-            overlayOptionses.add((new MarkerOptions())
-                    .position(mRouteLine.getStarting().getLocation())
-                    .icon(getStartMarker() != null ? getStartMarker() :
-                            BitmapDescriptorFactory
-                                    .fromAssetWithDpi("Icon_start.png")).zIndex(10));
+//            overlayOptionses.add((new MarkerOptions())
+//                    .position(mRouteLine.getStarting().getLocation())
+//                    .icon(getStartMarker() != null ? getStartMarker() :
+//                            BitmapDescriptorFactory
+//                                    .fromAssetWithDpi("Icon_start.png")).zIndex(10));
         }
         if (mRouteLine.getTerminal() != null) {
-            overlayOptionses
-                    .add((new MarkerOptions())
-                            .position(mRouteLine.getTerminal().getLocation())
-                            .icon(getTerminalMarker() != null ? getTerminalMarker() :
-                                    BitmapDescriptorFactory
-                                            .fromAssetWithDpi("Icon_end.png"))
-                            .zIndex(10));
+//            overlayOptionses
+//                    .add((new MarkerOptions())
+//                            .position(mRouteLine.getTerminal().getLocation())
+//                            .icon(getTerminalMarker() != null ? getTerminalMarker() :
+//                                    BitmapDescriptorFactory
+//                                            .fromAssetWithDpi("Icon_end.png"))
+//                            .zIndex(10));
         }
         // polyline
         if (mRouteLine.getAllStep() != null
@@ -166,7 +168,7 @@ public class TransitRouteOverlay extends OverlayManager {
     public boolean onRouteNodeClick(int i) {
         if (mRouteLine.getAllStep() != null
                 && mRouteLine.getAllStep().get(i) != null) {
-            Log.i("baidumapsdk", "TransitRouteOverlay onRouteNodeClick");
+            Log.i(TAG, "TransitRouteOverlay onRouteNodeClick");
         }
         return false;
     }
