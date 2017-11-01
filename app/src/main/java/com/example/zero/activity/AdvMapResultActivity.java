@@ -395,7 +395,6 @@ public class AdvMapResultActivity extends AppCompatActivity implements BaiduMap.
                         });
                         myTransitDlg.setOnItemInDlgClickLinster(new AdvMapResultActivity.OnItemInDlgClickListener() {
                             public void onItemClick(int position) {
-
                                 route = nowResultransit.getRouteLines().get(position);
                                 TransitRouteOverlay overlay = new AdvMapResultActivity.MyTransitRouteOverlay(mBaidumap);
                                 mBaidumap.setOnMarkerClickListener(overlay);

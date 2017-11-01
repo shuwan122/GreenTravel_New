@@ -8,12 +8,14 @@ public class SaleBean {
     private String name;
     private String price;
     private String content;
-    private int img;
+    private String time;
+    private String img;
 
-    public void setText(String name, String price, String content, int imgId) {
+    public void setText(String name, String price, String content, String time, String imgId) {
         this.name = name;
         this.price = price;
         this.content = content;
+        this.time = time;
         this.img = imgId;
     }
 
@@ -29,7 +31,11 @@ public class SaleBean {
         return content;
     }
 
-    public int getImage() {
+    public String getTime() {
+        return time;
+    }
+
+    public String getImage() {
         return img;
     }
 }

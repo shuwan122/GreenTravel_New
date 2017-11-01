@@ -179,6 +179,28 @@ Android App GreenTravel
 		<th>171024</th>
 		<th colspan="3">第五次程序合并</th>
 	</tr>
+	<tr>
+	 	<th>171026</th>
+	 	<th>路线——单人出行接口完成</th>
+	 	<th>销售——获取当前经纬度，用户头像改成圆形</th>
+	 	<th>个人中心——添加登录注册部分接口</th>
+	 </tr>
+	<tr>
+	 	<th>171027</th>
+	 	<th>路线——编写json解析函数</th>
+	 	<th>销售——连接服务器进行测试，解析返回的json数据</th>
+	 	<th>阅读解析JSON方法 PS展板</th>
+	 </tr>
+	<tr>
+	 	<th>171030</th>
+	 	<th>路线——单人出行前后端连接</th>
+	 	<th>销售——从服务器获取热门优惠券，领取成功</th>
+	 	<th>个人中心——调试登录注册接口</th>
+	 </tr>
+    <tr>
+		<th>171031</th>
+		<th colspan="3">第六次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -357,6 +379,28 @@ Android App GreenTravel
     <tr>
 		<th>171024</th>
 		<th colspan="3">个人中心常用联系人和扫一扫未完成</th>
+	</tr>
+	<tr>
+	 	<th>171026</th>
+	 	<th>路线——前后端无法联调</th>
+	 	<th>无</th>
+	 	<th>个人中心——没有测试</th>
+	 </tr>
+	<tr>
+	 	<th>171027</th>
+	 	<th>无</th>
+	 	<th>无</th>
+	 	<th>之前参照的代码解析JSON封装过好 理解困难</th>
+	 </tr>
+	<tr>
+	 	<th>171030</th>
+	 	<th路线——更改地图类型</th>
+	 	<th>无</th>
+	 	<th>如何简便的存储用户信息</th>
+	 </tr>
+    <tr>
+		<th>171031</th>
+		<th colspan="3">暂时没有发现bug</th>
 	</tr>
 </table>
 
@@ -537,5 +581,26 @@ Android App GreenTravel
 		<th>171024</th>
 		<th colspan="3">无</th>
 	</tr>
+	<tr>
+	 	<th>171026</th>
+	 	<th>http://blog.csdn.net/gaolei1201/article/details/50512265</th>
+	 	<th>无</th>
+	 	<th>无</th>
+	 </tr>
+	<tr>
+		<th>171027</th>
+		<th>http://www.cnblogs.com/whoislcj/p/5526431.html</th>
+		<th>无</th>
+		<th>无</th>
+	</tr>
+	<tr>
+	 	<th>171030</th>
+	 	<th>https://www.2cto.com/kf/201607/523539.html</th>
+	 	<th>http://blog.csdn.net/guolin_blog/article/details/53759439</th>
+	 	<th>http://www.cnblogs.com/zhujiabin/p/4546826.html</th>
+	 </tr>
+    <tr>
+		<th>171031</th>
+		<th colspan="3">无</th>
+	</tr>
 </table>
->>>>>>> dev

@@ -48,35 +48,12 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp" />
 
-        <LinearLayout
+        <com.example.zero.view.SimpleTextView
+            android:id="@+id/login_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="horizontal">
-
-            <com.example.zero.view.SimpleTextView
-                android:id="@+id/login_confirm"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3" />
-
-            <View
-                android:layout_width="1px"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="5dp"
-                android:background="@color/divideLine" />
-
-            <Button
-                android:id="@+id/login_confirm_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/white"
-                android:text="获取验证码"
-                android:textColor="@color/colorAccent" />
-        </LinearLayout>
+            android:layout_marginRight="20dp" />
     </LinearLayout>
 
     <Button
@@ -95,7 +72,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/register_text"
+            android:id="@+id/login_register"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
@@ -104,10 +81,12 @@
             android:textColor="@color/nav_head" />
 
         <TextView
+            android:id="@+id/login_reset"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginRight="20dp"
-            android:text="忘记密码？" />
+            android:text="忘记密码？"
+            android:textColor="@color/nav_head"/>
     </LinearLayout>
 
     <LinearLayout

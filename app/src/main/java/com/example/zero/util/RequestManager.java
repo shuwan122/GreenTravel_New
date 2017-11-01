@@ -5,6 +5,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSONException;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -28,11 +30,12 @@ public class RequestManager {
     private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//这个需要和服务端保持一致
     //private static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");//这个需要和服务端保持一致
     private static final String TAG = RequestManager.class.getSimpleName();
-    private static final String BASE_URL = "http://www.baidu.com";//请求接口根地址
+    private static final String BASE_URL = "http://10.108.120.154:8080";//请求接口根地址
     private static volatile RequestManager mInstance;//单例引用
     public static final int TYPE_GET = 0;//get请求
     public static final int TYPE_POST_JSON = 1;//post请求参数为json
     public static final int TYPE_POST_FORM = 2;//post请求参数为表单
+    public static final int TYPE_GET_Z = 3;
     private OkHttpClient mOkHttpClient;//okHttpClient 实例
     private Handler okHttpHandler;//全局处理子线程和M主线程通信
 
@@ -86,6 +89,8 @@ public class RequestManager {
                 break;
             case TYPE_POST_FORM:
                 requestPostBySynWithForm(actionUrl, paramsMap);
+                break;
+            default:
                 break;
         }
     }
@@ -216,6 +221,11 @@ public class RequestManager {
             case TYPE_POST_FORM:
                 call = requestPostByAsynWithForm(actionUrl, paramsMap, callBack);
                 break;
+            case TYPE_GET_Z:
+                call = requestGetByAsynZ(actionUrl, paramsMap, callBack);
+                break;
+            default:
+                break;
         }
         return call;
     }
@@ -241,9 +251,9 @@ public class RequestManager {
                 pos++;
             }
             String requestUrl = String.format("%s/%s?%s", BASE_URL, actionUrl, tempParams.toString());
-            final Request request = addHeaders().url(requestUrl).build();
-            final Call call = mOkHttpClient.newCall(request);
-            call.enqueue(new Callback() {
+            final Request request = addHeaders().url(requestUrl).build();  //创建一个request对象
+            final Call call = mOkHttpClient.newCall(request);    //newCall一个call对象
+            call.enqueue(new Callback() {                       //异步执行请求，callback回调函数
                 @Override
                 public void onFailure(Call call, IOException e) {
                     failedCallBack("访问失败", callBack);
@@ -257,7 +267,55 @@ public class RequestManager {
                         Log.e(TAG, "response ----->" + string);
                         successCallBack((T) string, callBack);
                     } else {
-                        failedCallBack("服务器错误", callBack);
+                        failedCallBack(response.body().string(), callBack);
+                    }
+                }
+            });
+            return call;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+        return null;
+    }
+
+    /**
+     * okHttp get异步请求
+     *
+     * @param actionUrl 接口地址
+     * @param paramsMap 请求参数
+     * @param callBack  请求返回数据回调
+     * @param <T>       数据泛型
+     * @return
+     */
+    private <T> Call requestGetByAsynZ(String actionUrl, HashMap<String, String> paramsMap, final ReqCallBack<T> callBack) {
+        StringBuilder tempParams = new StringBuilder();
+        try {
+            int pos = 0;
+            for (String key : paramsMap.keySet()) {
+                if (pos > 0) {
+                    tempParams.append("&");
+                }
+                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
+                pos++;
+            }
+            String requestUrl = String.format("%s?%s", actionUrl, tempParams.toString());
+            final Request request = addHeaders().url(requestUrl).build();  //创建一个request对象
+            final Call call = mOkHttpClient.newCall(request);    //newCall一个call对象
+            call.enqueue(new Callback() {                       //异步执行请求，callback回调函数
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    failedCallBack("访问失败", callBack);
+                    Log.e(TAG, e.toString());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String string = response.body().string();
+                        Log.e(TAG, "response ----->" + string);
+                        successCallBack((T) string, callBack);
+                    } else {
+                        failedCallBack(response.body().string(), callBack);
                     }
                 }
             });
@@ -307,7 +365,7 @@ public class RequestManager {
                         Log.e(TAG, "response ----->" + string);
                         successCallBack((T) string, callBack);
                     } else {
-                        failedCallBack("服务器错误", callBack);
+                        failedCallBack(response.body().string(), callBack);
                     }
                 }
             });
@@ -351,7 +409,7 @@ public class RequestManager {
                         Log.e(TAG, "response ----->" + string);
                         successCallBack((T) string, callBack);
                     } else {
-                        failedCallBack("服务器错误", callBack);
+                        failedCallBack(response.body().string(), callBack);
                     }
                 }
             });
@@ -401,6 +459,12 @@ public class RequestManager {
             @Override
             public void run() {
                 if (callBack != null) {
+//                    TypeInfo typeInfo = ReqClassUtils.getCallbackGenericType(callBack.getClass());
+//                    try {
+//                        callBack.onReqSuccess((T) ReqJsonUtils.parseHttpResult(typeInfo, result));
+//                    } catch (org.json.JSONException e) {
+//                        e.printStackTrace();
+//                    }
                     callBack.onReqSuccess(result);
                 }
             }

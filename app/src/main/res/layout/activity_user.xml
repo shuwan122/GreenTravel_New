@@ -124,10 +124,11 @@
                 android:textColor="@color/black" />
 
             <TextView
+                android:id="@+id/user_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="130******17" />
+                android:text="" />
 
             <ImageView
                 style="@style/arrow_right_gray"

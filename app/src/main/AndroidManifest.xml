@@ -63,6 +63,7 @@
 
         <activity android:name="com.example.zero.activity.HelpFeedbackActivity" />
         <activity android:name="com.example.zero.activity.FavorActivity" />
+        <activity android:name="com.example.zero.activity.FriendActivity" />
         <activity android:name="com.example.zero.activity.AboutActivity" />
         <activity android:name="com.example.zero.activity.LoginActivity" />
         <activity
@@ -76,6 +77,11 @@
                 <action android:name="MSG_SERVICE" />
             </intent-filter>
         </service>
+
+        <!--<service-->
+            <!--android:name="com.baidu.location.f"-->
+            <!--android:enabled="true"-->
+            <!--android:process=":remote"></service>-->
 
         <activity android:name="com.example.zero.activity.RouteDrawerActivity"></activity>
     </application>

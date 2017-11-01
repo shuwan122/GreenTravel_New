@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -35,8 +36,10 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMapOptions;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
@@ -48,6 +51,11 @@ import com.example.zero.fragment.RouteFragmentDouble;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.view.TitleLayout;
 import com.example.zero.view.TitleRouteLayout;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static android.content.ContentValues.TAG;
 
@@ -95,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private double mCurrentLat = 0.0;
     private double mCurrentLon = 0.0;
     private float mCurrentAccracy;
+    private boolean mEnableCustomStyle = true;
     /**
      * 定位按钮
      */
@@ -110,19 +119,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private MyLocationData locData;
     private float direction;
 
+//    private static String PATH = "style_json.json";
+    private static String PATH = "only_subway.json";
+
     private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //个性化地图
+        setMapCustomFile(this, PATH);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
         initView();
         initBottomNavBar();
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
+        if (actionBar != null) {
             actionBar.hide();
+        }
         Log.d(TAG, "onCreate: success");
     }
 
@@ -138,31 +153,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
         btnLocation = (Button) findViewById(R.id.btn_map_main_location);
 
-        Log.d(TAG, "Sensor: begin");
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);//获取传感器管理服务
-        if (mSensorManager == null) {
-            Log.d(TAG, "Sensor: sm is null");
-            return;
-        } else {
-            Log.d(TAG, "Sensor: sm is ok");
-        }
         mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
         btnLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                 } else {
                     changeMode();
                 }
             }
         });
-
         // 地图初始化
         mMapView = (MapView) findViewById(R.id.map_main);
         mBaiduMap = mMapView.getMap();
+        MapView.setMapCustomEnable(true);
         // 开启定位图层
         mBaiduMap.setMyLocationEnabled(true);
+//        mBaiduMap.setTrafficEnabled(true);
+
         // 定位初始化
         mLocClient = new LocationClient(getApplicationContext());
         LocationClientOption option = new LocationClientOption();
@@ -215,16 +227,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
      * 初始化底部导航栏
      */
     private void initBottomNavBar() {
-        bottom_navigation_bar_container.setAutoHideEnabled(true);//自动隐藏
+        //自动隐藏
+        bottom_navigation_bar_container.setAutoHideEnabled(true);
 
         bottom_navigation_bar_container.setMode(BottomNavigationBar.MODE_FIXED);
         bottom_navigation_bar_container.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
 
-        bottom_navigation_bar_container.setBarBackgroundColor(R.color.white);//背景颜色
-        bottom_navigation_bar_container.setInActiveColor(R.color.nav_gray);//未选中时的颜色
-        bottom_navigation_bar_container.setActiveColor(R.color.colorPrimaryDark);//选中时的颜色
+        //背景颜色
+        bottom_navigation_bar_container.setBarBackgroundColor(R.color.white);
+        //未选中时的颜色
+        bottom_navigation_bar_container.setInActiveColor(R.color.nav_gray);
+        //选中时的颜色
+        bottom_navigation_bar_container.setActiveColor(R.color.colorPrimaryDark);
 
-        badgeItem = new BadgeItem().setBackgroundColor(Color.RED).setText("99").setHideOnSelect(true);//角标
+        //角标
+        badgeItem = new BadgeItem().setBackgroundColor(Color.RED).setText("99").setHideOnSelect(true);
 
         routeItem = new BottomNavigationItem(R.drawable.route, "路线");
         adviceItem = new BottomNavigationItem(R.drawable.advice, "建议");
@@ -281,6 +298,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 getSupportActionBar().setTitle("个人");
                 mMapView.setVisibility(View.GONE);
                 btnLocation.setVisibility(View.GONE);
+                break;
+            default:
                 break;
         }
     }
@@ -403,14 +422,51 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
+                    changeMode();
                 } else {
-                    // Permission Denied
                     Toast.makeText(MainActivity.this, "PERMISSION Denied", Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    /**
+     * 设置个性化地图config文件路径
+     */
+    private void setMapCustomFile(Context context, String PATH) {
+        FileOutputStream out = null;
+        InputStream inputStream = null;
+        String moduleName = null;
+        try {
+            inputStream = context.getAssets()
+                    .open("customConfigdir/" + PATH);
+            byte[] b = new byte[inputStream.available()];
+            inputStream.read(b);
+
+            moduleName = context.getFilesDir().getAbsolutePath();
+            File f = new File(moduleName + "/" + PATH);
+            if (f.exists()) {
+                f.delete();
+            }
+            f.createNewFile();
+            out = new FileOutputStream(f);
+            out.write(b);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        MapView.setCustomMapStylePath(moduleName + "/" + PATH);
     }
 }

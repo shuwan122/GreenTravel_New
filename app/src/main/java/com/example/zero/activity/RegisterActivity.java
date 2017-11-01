@@ -4,13 +4,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.zero.greentravel_new.R;
+import com.example.zero.util.RequestManager;
 import com.example.zero.view.SimpleTextView;
+
+
+import java.util.HashMap;
 
 
 /**
@@ -21,6 +28,8 @@ public class RegisterActivity extends AppCompatActivity {
     private ImageView backArrow;
     private Button register, confirm_button;
     private SimpleTextView phone, password, pw_confirm, confirm;
+
+    private static final String TAG = "RegisterActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +47,8 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean b) {
                 if (!b) {
                     String text = phone.getText().toString().trim();
-                    if (!isEmail(text) && !isMobile(text)) {
-                        Toast.makeText(RegisterActivity.this, "请输入正确的手机号或邮箱。", Toast.LENGTH_SHORT).show();
+                    if (!isMobile(text)) {
+                        Toast.makeText(RegisterActivity.this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
                     }
                     phone.notFocused();
                 }
@@ -69,7 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFocusChange(View view, boolean b) {
                 if (!b) {
                     if (!password.getText().toString().trim().equals(pw_confirm.getText().toString().trim())) {
-                        Toast.makeText(RegisterActivity.this, "两次输入密码不一致。", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "两次输入密码不一致", Toast.LENGTH_SHORT).show();
                     }
                     pw_confirm.notFocused();
                 }
@@ -78,14 +87,26 @@ public class RegisterActivity extends AppCompatActivity {
         confirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO 发送验证码
                 String text = phone.getText().toString().trim();
-                if (isEmail(text)) {
-                    Toast.makeText(RegisterActivity.this, "已发送邮件", Toast.LENGTH_SHORT).show();
-                } else if (isMobile(text)) {
-                    Toast.makeText(RegisterActivity.this, "已发送短信", Toast.LENGTH_SHORT).show();
+                if (isMobile(text)) {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("type","0");
+                    params.put("phone",phone.getText());
+                    RequestManager.getInstance(getBaseContext()).requestAsyn("/users/send_verification_code", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+                        @Override
+                        public void onReqSuccess(String result) {
+                            Log.d(TAG,result);
+                            Toast.makeText(RegisterActivity.this, "已发送短信", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onReqFailed(String errorMsg) {
+                            Toast.makeText(getBaseContext(), "发送失败", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG,errorMsg);
+                        }
+                    });
                 } else {
-                    Toast.makeText(RegisterActivity.this, "请输入正确的手机号或邮箱。", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -93,12 +114,43 @@ public class RegisterActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO 校验写入用户名密码 验证码
-                Toast.makeText(RegisterActivity.this, "注册成功。", Toast.LENGTH_SHORT).show();
-                Intent result = new Intent();
-                result.putExtra("User name", "name from register");
-                setResult(RESULT_OK, result);
-                finish();
+                String text = phone.getText().trim();
+                if (password.getText().toString().trim().length() < 6) {
+                    Toast.makeText(RegisterActivity.this, "密码不能少于6个字符。", Toast.LENGTH_SHORT).show();
+                }
+                else if(!password.getText().trim().equals(pw_confirm.getText().trim())) {
+                    Toast.makeText(RegisterActivity.this, "两次输入密码不一致", Toast.LENGTH_SHORT).show();
+                }
+                else if (isMobile(text)) {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("phone",phone.getText().trim());
+                    params.put("psw",password.getText().trim());
+                    params.put("verification_code",confirm.getText().trim());
+                    RequestManager.getInstance(getBaseContext()).requestAsyn("/users/user_register", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+                        @Override
+                        public void onReqSuccess(String result) {
+                            Log.d(TAG,result);
+                            JSONObject jsonObj = JSON.parseObject(result);
+                            String user_id = jsonObj.getString("user_id");
+                            String token = jsonObj.getString("token");
+                            String username = jsonObj.getString("username");
+                            Intent userInfo = new Intent();
+                            userInfo.putExtra("username", username);
+                            userInfo.putExtra("avator","");
+                            setResult(RESULT_OK, userInfo);
+                            Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+
+                        @Override
+                        public void onReqFailed(String errorMsg) {
+                            Toast.makeText(getBaseContext(), "注册失败", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG,errorMsg);
+                        }
+                    });
+                } else {
+                    Toast.makeText(RegisterActivity.this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -114,9 +166,11 @@ public class RegisterActivity extends AppCompatActivity {
         password = (SimpleTextView) findViewById(R.id.register_pw);
         password.setHintText(" 请输入密码");
         password.setLeftImage(R.drawable.lock_fill);
+        password.setPw();
         pw_confirm = (SimpleTextView) findViewById(R.id.register_pw_confirm);
         pw_confirm.setHintText(" 确认密码");
         pw_confirm.setLeftImage(R.drawable.lock_fill);
+        pw_confirm.setPw();
         confirm_button = (Button) findViewById(R.id.register_confirm_button);
         register = (Button) findViewById(R.id.register_button);
 
@@ -139,14 +193,5 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    //邮箱验证
-    public static boolean isEmail(String strEmail) {
-        String strPattern = "^[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]$";
-        if (TextUtils.isEmpty(strPattern)) {
-            return false;
-        } else {
-            return strEmail.matches(strPattern);
-        }
-    }
 }
 

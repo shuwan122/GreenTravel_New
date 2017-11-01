@@ -46,6 +46,7 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
     private int hour2;
     private int minute2;
     private Button searchButton;
+    private Button btnChange;
 
     /**
      * 搜索结果列表view
@@ -120,6 +121,7 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
         return view;
     }
 
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         initData();
         initViews();
@@ -151,6 +153,8 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
         searchPopView2.setTipsHintAdapter(hintAdapter);
         searchPopView2.setHintText("请输入终点");
         searchPopView2.setSearchPopViewListener(this);
+
+        btnChange = (Button) getActivity().findViewById(R.id.adv_plan_btn_change);
 
         lvResults1 = (ListView) getView().findViewById(R.id.plan_search_results1);
         lvResults2 = (ListView) getView().findViewById(R.id.plan_search_results2);
@@ -188,6 +192,72 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                 }
             }
         });
+
+        btnChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String text1 = searchPopView1.getText();
+                String text2 = searchPopView2.getText();
+
+                searchPopView1.setJUD(false);
+                searchPopView2.setJUD(false);
+
+                searchPopView1.setText(text2);
+                searchPopView2.setText(text1);
+
+                if (resultData1 == null) {
+                    // 初始化
+                    resultData1 = new ArrayList<>();
+                } else {
+                    resultData1.clear();
+                    for (int i = 0; i < dbData.size(); i++) {
+                        if (dbData.get(i).getTitle().equals(searchPopView1.getText().trim())) {
+                            resultData1.add(dbData.get(i));
+                        }
+                    }
+                }
+
+                if (resultData2 == null) {
+                    // 初始化
+                    resultData2 = new ArrayList<>();
+                } else {
+                    resultData2.clear();
+                    for (int i = 0; i < dbData.size(); i++) {
+                        if (dbData.get(i).getTitle().equals(searchPopView2.getText().trim())) {
+                            resultData2.add(dbData.get(i));
+                        }
+                    }
+                }
+
+                if (lvResults1.getAdapter() == null) {
+                    //获取搜索数据 设置适配器
+                    resultAdapter1.getItem(0).setComments("起点");
+                    lvResults1.setAdapter(resultAdapter1);
+                } else {
+                    //更新搜索数据
+                    resultAdapter1.getItem(0).setComments("起点");
+                    resultAdapter1.notifyDataSetChanged();
+                }
+                if (lvResults2.getAdapter() == null) {
+                    //获取搜索数据 设置适配器
+                    resultAdapter2.getItem(0).setComments("终点");
+                    lvResults2.setAdapter(resultAdapter2);
+                } else {
+                    //更新搜索数据
+                    resultAdapter2.getItem(0).setComments("终点");
+                    resultAdapter2.notifyDataSetChanged();
+                }
+                cvSearchBtn();
+            }
+        });
+    }
+
+    private void cvSearchBtn() {
+        if ((lvResults1.getVisibility() == View.VISIBLE) && (lvResults2.getVisibility() == View.VISIBLE)) {
+            searchButton.setVisibility(View.VISIBLE);
+        } else {
+            searchButton.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -344,6 +414,8 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
     @Override
     public void onSearch(String text) {
         //更新result数据
+        searchPopView1.setJUD(false);
+        searchPopView2.setJUD(false);
         getResultData(text);
         if (!searchPopView1.getText().equals("")) {
             lvResults1.setVisibility(View.VISIBLE);
@@ -352,33 +424,38 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
             lvResults2.setVisibility(View.VISIBLE);
         }
 
-        //第一次获取结果 还未配置适配器
         if (searchPopView1.hasFocus()) {
+            //第一次获取结果 还未配置适配器
+            resultAdapter1.getItem(0).setComments("起点");
             if (lvResults1.getAdapter() == null) {
                 //获取搜索数据 设置适配器
                 lvResults1.setAdapter(resultAdapter1);
             } else {
                 //更新搜索数据
                 resultAdapter1.notifyDataSetChanged();
-                Log.d("notify", "1");
             }
         }
+
         if (searchPopView2.hasFocus()) {
+            resultAdapter2.getItem(0).setComments("终点");
             if (lvResults2.getAdapter() == null) {
                 //获取搜索数据 设置适配器
                 lvResults2.setAdapter(resultAdapter2);
             } else {
                 //更新搜索数据
                 resultAdapter2.notifyDataSetChanged();
-                Log.d("notify", "2");
             }
         }
+
+        cvSearchBtn();
 
         Toast.makeText(getActivity(), "完成搜索", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onBack() {
+        searchPopView1.setJUD(true);
+        searchPopView2.setJUD(true);
         if (searchPopView1.getText().equals("")) {
             lvResults1.setVisibility(View.GONE);
             autoCompleteAdapter1.notifyDataSetChanged();
@@ -397,6 +474,8 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
      */
     @Override
     public void isFocus() {
+        searchPopView1.setJUD(true);
+        searchPopView2.setJUD(true);
         if (searchPopView1.hasFocus()) {
             lvResults1.setVisibility(View.GONE);
             autoCompleteAdapter1.notifyDataSetChanged();

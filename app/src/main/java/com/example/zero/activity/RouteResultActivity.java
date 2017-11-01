@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -32,10 +34,17 @@ import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.Overlay;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
@@ -60,18 +69,34 @@ import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.example.zero.adapter.RouteLineAdapter;
+import com.example.zero.bean.RouteSearchBean;
+import com.example.zero.entity.Route;
 import com.example.zero.fragment.OverlayManager;
 import com.example.zero.fragment.RouteFragmentDouble;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.BikingRouteOverlay;
+import com.example.zero.util.CouponOverlay;
 import com.example.zero.util.DrivingRouteOverlay;
 import com.example.zero.util.MassTransitRouteOverlay;
+import com.example.zero.util.RequestManager;
 import com.example.zero.util.TransitRouteOverlay;
 import com.example.zero.util.WalkingRouteOverlay;
 
+import com.alibaba.fastjson.*;
+
+import org.json.*;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class RouteResultActivity extends AppCompatActivity implements BaiduMap.OnMapClickListener, OnGetRoutePlanResultListener, SensorEventListener {
 
@@ -116,6 +141,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private double mCurrentLat = 0.0;
     private double mCurrentLon = 0.0;
     private float mCurrentAccracy;
+
     // UI相关
     Button requestLocButton;
     boolean isFirstLoc = true; // 是否首次定位
@@ -123,6 +149,33 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
     // 路线节点
     private List<String> mPathList = new ArrayList<String>();
+
+    //前后端接口
+    private ArrayList<String> fastStationList = new ArrayList<String>();
+    private ArrayList<String> lessbusyStationList = new ArrayList<String>();
+    private ArrayList<String> lesschangeStationList = new ArrayList<String>();
+    private ArrayList<String> sellerList = new ArrayList<String>();
+    private ArrayList<List<TransitRouteLine>> modelSelect = new ArrayList<List<TransitRouteLine>>();
+
+    private Route.RouteType cModel;
+
+    private double[] fastSellerLatList;
+    private double[] fastSellerLngList;
+    private double[] lessbusySellerLatList;
+    private double[] lessbusySellerLngList;
+    private double[] lesschangeSellerLatList;
+    private double[] lesschangeSellerLngList;
+
+    private int fastCount;
+    private int lessbusyCount;
+    private int lesschangeCount;
+
+    private LatLng stNode;
+    private LatLng edNode;
+
+    private Button fastBtn = null;
+    private Button lessbusyBtn = null;
+    private Button lesschangeBtn = null;
 
     int nowSearchType = -1; // 当前节点
 
@@ -148,6 +201,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
 
         View.OnClickListener btnClickListener = new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 switch (mCurrentMode) {
                     case NORMAL:
@@ -189,7 +243,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         // 开启定位图层
         mBaidumap.setMyLocationEnabled(true);
 //        mBaidumap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
-        mBaidumap.setTrafficEnabled(true);
+//        mBaidumap.setTrafficEnabled(true);
 
         mBtnPre = (Button) findViewById(R.id.route_result_pre);
         mBtnNext = (Button) findViewById(R.id.route_result_next);
@@ -202,15 +256,377 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         mSearch = RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
 
+        fastBtn = (Button) findViewById(R.id.fastStation);
+        lessbusyBtn = (Button) findViewById(R.id.lessbusyStation);
+        lesschangeBtn = (Button) findViewById(R.id.lesschangeStation);
+
         if (mBundle.getString("origin").equals("Single")) {
-            beginStation = mBundle.getString("beginStation");
-            endStation = mBundle.getString("endStation");
-            JUD = 0;
+
+            fastBtn.setVisibility(View.VISIBLE);
+            lessbusyBtn.setVisibility(View.VISIBLE);
+            lesschangeBtn.setVisibility(View.VISIBLE);
+
+            fastStationList = mBundle.getStringArrayList("fastStationList");
+            lessbusyStationList = mBundle.getStringArrayList("lessbusyStationList");
+            lesschangeStationList = mBundle.getStringArrayList("lesschangeStationList");
+
+            fastSellerLatList = mBundle.getDoubleArray("fastSellerLatList");
+            fastSellerLngList = mBundle.getDoubleArray("fastSellerLngList");
+            lessbusySellerLatList = mBundle.getDoubleArray("lessbusySellerLatList");
+            lessbusySellerLngList = mBundle.getDoubleArray("lessbusySellerLngList");
+            lesschangeSellerLatList = mBundle.getDoubleArray("lesschangeSellerLatList");
+            lesschangeSellerLngList = mBundle.getDoubleArray("lesschangeSellerLngList");
+
+            fastCount = mBundle.getInt("fastCount");
+            lessbusyCount = mBundle.getInt("lessbusyCount");
+            lesschangeCount = mBundle.getInt("lesschangeCount");
+
+            JUD = 2;
+
+            fastBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    cModel = Route.RouteType.FAST;
+                    mBaidumap.clear();
+                    TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+                    if (fastStationList.size() > 1) {
+                        for (int i = 0; i < fastStationList.size() - 1; i++) {
+                            mSearch.transitSearch(transitRouteFast
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i)))
+                                    .city("广州")
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i + 1))));
+                        }
+                        addstEdNode();
+
+                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                        mBaidumap.animateMapStatus(mapStatusUpdate);
+                    } else {
+                        Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
+                    }
+                    nowSearchType = 2;
+                }
+            });
+            lessbusyBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    cModel = Route.RouteType.LESSBUSY;
+                    mBaidumap.clear();
+
+                    TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+                    if (lessbusyStationList.size() > 1) {
+                        for (int i = 0; i < lessbusyStationList.size() - 1; i++) {
+                            mSearch.transitSearch(transitRouteFast
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i)))
+                                    .city("广州")
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i + 1))));
+                        }
+                        addstEdNode();
+
+                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                        mBaidumap.animateMapStatus(mapStatusUpdate);
+                    } else {
+                        Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
+                    }
+                    nowSearchType = 2;
+                }
+            });
+            lesschangeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    cModel = Route.RouteType.LESSCHANGE;
+                    mBaidumap.clear();
+
+                    TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+                    if (lesschangeStationList.size() > 1) {
+                        for (int i = 0; i < lesschangeStationList.size() - 1; i++) {
+                            mSearch.transitSearch(transitRouteFast
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i)))
+                                    .city("广州")
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i + 1))));
+                        }
+                        addstEdNode();
+
+                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                        mBaidumap.animateMapStatus(mapStatusUpdate);
+                    } else {
+                        Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
+                    }
+                    nowSearchType = 2;
+                }
+            });
         } else {
             beginStationList = mBundle.getStringArrayList("beginStationList");
             endStation = mBundle.getString("endStation");
             beginNum = mBundle.getInt("beginNum");
             JUD = 1;
+        }
+    }
+
+    private void addstEdNode() {
+        HashMap<String, String> params = new HashMap<>();
+        switch (cModel) {
+            case FAST:
+                params.clear();
+                params.put("address", "广州" + fastStationList.get(0) + "地铁站");
+                params.put("output", "json");
+                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+                params.put("callback", "0");
+                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                try {
+                                    JSONObject jsonData = new JSONObject(result);
+
+                                    JSONObject res = jsonData.getJSONObject("result");
+                                    JSONObject location = res.getJSONObject("location");
+
+                                    double lat = location.getDouble("lat");
+                                    double lng = location.getDouble("lng");
+                                    stNode = new LatLng(lat, lng);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                params.clear();
+                params.put("address", "广州" + fastStationList.get(fastStationList.size() - 1) + "地铁站");
+                params.put("output", "json");
+                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+                params.put("callback", "0");
+                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                try {
+                                    JSONObject jsonData = new JSONObject(result);
+
+                                    JSONObject res = jsonData.getJSONObject("result");
+                                    JSONObject location = res.getJSONObject("location");
+
+                                    double lat = location.getDouble("lat");
+                                    double lng = location.getDouble("lng");
+                                    edNode = new LatLng(lat, lng);
+                                    addMarker();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                break;
+
+            case LESSBUSY:
+                params.clear();
+                params.put("address", "广州" + lessbusyStationList.get(0) + "地铁站");
+                params.put("output", "json");
+                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+                params.put("callback", "0");
+                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                try {
+                                    JSONObject jsonData = new JSONObject(result);
+
+                                    JSONObject res = jsonData.getJSONObject("result");
+                                    JSONObject location = res.getJSONObject("location");
+
+                                    double lat = location.getDouble("lat");
+                                    double lng = location.getDouble("lng");
+                                    stNode = new LatLng(lat, lng);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                params.clear();
+                params.put("address", "广州" + lessbusyStationList.get(lessbusyStationList.size() - 1) + "地铁站");
+                params.put("output", "json");
+                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+                params.put("callback", "0");
+                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                try {
+                                    JSONObject jsonData = new JSONObject(result);
+
+                                    JSONObject res = jsonData.getJSONObject("result");
+                                    JSONObject location = res.getJSONObject("location");
+
+                                    double lat = location.getDouble("lat");
+                                    double lng = location.getDouble("lng");
+                                    edNode = new LatLng(lat, lng);
+                                    addMarker();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                break;
+
+            case LESSCHANGE:
+                params.clear();
+                params.put("address", "广州" + lesschangeStationList.get(0) + "地铁站");
+                params.put("output", "json");
+                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+                params.put("callback", "0");
+                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                try {
+                                    JSONObject jsonData = new JSONObject(result);
+
+                                    JSONObject res = jsonData.getJSONObject("result");
+                                    JSONObject location = res.getJSONObject("location");
+
+                                    double lat = location.getDouble("lat");
+                                    double lng = location.getDouble("lng");
+                                    stNode = new LatLng(lat, lng);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                params.clear();
+                params.put("address", "广州" + lesschangeStationList.get(lesschangeStationList.size() - 1) + "地铁站");
+                params.put("output", "json");
+                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+                params.put("callback", "0");
+                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                try {
+                                    JSONObject jsonData = new JSONObject(result);
+
+                                    JSONObject res = jsonData.getJSONObject("result");
+                                    JSONObject location = res.getJSONObject("location");
+
+                                    double lat = location.getDouble("lat");
+                                    double lng = location.getDouble("lng");
+                                    edNode = new LatLng(lat, lng);
+                                    addMarker();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void addMarker() {
+        List<OverlayOptions> options = new ArrayList<OverlayOptions>();
+        switch (cModel) {
+            case FAST:
+                //起终点
+                options.clear();
+                OverlayOptions option1 = new MarkerOptions()
+                        .position(stNode)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st));
+                OverlayOptions option2 = new MarkerOptions()
+                        .position(edNode)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_en));
+                options.add(option1);
+                options.add(option2);
+                mBaidumap.addOverlays(options);
+
+                //seller
+                options.clear();
+                for (int i = 0; i < fastCount; i++) {
+                    OverlayOptions option = new MarkerOptions()
+                            .position(new LatLng(fastSellerLatList[i], fastSellerLngList[i]))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.sale_pop));
+                    options.add(option);
+                }
+                mBaidumap.addOverlays(options);
+                break;
+
+            case LESSBUSY:
+                //起终点
+                options.clear();
+                OverlayOptions option3 = new MarkerOptions()
+                        .position(stNode)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st));
+                OverlayOptions option4 = new MarkerOptions()
+                        .position(edNode)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_en));
+                options.add(option3);
+                options.add(option4);
+                mBaidumap.addOverlays(options);
+
+                //seller
+                options.clear();
+                for (int i = 0; i < lessbusyCount; i++) {
+                    OverlayOptions option = new MarkerOptions()
+                            .position(new LatLng(lessbusySellerLatList[i], lessbusySellerLngList[i]))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.sale_pop));
+                    options.add(option);
+                }
+                mBaidumap.addOverlays(options);
+                break;
+
+            case LESSCHANGE:
+                //起终点
+                options.clear();
+                OverlayOptions option5 = new MarkerOptions()
+                        .position(stNode)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st));
+                OverlayOptions option6 = new MarkerOptions()
+                        .position(edNode)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_en));
+                options.add(option5);
+                options.add(option6);
+                mBaidumap.addOverlays(options);
+
+                //seller
+                options.clear();
+                for (int i = 0; i < lesschangeCount; i++) {
+                    OverlayOptions option = new MarkerOptions()
+                            .position(new LatLng(lesschangeSellerLatList[i], lesschangeSellerLngList[i]))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.sale_pop));
+                    options.add(option);
+                }
+                mBaidumap.addOverlays(options);
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -244,7 +660,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 nowSearchType = 1;
             } else if (v.getId() == R.id.transit) {
                 mSearch.transitSearch((new TransitRoutePlanOption())
-                        .from(stNode).city("北京").to(enNode));
+                        .from(stNode).city("广州").to(enNode));
                 nowSearchType = 2;
             } else if (v.getId() == R.id.walk) {
                 mSearch.walkingSearch((new WalkingRoutePlanOption())
@@ -255,73 +671,12 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         .from(stNode).to(enNode));
                 nowSearchType = 4;
             }
-
-            // TODO: 2017/10/17 pathList规划路线
-//            PlanNode mStNode = PlanNode.withCityNameAndPlaceName("北京", mPathList.get(0));
-//            PlanNode mEnNode = PlanNode.withCityNameAndPlaceName("北京", mPathList.get(1));
-//
-//            if (v.getId() == R.id.mass) {
-//                PlanNode stMassNode = PlanNode.withCityNameAndPlaceName("北京", "天安门");
-//                PlanNode enMassNode = PlanNode.withCityNameAndPlaceName("上海", "东方明珠");
-//
-//                mSearch.masstransitSearch(new MassTransitRoutePlanOption().from(stMassNode).to(enMassNode));
-//                nowSearchType = 0;
-//            } else if (v.getId() == R.id.drive) {
-//                DrivingRoutePlanOption drivingRoutePlanOption = new DrivingRoutePlanOption();
-//                if (mPathList.size() > 1) {
-//                    for (int i = 0; i < mPathList.size() - 1; i++) {
-//                        mSearch.drivingSearch(drivingRoutePlanOption
-//                                .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
-//                                .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
-//                    }
-//                } else {
-//                    Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
-//                }
-//                nowSearchType = 1;
-//            } else if (v.getId() == R.id.transit) {
-//                TransitRoutePlanOption transitRoutePlanOption = new TransitRoutePlanOption();
-//                if (mPathList.size() > 1) {
-//                    for (int i = 0; i < mPathList.size() - 1; i++) {
-//                        mSearch.transitSearch(transitRoutePlanOption
-//                                .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
-//                                .city("北京")
-//                                .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
-//                    }
-//                } else {
-//                    Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
-//                }
-//                nowSearchType = 2;
-//            } else if (v.getId() == R.id.walk) {
-//                WalkingRoutePlanOption walkingRoutePlanOption = new WalkingRoutePlanOption();
-//                if (mPathList.size() > 1) {
-//                    for (int i = 0; i < mPathList.size() - 1; i++) {
-//                        mSearch.walkingSearch(walkingRoutePlanOption
-//                                .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
-//                                .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
-//                    }
-//                } else {
-//                    Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
-//                }
-//                nowSearchType = 3;
-//            } else if (v.getId() == R.id.bike) {
-//                BikingRoutePlanOption bikingRoutePlanOption = new BikingRoutePlanOption();
-//                if (mPathList.size() > 1) {
-//                    for (int i = 0; i < mPathList.size() - 1; i++) {
-//                        mSearch.bikingSearch(bikingRoutePlanOption
-//                                .from(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i)))
-//                                .to(PlanNode.withCityNameAndPlaceName("北京", mPathList.get(i + 1))));
-//                    }
-//                } else {
-//                    Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
-//                }
-//                nowSearchType = 4;
-//            }
         } else {
             ArrayList<PlanNode> stNodeList = new ArrayList<PlanNode>();
-            PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", endStation);
-            stNodeList.add(PlanNode.withCityNameAndPlaceName("北京", beginStationList.get(0)));
-            stNodeList.add(PlanNode.withCityNameAndPlaceName("北京", beginStationList.get(1)));
-            stNodeList.add(PlanNode.withCityNameAndPlaceName("北京", beginStationList.get(2)));
+            PlanNode enNode = PlanNode.withCityNameAndPlaceName("广州", endStation);
+            stNodeList.add(PlanNode.withCityNameAndPlaceName("广州", beginStationList.get(0)));
+            stNodeList.add(PlanNode.withCityNameAndPlaceName("广州", beginStationList.get(1)));
+            stNodeList.add(PlanNode.withCityNameAndPlaceName("广州", beginStationList.get(2)));
 
             if (v.getId() == R.id.mass) {
                 Toast.makeText(RouteResultActivity.this, "抱歉，多人界面不提供该功能", Toast.LENGTH_SHORT).show();
@@ -344,15 +699,15 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 TransitRoutePlanOption transitRoutePlanOption = new TransitRoutePlanOption();
                 if (!beginStationList.get(0).equals("")) {
                     mSearch.transitSearch(transitRoutePlanOption
-                            .from(stNodeList.get(0)).city("北京").to(enNode));
+                            .from(stNodeList.get(0)).city("广州").to(enNode));
                 }
                 if (!beginStationList.get(1).equals("")) {
                     mSearch.transitSearch(transitRoutePlanOption
-                            .from(stNodeList.get(1)).city("北京").to(enNode));
+                            .from(stNodeList.get(1)).city("广州").to(enNode));
                 }
                 if (!beginStationList.get(2).equals("")) {
                     mSearch.transitSearch(transitRoutePlanOption
-                            .from(stNodeList.get(2)).city("北京").to(enNode));
+                            .from(stNodeList.get(2)).city("广州").to(enNode));
                 }
                 nowSearchType = 2;
             } else if (v.getId() == R.id.walk) {
@@ -548,6 +903,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             }
                         });
                         myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                            @Override
                             public void onItemClick(int position) {
                                 route = nowResultwalk.getRouteLines().get(position);
                                 WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaidumap);
@@ -615,8 +971,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             }
                         });
                         myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                            @Override
                             public void onItemClick(int position) {
-
                                 route = nowResultransit.getRouteLines().get(position);
                                 TransitRouteOverlay overlay = new MyTransitRouteOverlay(mBaidumap);
                                 mBaidumap.setOnMarkerClickListener(overlay);
@@ -625,7 +981,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                 overlay.addToMap();
                                 overlay.zoomToSpan();
                             }
-
                         });
                         myTransitDlg.show();
                         hasShownDialogue = true;
@@ -639,7 +994,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     overlay.setData(result.getRouteLines().get(0));
                     overlay.addToMap();
                     overlay.zoomToSpan();
-
                 } else {
                     Log.d("route result", "结果数<0");
                     return;
@@ -688,8 +1042,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     }
                 });
                 myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                    @Override
                     public void onItemClick(int position) {
-
                         MyMassTransitRouteOverlay overlay = new MyMassTransitRouteOverlay(mBaidumap);
                         mBaidumap.setOnMarkerClickListener(overlay);
                         routeOverlay = overlay;
@@ -709,14 +1063,12 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         overlay.addToMap();
                         overlay.zoomToSpan();
                     }
-
                 });
                 myTransitDlg.show();
                 hasShownDialogue = true;
             }
         }
     }
-
 
     @Override
     public void onGetDrivingRouteResult(DrivingRouteResult result) {
@@ -745,6 +1097,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             }
                         });
                         myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                            @Override
                             public void onItemClick(int position) {
                                 route = nowResultdrive.getRouteLines().get(position);
                                 DrivingRouteOverlay overlay = new MyDrivingRouteOverlay(mBaidumap);
@@ -823,6 +1176,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             }
                         });
                         myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                            @Override
                             public void onItemClick(int position) {
                                 route = nowResultbike.getRouteLines().get(position);
                                 BikingRouteOverlay overlay = new MyBikingRouteOverlay(mBaidumap);
@@ -1054,7 +1408,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             transitRouteList.setAdapter(mTransitAdapter);
 
             transitRouteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     onItemInDlgClickListener.onItemClick(position);
@@ -1067,6 +1420,5 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         public void setOnItemInDlgClickLinster(OnItemInDlgClickListener itemListener) {
             onItemInDlgClickListener = itemListener;
         }
-
     }
 }

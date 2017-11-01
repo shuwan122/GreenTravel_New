@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.zero.bean.SaleBean;
 import com.example.zero.greentravel_new.R;
 
@@ -17,6 +18,8 @@ import java.util.List;
 
 /**
  * HotCoupon适配器
+ *
+ * @author jojo
  */
 
 public class SaleHotCouponAdapter extends RecyclerView.Adapter<SaleHotCouponAdapter.SaleViewHolder> {
@@ -49,8 +52,9 @@ public class SaleHotCouponAdapter extends RecyclerView.Adapter<SaleHotCouponAdap
     public void onBindViewHolder(SaleHotCouponAdapter.SaleViewHolder holder, int position) {
         holder.name.setText(dataList.get(position).getName());
         holder.price.setText(dataList.get(position).getPrice());
+        holder.time.setText(dataList.get(position).getTime());
         holder.content.setText(dataList.get(position).getContent());
-        holder.img.setImageResource(dataList.get(position).getImage());
+        Glide.with(context).load(dataList.get(position).getImage()).placeholder(R.drawable.loading).into(holder.img);
     }
 
     @Override
@@ -66,6 +70,7 @@ public class SaleHotCouponAdapter extends RecyclerView.Adapter<SaleHotCouponAdap
         private TextView name;
         private TextView price;
         private TextView content;
+        private TextView time;
         private ImageView img;
         private LinearLayout coupon;
         private Button btn;
@@ -75,11 +80,11 @@ public class SaleHotCouponAdapter extends RecyclerView.Adapter<SaleHotCouponAdap
             name = (TextView) itemView.findViewById(R.id.sale_hot_name);
             price = (TextView) itemView.findViewById(R.id.sale_hot_price);
             content = (TextView) itemView.findViewById(R.id.sale_hot_content);
+            time = (TextView) itemView.findViewById(R.id.sale_hot_time);
             img = (ImageView) itemView.findViewById(R.id.sale_hot_img);
             coupon = (LinearLayout) itemView.findViewById(R.id.sale_hot_coupon);
             btn = (Button) itemView.findViewById(R.id.sale_hot_btn);
             mListener = listener;
-            // 添加点击事件
             coupon.setOnClickListener(this);
             btn.setOnClickListener(this);
         }
@@ -97,6 +102,8 @@ public class SaleHotCouponAdapter extends RecyclerView.Adapter<SaleHotCouponAdap
                     break;
                 case R.id.sale_hot_btn:
                     mListener.onBtnClick(view, getAdapterPosition());
+                    break;
+                default:
                     break;
             }
         }

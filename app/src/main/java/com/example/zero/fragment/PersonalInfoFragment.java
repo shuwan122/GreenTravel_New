@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zero.activity.FavorActivity;
 import com.example.zero.activity.FriendActivity;
@@ -19,6 +21,7 @@ import com.example.zero.activity.RegisterActivity;
 import com.example.zero.activity.SettingActivity;
 import com.example.zero.activity.UserActivity;
 import com.example.zero.greentravel_new.R;
+import com.example.zero.util.MainApplication;
 
 /**
  * Created by jojo on 2017/9/22.
@@ -37,6 +40,7 @@ public class PersonalInfoFragment extends Fragment {
 
     private static final int START_LOGIN_ACTIVITY = 1;
     private static final int START_REGISTER_ACTIVITY = 2;
+    private static final int START_USER_ACTIVITY = 3;
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -48,15 +52,23 @@ public class PersonalInfoFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), SettingActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,START_USER_ACTIVITY);
             }
         });
         user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), UserActivity.class);
-                startActivity(intent);
+                MainApplication mainApplication = (MainApplication) getActivity().getApplication();
+                if(mainApplication.isOnline()) {
+                    Intent intent = new Intent();
+                    intent.setClass(getActivity(), UserActivity.class);
+                    startActivity(intent);
+                    Log.d("MainPersonal","online");
+                }
+                else {
+                    Toast.makeText(getActivity(),"请先登录",Toast.LENGTH_SHORT);
+                    Log.d("MainPersonal","offline");
+                }
             }
         });
         login.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +120,7 @@ public class PersonalInfoFragment extends Fragment {
             }
         });
         context = person_frag.getContext();
+
         return person_frag;
     }
 
@@ -121,26 +134,50 @@ public class PersonalInfoFragment extends Fragment {
         favor = (LinearLayout) person_frag.findViewById(R.id.favor);
         friend = (LinearLayout) person_frag.findViewById(R.id.friends);
         help_feedback = (LinearLayout) person_frag.findViewById(R.id.help_feedback);
+        //OnRefreshOnlineState();
     }
 
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == -1) {
             switch (requestCode) {
                 case START_LOGIN_ACTIVITY:
-                    user_name.setText(data.getStringExtra("User name"));
-                    user_name.setVisibility(View.VISIBLE);
-                    login.setVisibility(View.GONE);
-                    register.setVisibility(View.GONE);
+                    //user_name.setText(data.getStringExtra("username"));
+                    OnRefreshOnlineState();
                     break;
                 case START_REGISTER_ACTIVITY:
-                    user_name.setText(data.getStringExtra("User name"));
-                    user_name.setVisibility(View.VISIBLE);
-                    login.setVisibility(View.GONE);
-                    register.setVisibility(View.GONE);
+                    //user_name.setText(data.getStringExtra("username"));
+                    OnRefreshOnlineState();
                     break;
+                case START_USER_ACTIVITY:
+                    OnRefreshOnlineState();
+                    break;
+                default:OnRefreshOnlineState();
             }
+        }
+    }
+
+    public void OnRefreshOnlineState() {
+        MainApplication mainApplication = (MainApplication) getActivity().getApplication();
+        if(mainApplication.isOnline()) {
+            user_name.setVisibility(View.VISIBLE);
+            login.setVisibility(View.GONE);
+            register.setVisibility(View.GONE);
+            user_name.setText(mainApplication.getUsername());
+        }
+        else {
+            user_name.setVisibility(View.GONE);
+            login.setVisibility(View.VISIBLE);
+            register.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidd) {
+        if (!hidd) {
+            OnRefreshOnlineState();
         }
     }
 }
