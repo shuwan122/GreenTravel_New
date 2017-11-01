@@ -1,8 +1,10 @@
 package com.example.zero.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,15 +14,19 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zero.greentravel_new.R;
+import com.example.zero.util.MainApplication;
+import com.example.zero.util.RequestManager;
 import com.example.zero.view.SimpleTextView;
 
 import java.io.File;
+import java.util.HashMap;
 
 /**
  * Created by jojo on 2017/9/27.
@@ -36,11 +42,13 @@ public class UserActivity extends Activity implements View.OnClickListener {
     private View changePhone;
     private View changePw;
     private Bitmap mBitmap;
-    private TextView user_name;
+    private TextView user_name,user_phone;
+    private Button signOut;
     protected static final int CHOOSE_PICTURE = 0;
     protected static final int TAKE_PICTURE = 1;
     protected static Uri tempUri;
     private static final int CROP_SMALL_PICTURE = 2;
+    private static final String TAG = "UserActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +58,7 @@ public class UserActivity extends Activity implements View.OnClickListener {
         /**
          *  监听器
          */
+        signOut.setOnClickListener(this);
         backArrow.setOnClickListener(this);
         user_img.setOnClickListener(this);
         changeName.setOnClickListener(this);
@@ -65,6 +74,13 @@ public class UserActivity extends Activity implements View.OnClickListener {
         changeName = (View) findViewById(R.id.user_name_change);
         changePhone = (View) findViewById(R.id.user_phone_change);
         changePw = (View) findViewById(R.id.user_pw_change);
+        signOut = (Button) findViewById(R.id.sign_out);
+        user_phone = (TextView) findViewById(R.id.user_phone);
+        MainApplication application = (MainApplication) getApplication();
+        user_name.setText(application.getUsername());
+        String s = application.getPhone();
+        s = s.substring(0,3) + "****" + s.substring(9,11);
+        user_phone.setText(s);
     }
 
     /**
@@ -73,24 +89,41 @@ public class UserActivity extends Activity implements View.OnClickListener {
     protected void showChangeNameDialog() {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_change_name, null);
-        final SimpleTextView simpleTextView = view.findViewById(R.id.dialog_name);
-        simpleTextView.setHintText("新用户名");
-        new AlertDialog.Builder(this)
-                .setTitle("修改用户名")
+        final SimpleTextView newName = view.findViewById(R.id.dialog_name);
+        newName.setHintText("新用户名");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("修改用户名")
                 .setView(view)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                .setPositiveButton("确定", null)
+                .setNegativeButton("关闭", null);
+        final AlertDialog dialog = builder.show();
+        Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HashMap<String, String> params = new HashMap<>();
+                SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+                params.put("user_id", sharedPreferences.getString("user_id", ""));
+                params.put("user_name",newName.getText().trim());
+                RequestManager.getInstance(getBaseContext()).requestAsyn("/users/update_user_info", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+                    @Override
+                    public void onReqSuccess(String result) {
+                        Log.d(TAG, result);
+                        Toast.makeText(getBaseContext(), "修改成功", Toast.LENGTH_SHORT);
+                        user_name.setText(newName.getText().trim());
+                        MainApplication mainApplication = (MainApplication) getApplication();
+                        mainApplication.setUsername(newName.getText().trim());
+                        dialog.dismiss();
+                    }
 
-                        String userMsg = simpleTextView.getText().toString();
-                        user_name.setText(userMsg);
+                    @Override
+                    public void onReqFailed(String errorMsg) {
+                        Toast.makeText(getBaseContext(), "修改失败", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, errorMsg);
                     }
-                })
-                .setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .show();
+                });
+            }
+        });
     }
 
     /**
@@ -99,29 +132,54 @@ public class UserActivity extends Activity implements View.OnClickListener {
     protected void showChangePwDialog() {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_change_pw, null);
-        final SimpleTextView simpleTextView1 = view.findViewById(R.id.dialog_pw_pre);
-        final SimpleTextView simpleTextView2 = view.findViewById(R.id.dialog_pw_new);
-        final SimpleTextView simpleTextView3 = view.findViewById(R.id.dialog_pw_confirm);
-        simpleTextView1.setHintText("原密码");
-        simpleTextView2.setHintText("新密码");
-        simpleTextView3.setHintText("重复新密码");
-        simpleTextView1.setLeftImage(R.drawable.lock_fill);
-        simpleTextView2.setLeftImage(R.drawable.lock_fill);
-        simpleTextView3.setLeftImage(R.drawable.lock_fill);
-        new AlertDialog.Builder(this)
+        final SimpleTextView prePw = view.findViewById(R.id.dialog_pw_pre);
+        final SimpleTextView newPw = view.findViewById(R.id.dialog_pw_new);
+        final SimpleTextView confirmPw = view.findViewById(R.id.dialog_pw_confirm);
+        prePw.setHintText("原密码");
+        newPw.setHintText("新密码");
+        confirmPw.setHintText("重复新密码");
+        prePw.setLeftImage(R.drawable.lock_fill);
+        newPw.setLeftImage(R.drawable.lock_fill);
+        confirmPw.setLeftImage(R.drawable.lock_fill);
+        prePw.setPw();
+        newPw.setPw();
+        confirmPw.setPw();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("修改密码")
                 .setView(view)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getBaseContext(), "修改成功", Toast.LENGTH_SHORT);
-                    }
-                })
-                .setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .show();
+                .setPositiveButton("确定", null)
+                .setNegativeButton("关闭", null);
+        final AlertDialog dialog = builder.show();
+        Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view1) {
+                if(confirmPw.getText().trim().equals(newPw.getText().trim())) {
+                    HashMap<String, String> params = new HashMap<>();
+                    SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+                    params.put("user_id", sharedPreferences.getString("user_id", ""));
+                    params.put("old_psw", prePw.getText().trim());
+                    params.put("new_psw", newPw.getText().trim());
+                    RequestManager.getInstance(getBaseContext()).requestAsyn("/users/update_psw", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+                        @Override
+                        public void onReqSuccess(String result) {
+                            Log.d(TAG, result);
+                            Toast.makeText(getBaseContext(), "修改成功", Toast.LENGTH_SHORT);
+                            dialog.dismiss();
+                        }
+
+                        @Override
+                        public void onReqFailed(String errorMsg) {
+                            Toast.makeText(getBaseContext(), "修改失败", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, errorMsg);
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(getBaseContext(), "修改成功", Toast.LENGTH_SHORT);
+                }
+            }
+        });
     }
 
     /**
@@ -130,29 +188,84 @@ public class UserActivity extends Activity implements View.OnClickListener {
     protected void showChangePhoneDialog() {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_change_phone, null);
-        SimpleTextView simpleTextView1 = view.findViewById(R.id.dialog_phone_pre);
-        SimpleTextView simpleTextView2 = view.findViewById(R.id.dialog_phone_new);
-        SimpleTextView simpleTextView3 = view.findViewById(R.id.dialog_phone_new_confirm);
-        simpleTextView1.setHintText("原手机收到的验证码");
-        simpleTextView2.setHintText("新手机");
-        simpleTextView3.setHintText("新手机收到的验证码");
-        simpleTextView1.setLeftImage(R.drawable.identify);
-        simpleTextView2.setLeftImage(R.drawable.user_fill);
-        simpleTextView3.setLeftImage(R.drawable.identify);
-        new AlertDialog.Builder(this)
-                .setTitle("修改绑定手机")
+        final SimpleTextView prePhone = view.findViewById(R.id.dialog_phone_pre);
+        final SimpleTextView newPhone = view.findViewById(R.id.dialog_phone_new);
+        final SimpleTextView confirm = view.findViewById(R.id.dialog_phone_new_confirm);
+        final Button sendConfirm = view.findViewById(R.id.dialog_phone_new_button);
+        prePhone.setHintText("原手机号");
+        newPhone.setHintText("新手机号");
+        confirm.setHintText("新手机的验证码");
+        prePhone.setLeftImage(R.drawable.user_fill);
+        newPhone.setLeftImage(R.drawable.user_fill);
+        confirm.setLeftImage(R.drawable.identify);
+        sendConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String text = newPhone.getText().toString().trim();
+                if (RegisterActivity.isMobile(text)) {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("type", "2");
+                    params.put("phone", newPhone.getText());
+                    RequestManager.getInstance(getBaseContext()).requestAsyn("/users/send_verification_code", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+                        @Override
+                        public void onReqSuccess(String result) {
+                            Log.d(TAG, result);
+                            Toast.makeText(getBaseContext(), "已发送短信", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onReqFailed(String errorMsg) {
+                            Toast.makeText(getBaseContext(), "发送失败", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, errorMsg);
+                        }
+                    });
+                } else {
+                    Toast.makeText(getBaseContext(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("修改绑定手机")
                 .setView(view)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getBaseContext(), "修改成功", Toast.LENGTH_SHORT);
-                    }
-                })
-                .setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .show();
+                .setPositiveButton("确定", null)
+                .setNegativeButton("关闭", null);
+        final AlertDialog dialog = builder.show();
+        Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String newString = newPhone.getText().toString().trim();
+                if (RegisterActivity.isMobile(newString)) {
+                    HashMap<String, String> params = new HashMap<>();
+                    SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+                    params.put("user_id", sharedPreferences.getString("user_id", ""));
+                    params.put("old_phone", prePhone.getText().trim());
+                    params.put("new_phone", newPhone.getText().trim());
+                    params.put("verification_code", confirm.getText().trim());
+                    RequestManager.getInstance(getBaseContext()).requestAsyn("/users/update_phone", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+                        @Override
+                        public void onReqSuccess(String result) {
+                            Log.d(TAG, result);
+                            Toast.makeText(getBaseContext(), "修改成功", Toast.LENGTH_SHORT);
+                            String s = newPhone.getText().trim();
+                            MainApplication mainApplication = (MainApplication) getApplication();
+                            mainApplication.setPhone(s);
+                            s = s.substring(0,3) + "****" + s.substring(9,11);
+                            user_phone.setText(s);
+                            dialog.dismiss();
+                        }
+
+                        @Override
+                        public void onReqFailed(String errorMsg) {
+                            Toast.makeText(getBaseContext(), "修改失败", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, errorMsg);
+                        }
+                    });
+                } else {
+                    Toast.makeText(getBaseContext(), "请输入正确的手机号"+newString, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     /**
@@ -265,6 +378,11 @@ public class UserActivity extends Activity implements View.OnClickListener {
             case R.id.user_pw_change:
                 showChangePwDialog();
                 break;
+            case R.id.sign_out:
+                MainApplication application = (MainApplication) getApplication();
+                application.logout();
+                break;
+            default:break;
         }
     }
 }

@@ -153,14 +153,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
         btnLocation = (Button) findViewById(R.id.btn_map_main_location);
 
-        Log.d(TAG, "Sensor: begin");
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);//获取传感器管理服务
-        if (mSensorManager == null) {
-            Log.d(TAG, "Sensor: sm is null");
-            return;
-        } else {
-            Log.d(TAG, "Sensor: sm is ok");
-        }
         mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
         btnLocation.setOnClickListener(new View.OnClickListener() {
             @Override

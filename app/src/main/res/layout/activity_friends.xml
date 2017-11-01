@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/white"
-        android:drawableLeft="@drawable/friend_add_fill"
+        android:drawableLeft="@drawable/add_user"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"

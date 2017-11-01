@@ -100,7 +100,7 @@ public class TransitRouteOverlay extends OverlayManager {
                 int color = 0;
                 if (step.getStepType() != TransitRouteLine.TransitStep.TransitRouteStepType.WAKLING) {
 //                    color = Color.argb(178, 0, 78, 255);
-                    color = getLineColor() != 0 ? getLineColor() : Color.argb(178, 0, 78, 255);
+                    color = getLineColor() != 0 ? getLineColor() : Color.argb(178, 139, 35, 35);
                 } else {
 //                    color = Color.argb(178, 88, 208, 0);
                     color = getLineColor() != 0 ? getLineColor() : Color.argb(178, 88, 208, 0);

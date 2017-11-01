@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.zero.bean.SaleBean;
 import com.example.zero.greentravel_new.R;
 
@@ -46,7 +47,8 @@ public class SaleMyCouponAdapter extends RecyclerView.Adapter<SaleMyCouponAdapte
         holder.name.setText(dataList.get(position).getName());
         holder.price.setText(dataList.get(position).getPrice());
         holder.content.setText(dataList.get(position).getContent());
-        holder.img.setImageResource(dataList.get(position).getImage());
+        holder.time.setText(dataList.get(position).getTime());
+        Glide.with(context).load(dataList.get(position).getImage()).placeholder(R.drawable.loading).into(holder.img);
     }
 
     @Override
@@ -59,6 +61,7 @@ public class SaleMyCouponAdapter extends RecyclerView.Adapter<SaleMyCouponAdapte
         private TextView name;
         private TextView price;
         private TextView content;
+        private TextView time;
         private ImageView img;
         private LinearLayout coupon;
         private Button btn;
@@ -68,6 +71,7 @@ public class SaleMyCouponAdapter extends RecyclerView.Adapter<SaleMyCouponAdapte
             name = (TextView) itemView.findViewById(R.id.sale_my_name);
             price = (TextView) itemView.findViewById(R.id.sale_my_price);
             content = (TextView) itemView.findViewById(R.id.sale_my_content);
+            time = (TextView) itemView.findViewById(R.id.sale_my_time);
             img = (ImageView) itemView.findViewById(R.id.sale_my_img);
             coupon = (LinearLayout) itemView.findViewById(R.id.sale_my_coupon);
             btn = (Button) itemView.findViewById(R.id.sale_my_btn);
@@ -84,6 +88,8 @@ public class SaleMyCouponAdapter extends RecyclerView.Adapter<SaleMyCouponAdapte
                     break;
                 case R.id.sale_my_btn:
                     mListener.onBtnClick(view, getAdapterPosition());
+                    break;
+                default:
                     break;
             }
         }

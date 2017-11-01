@@ -1,13 +1,18 @@
 package com.example.zero.fragment;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -49,9 +54,11 @@ import com.baidu.mapapi.model.LatLng;
 import com.example.zero.activity.RouteResultActivity;
 import com.example.zero.adapter.RouteSearchAdapter;
 import com.example.zero.bean.RouteSearchBean;
+import com.example.zero.bean.SaleBean;
 import com.example.zero.entity.Route;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.HttpUtil;
+import com.example.zero.util.RequestManager;
 import com.example.zero.view.SearchPopView;
 import com.example.zero.view.SearchView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
@@ -62,7 +69,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -70,6 +83,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static android.app.Activity.RESULT_OK;
+import static com.example.zero.fragment.RouteFragmentDouble.Origin.DATA;
+import static com.example.zero.fragment.RouteFragmentDouble.Origin.SINGLE;
 
 public class RouteFragmentDouble extends Fragment implements SearchPopView.SearchPopViewListener {
 
@@ -232,7 +249,17 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
      */
     private RouteSearchAdapter resultAdapter0;
 
+    private Context context;
+
     private int cModel = 1;
+
+    private Origin origin;
+
+    public enum Origin {
+        SINGLE,
+        MULTI,
+        DATA
+    }
 
     /**
      * 设置提示框显示项的个数
@@ -243,11 +270,6 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         RouteFragmentDouble.hintSize = hintSize;
     }
 
-    static MapFragment newInstance() {
-        MapFragment f = new MapFragment();
-        return f;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -256,14 +278,16 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_route_double, container, false);
+        View v = inflater.inflate(R.layout.fragment_route_double, container, false);
+        context = v.getContext();
+        return v;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initData();
-        initViews();
+//        initViews();
     }
 
     /**
@@ -361,16 +385,17 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                     JUD = true;
                 }
                 final Bundle mBundle = new Bundle();
-                mBundle.putString("userId", "123456");
+                mBundle.putString("userId", "guest");
                 mBundle.putString("beginStation", beginStation);
                 mBundle.putString("endStation", endStation);
                 if ((!beginStation.equals("")) & (!endStation.equals(""))) {
                     if (!JUD) {
                         // TODO: 2017/10/29  前后端联调
-                        HttpUtil.sendOkHttpRequest("http://10.108.120.154:8080/route/single", mBundle, new okhttp3.Callback() {
+                        HttpUtil.sendSingleOkHttpRequest(mBundle, new okhttp3.Callback() {
                             @Override
                             public void onResponse(Call call, Response response) throws IOException {
                                 String responseData = response.body().string();
+                                origin = SINGLE;
                                 parseJSONWithJSONObject(responseData);
                             }
 
@@ -432,56 +457,57 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
             public void onClick(View view) {
                 String text1 = searchView.getText();
                 String text2 = searchView2.getText();
+                if ((!text1.equals("")) && (!text2.equals(""))) {
+                    searchView.setJUD(false);
+                    searchView2.setJUD(false);
 
-                searchView.setJUD(false);
-                searchView2.setJUD(false);
+                    searchView.setText(text2);
+                    searchView2.setText(text1);
 
-                searchView.setText(text2);
-                searchView2.setText(text1);
-
-                if (resultData == null) {
-                    // 初始化
-                    resultData = new ArrayList<>();
-                } else {
-                    resultData.clear();
-                    for (int i = 0; i < dbData.size(); i++) {
-                        if (dbData.get(i).getTitle().equals(searchView.getText().trim())) {
-                            resultData.add(dbData.get(i));
+                    if (resultData == null) {
+                        // 初始化
+                        resultData = new ArrayList<>();
+                    } else {
+                        resultData.clear();
+                        for (int i = 0; i < dbData.size(); i++) {
+                            if (dbData.get(i).getTitle().equals(searchView.getText().trim())) {
+                                resultData.add(dbData.get(i));
+                            }
                         }
                     }
-                }
 
-                if (resultData2 == null) {
-                    // 初始化
-                    resultData2 = new ArrayList<>();
-                } else {
-                    resultData2.clear();
-                    for (int i = 0; i < dbData.size(); i++) {
-                        if (dbData.get(i).getTitle().equals(searchView2.getText().trim())) {
-                            resultData2.add(dbData.get(i));
+                    if (resultData2 == null) {
+                        // 初始化
+                        resultData2 = new ArrayList<>();
+                    } else {
+                        resultData2.clear();
+                        for (int i = 0; i < dbData.size(); i++) {
+                            if (dbData.get(i).getTitle().equals(searchView2.getText().trim())) {
+                                resultData2.add(dbData.get(i));
+                            }
                         }
                     }
-                }
 
-                if (lvResults.getAdapter() == null) {
-                    //获取搜索数据 设置适配器
-                    resultAdapter.getItem(0).setComments("起点");
-                    lvResults.setAdapter(resultAdapter);
-                } else {
-                    //更新搜索数据
-                    resultAdapter.getItem(0).setComments("起点");
-                    resultAdapter.notifyDataSetChanged();
+                    if (lvResults.getAdapter() == null) {
+                        //获取搜索数据 设置适配器
+                        resultAdapter.getItem(0).setComments("起点");
+                        lvResults.setAdapter(resultAdapter);
+                    } else {
+                        //更新搜索数据
+                        resultAdapter.getItem(0).setComments("起点");
+                        resultAdapter.notifyDataSetChanged();
+                    }
+                    if (lvResults2.getAdapter() == null) {
+                        //获取搜索数据 设置适配器
+                        resultAdapter2.getItem(0).setComments("终点");
+                        lvResults2.setAdapter(resultAdapter2);
+                    } else {
+                        //更新搜索数据
+                        resultAdapter2.getItem(0).setComments("终点");
+                        resultAdapter2.notifyDataSetChanged();
+                    }
+                    cvSearchBtn();
                 }
-                if (lvResults2.getAdapter() == null) {
-                    //获取搜索数据 设置适配器
-                    resultAdapter2.getItem(0).setComments("终点");
-                    lvResults2.setAdapter(resultAdapter2);
-                } else {
-                    //更新搜索数据
-                    resultAdapter2.getItem(0).setComments("终点");
-                    resultAdapter2.notifyDataSetChanged();
-                }
-                cvSearchBtn();
             }
         });
 
@@ -489,10 +515,15 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         searchView.setSearchPopViewListener(this);
         searchView2.setSearchPopViewListener(this);
         //设置adapter
-        searchView.setTipsHintAdapter(hintAdapter);
-        searchView.setAutoCompleteAdapter(autoCompleteAdapter);
-        searchView2.setTipsHintAdapter(hintAdapter);
-        searchView2.setAutoCompleteAdapter(autoCompleteAdapter2);
+        if (hintAdapter != null) {
+            Log.d(TAG, "initViews: start123 " + hintAdapter.getCount());
+            searchView.setTipsHintAdapter(hintAdapter);
+            searchView2.setTipsHintAdapter(hintAdapter);
+        }
+        if ((autoCompleteAdapter != null) && (autoCompleteAdapter2 != null)) {
+            searchView.setAutoCompleteAdapter(autoCompleteAdapter);
+            searchView2.setAutoCompleteAdapter(autoCompleteAdapter2);
+        }
 
         lvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -513,14 +544,20 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         searchViewList0.get(1).setSearchPopViewListener(this);
         searchViewList0.get(2).setSearchPopViewListener(this);
         //设置adapter
-        endSearchView0.setTipsHintAdapter(hintAdapter0);
-        endSearchView0.setAutoCompleteAdapter(autoCompleteAdapter00);
-        searchViewList0.get(0).setTipsHintAdapter(hintAdapter0);
-        searchViewList0.get(1).setTipsHintAdapter(hintAdapter0);
-        searchViewList0.get(2).setTipsHintAdapter(hintAdapter0);
-        searchViewList0.get(0).setAutoCompleteAdapter(autoCompleteAdapter01);
-        searchViewList0.get(1).setAutoCompleteAdapter(autoCompleteAdapter02);
-        searchViewList0.get(2).setAutoCompleteAdapter(autoCompleteAdapter03);
+        if (hintAdapter0 != null) {
+            Log.d(TAG, "initViews: start123 " + hintAdapter.getCount());
+            endSearchView0.setTipsHintAdapter(hintAdapter0);
+            searchViewList0.get(0).setTipsHintAdapter(hintAdapter0);
+            searchViewList0.get(1).setTipsHintAdapter(hintAdapter0);
+            searchViewList0.get(2).setTipsHintAdapter(hintAdapter0);
+        }
+        if ((autoCompleteAdapter00 != null) && (autoCompleteAdapter01 != null)
+                && (autoCompleteAdapter02 != null) && (autoCompleteAdapter03 != null)) {
+            endSearchView0.setAutoCompleteAdapter(autoCompleteAdapter00);
+            searchViewList0.get(0).setAutoCompleteAdapter(autoCompleteAdapter01);
+            searchViewList0.get(1).setAutoCompleteAdapter(autoCompleteAdapter02);
+            searchViewList0.get(2).setAutoCompleteAdapter(autoCompleteAdapter03);
+        }
 
         lvResults0.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -615,159 +652,192 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
     }
 
     /**
+     * 初始化数据
+     */
+    private void initData() {
+        //从数据库获取数据
+        getData();
+    }
+
+    /**
      * json处理函数
      *
      * @param jsonData json字符串
      */
     private void parseJSONWithJSONObject(String jsonData) {
-//        try {
-//            ProgressDialog progressDialog = new ProgressDialog(getActivity());
-//            progressDialog.setTitle("正在从服务器接收数据");
-//            progressDialog.setCancelable(true);
-//            progressDialog.show();
-//            Thread.currentThread();
-//            Thread.sleep(500);
-//            progressDialog.dismiss();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
         Bundle mBundleHttp = new Bundle();
-        try {
-            JSONObject jsonObject = new JSONObject(jsonData);
-            JSONObject seller = jsonObject.getJSONObject("seller");
-            JSONObject route = jsonObject.getJSONObject("route");
-            JSONObject busy = jsonObject.getJSONObject("busy");
+        switch (origin) {
+            case SINGLE:
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonData);
+                    JSONObject seller = jsonObject.getJSONObject("seller");
+                    JSONObject route = jsonObject.getJSONObject("route");
+                    JSONObject busy = jsonObject.getJSONObject("busy");
 
-            JSONArray routeFast = route.getJSONArray("fast");
-            JSONArray routeLessbusy = route.getJSONArray("lessbusy");
-            JSONArray routeLesschange = route.getJSONArray("lesschange");
+                    JSONObject routeFastX = route.getJSONObject("fast");
+                    JSONObject routeLessbusyX = route.getJSONObject("lessbusy");
+                    JSONObject routeLesschangeX = route.getJSONObject("lesschange");
 
-            ArrayList<String> fastStationList = new ArrayList<String>();
-            ArrayList<String> lessbusyStationList = new ArrayList<String>();
-            ArrayList<String> lesschangeStationList = new ArrayList<String>();
-            ArrayList<String> fastRouteList = new ArrayList<String>();
-            ArrayList<String> lessbusyRouteList = new ArrayList<String>();
-            ArrayList<String> lesschangeRouteList = new ArrayList<String>();
+                    JSONArray routeFast = routeFastX.getJSONArray("route");
+                    JSONArray routeLessbusy = routeLessbusyX.getJSONArray("route");
+                    JSONArray routeLesschange = routeLesschangeX.getJSONArray("route");
+                    JSONArray routeFastDetail = routeFastX.getJSONArray("route_detail");
+                    JSONArray routeLessbusyDetail = routeLessbusyX.getJSONArray("route_detail");
+                    JSONArray routeLesschangeDetail = routeLesschangeX.getJSONArray("route_detail");
 
-            for (int i = 0; i < routeFast.length(); i++) {
-                if (i % 2 == 0) {
-                    fastStationList.add(routeFast.getString(i));
-                } else {
-                    fastRouteList.add(routeFast.getString(i));
+                    ArrayList<String> fastStationList = new ArrayList<String>();
+                    ArrayList<String> lessbusyStationList = new ArrayList<String>();
+                    ArrayList<String> lesschangeStationList = new ArrayList<String>();
+                    ArrayList<String> fastRouteList = new ArrayList<String>();
+                    ArrayList<String> lessbusyRouteList = new ArrayList<String>();
+                    ArrayList<String> lesschangeRouteList = new ArrayList<String>();
+
+                    for (int i = 0; i < routeFast.length(); i++) {
+                        if (i % 2 == 0) {
+                            fastStationList.add(routeFast.getString(i));
+                        } else {
+                            fastRouteList.add(routeFast.getString(i));
+                        }
+                    }
+                    mBundleHttp.putStringArrayList("fastStationList", fastStationList);
+                    mBundleHttp.putStringArrayList("fastRouteList", fastRouteList);
+
+                    for (int i = 0; i < routeLessbusy.length(); i++) {
+                        if (i % 2 == 0) {
+                            lessbusyStationList.add(routeLessbusy.getString(i));
+                        } else {
+                            lessbusyRouteList.add(routeLessbusy.getString(i));
+                        }
+                    }
+                    mBundleHttp.putStringArrayList("lessbusyStationList", lessbusyStationList);
+                    mBundleHttp.putStringArrayList("lessbusyRouteList", lessbusyRouteList);
+
+                    for (int i = 0; i < routeLesschange.length(); i++) {
+                        if (i % 2 == 0) {
+                            lesschangeStationList.add(routeLesschange.getString(i));
+                        } else {
+                            lesschangeRouteList.add(routeLesschange.getString(i));
+                        }
+                    }
+                    mBundleHttp.putStringArrayList("lesschangeStationList", lesschangeStationList);
+                    mBundleHttp.putStringArrayList("lesschangeRouteList", lesschangeRouteList);
+
+                    int size = 100;
+                    double[] fastSellerLatList = new double[size];
+                    double[] fastSellerLngList = new double[size];
+                    double[] lessbusySellerLatList = new double[size];
+                    double[] lessbusySellerLngList = new double[size];
+                    double[] lesschangeSellerLatList = new double[size];
+                    double[] lesschangeSellerLngList = new double[size];
+
+                    int sellerRange = 2;
+                    int count = 0;
+                    for (int i = 0; i < fastStationList.size(); i++) {
+                        for (int j = 0; j < sellerRange; j++) {
+                            fastSellerLatList[count] = seller.getJSONArray(fastStationList.get(i)).getJSONObject(j).getDouble("lat");
+                            fastSellerLngList[count] = seller.getJSONArray(fastStationList.get(i)).getJSONObject(j).getDouble("lng");
+                            count++;
+                        }
+                    }
+                    mBundleHttp.putInt("fastCount", count);
+                    count = 0;
+                    for (int i = 0; i < lessbusyStationList.size(); i++) {
+                        for (int j = 0; j < sellerRange; j++) {
+                            lessbusySellerLatList[count] = seller.getJSONArray(lessbusyStationList.get(i)).getJSONObject(j).getDouble("lat");
+                            lessbusySellerLngList[count] = seller.getJSONArray(lessbusyStationList.get(i)).getJSONObject(j).getDouble("lng");
+                            count++;
+                        }
+                    }
+                    mBundleHttp.putInt("lessbusyCount", count);
+                    count = 0;
+                    for (int i = 0; i < lesschangeStationList.size(); i++) {
+                        for (int j = 0; j < sellerRange; j++) {
+                            lesschangeSellerLatList[count] = seller.getJSONArray(lesschangeStationList.get(i)).getJSONObject(j).getDouble("lat");
+                            lesschangeSellerLngList[count] = seller.getJSONArray(lesschangeStationList.get(i)).getJSONObject(j).getDouble("lng");
+                            count++;
+                        }
+                    }
+                    mBundleHttp.putInt("lesschangeCount", count);
+
+                    mBundleHttp.putDoubleArray("fastSellerLatList", fastSellerLatList);
+                    mBundleHttp.putDoubleArray("fastSellerLngList", fastSellerLngList);
+                    mBundleHttp.putDoubleArray("lessbusySellerLatList", lessbusySellerLatList);
+                    mBundleHttp.putDoubleArray("lessbusySellerLngList", lessbusySellerLngList);
+                    mBundleHttp.putDoubleArray("lesschangeSellerLatList", lesschangeSellerLatList);
+                    mBundleHttp.putDoubleArray("lesschangeSellerLngList", lesschangeSellerLngList);
+
+                    mBundleHttp.putString("origin", "Single");
+
+                    Intent intent = new Intent(getActivity(), RouteResultActivity.class);
+                    intent.putExtras(mBundleHttp);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }
-            mBundleHttp.putStringArrayList("fastStationList", fastStationList);
-            mBundleHttp.putStringArrayList("fastRouteList", fastRouteList);
+                break;
 
-            for (int i = 0; i < routeLessbusy.length(); i++) {
-                if (i % 2 == 0) {
-                    lessbusyStationList.add(routeLessbusy.getString(i));
-                } else {
-                    lessbusyRouteList.add(routeLessbusy.getString(i));
-                }
-            }
-            mBundleHttp.putStringArrayList("lessbusyStationList", lessbusyStationList);
-            mBundleHttp.putStringArrayList("lessbusyRouteList", lessbusyRouteList);
+            case DATA:
+                HashMap<String, String> params = new HashMap<>();
+                params.put("userId", "guest");
+                RequestManager.getInstance(context).requestAsyn("http://10.108.120.91:8080/route/station",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                com.alibaba.fastjson.JSONObject jsonData = JSON.parseObject(result);
 
-            for (int i = 0; i < routeLesschange.length(); i++) {
-                if (i % 2 == 0) {
-                    lesschangeStationList.add(routeLesschange.getString(i));
-                } else {
-                    lesschangeRouteList.add(routeLesschange.getString(i));
-                }
-            }
-            mBundleHttp.putStringArrayList("lesschangeStationList", lesschangeStationList);
-            mBundleHttp.putStringArrayList("lesschangeRouteList", lesschangeRouteList);
+                                com.alibaba.fastjson.JSONArray station = jsonData.getJSONArray("station");
+                                com.alibaba.fastjson.JSONArray busy = jsonData.getJSONArray("busy");
 
-            mBundleHttp.putString("origin", "Single");
+                                dbData = new ArrayList<>(station.size());
+                                dbData0 = new ArrayList<>(station.size());
+                                for (int i = 0; i < station.size(); i++) {
+                                    dbData.add(new RouteSearchBean(R.drawable.title_icon, station.getString(i),
+                                            "周围简介\n热门吃、喝、玩、乐", ""));
+                                    dbData0.add(new RouteSearchBean(R.drawable.title_icon, station.getString(i),
+                                            "周围简介\n热门吃、喝、玩、乐", ""));
+                                }
+                                Log.d(TAG, "parseJSONWithJSONObject: " + dbData.size());
 
-            Intent intent = new Intent(getActivity(), RouteResultActivity.class);
-            intent.putExtras(mBundleHttp);
-            startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
+                                setHintSize(busy.size());
+                                hintData = new ArrayList<>(hintSize);
+                                hintData0 = new ArrayList<>(hintSize);
+                                for (int i = 0; i < hintSize; i++) {
+                                    hintData.add(busy.getString(i));
+                                    hintData0.add(busy.getString(i));
+                                }
+                                hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
+                                hintAdapter0 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData0);
+                                //初始化自动补全数据
+                                getAutoCompleteData(null);
+                                //初始化搜索结果数据
+                                getResultData(null);
+                                //初始化自动补全数据
+                                getAutoCompleteData0(null);
+                                //初始化搜索结果数据
+                                getResultData0(null);
+
+                                initViews();
+                                Log.d(TAG, "parseJSONWithJSONObject: " + hintData.size());
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(getContext(), "站点List请求失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                break;
+
+            default:
+                break;
         }
-    }
-
-    /**
-     * 初始化数据
-     */
-    private void initData() {
-        //从数据库获取数据
-        getDbData();
-        //初始化热搜版数据
-        getHintData();
-        //初始化自动补全数据
-        getAutoCompleteData(null);
-        //初始化搜索结果数据
-        getResultData(null);
-
-        //初始化自动补全数据
-        getAutoCompleteData0(null);
-        //初始化搜索结果数据
-        getResultData0(null);
     }
 
     /**
      * 获取db数据
      */
-    private void getDbData() {
-        int size = 100;
-        dbData = new ArrayList<>(size);
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "广州塔",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "广州南站",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "广州东站",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "汉溪长隆",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-//        for (int i = 0; i < size; i++) {
-//            dbData.add(new RouteSearchBean(R.drawable.title_icon, "站点" + (i + 1),
-//                    "周围简介\n热门吃、喝、玩、乐", i * 20 + 2 + ""));
-//        }
-
-        dbData0 = new ArrayList<>(size);
-        dbData0.add(new RouteSearchBean(R.drawable.title_icon, "广州塔",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData0.add(new RouteSearchBean(R.drawable.title_icon, "广州南站",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData0.add(new RouteSearchBean(R.drawable.title_icon, "广州东站",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData0.add(new RouteSearchBean(R.drawable.title_icon, "汉溪长隆",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-//        for (int i = 0; i < size; i++) {
-//            dbData0.add(new RouteSearchBean(R.drawable.title_icon, "站点" + (i + 1),
-//                    "周围简介\n热门吃、喝、玩、乐", i * 20 + 2 + ""));
-//        }
-    }
-
-    /**
-     * 获取热搜版data和adapter
-     */
-    private void getHintData() {
-        hintData = new ArrayList<>(hintSize);
-        hintData.add("广州塔");
-        hintData.add("广州南站");
-        hintData.add("广州东站");
-        hintData.add("汉溪长隆");
-        for (int i = 1; i <= hintSize; i++) {
-            hintData.add("站点" + i * 10);
-        }
-
-        hintData0 = new ArrayList<>(hintSize);
-        hintData0.add("广州塔");
-        hintData0.add("广州南站");
-        hintData0.add("广州东站");
-        hintData0.add("汉溪长隆");
-//        for (int i = 1; i <= hintSize; i++) {
-//            hintData0.add("站点" + i * 10);
-//        }
-
-        hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
-
-        hintAdapter0 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData0);
+    private void getData() {
+        origin = DATA;
+        parseJSONWithJSONObject(null);
     }
 
     /**

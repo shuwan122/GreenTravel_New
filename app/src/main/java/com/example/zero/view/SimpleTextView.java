@@ -3,6 +3,8 @@ package com.example.zero.view;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -42,6 +44,10 @@ public class SimpleTextView  extends LinearLayout implements View.OnClickListene
         initViews();
     }
 
+    public void setText(String str) {
+        etInput.setText(str);
+    }
+
     public void setHintText(String str) {
         etInput.setHint(str);
     }
@@ -50,6 +56,11 @@ public class SimpleTextView  extends LinearLayout implements View.OnClickListene
         etInput.setCompoundDrawablesWithIntrinsicBounds(id,0,0,0);
     }
 
+    public void setPw() {
+        etInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
+    }
+
+    @Override
     public void setOnFocusChangeListener(OnFocusChangeListener listener) {
         etInput.setOnFocusChangeListener(listener);
     }

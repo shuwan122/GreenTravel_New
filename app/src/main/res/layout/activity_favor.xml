@@ -67,7 +67,19 @@
         android:id="@+id/favor_recv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@color/white" />
 
-    </android.support.v7.widget.RecyclerView>
+    <Button
+        android:id="@+id/favor_add"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_margin="15dp"
+        android:background="@color/white"
+        android:drawableLeft="@drawable/plus"
+        android:elevation="5dp"
+        android:gravity="center"
+        android:paddingLeft="150dp"
+        android:paddingRight="150dp"
+        android:text="新增"
+        android:textColor="@color/firstColor" />
 </LinearLayout>

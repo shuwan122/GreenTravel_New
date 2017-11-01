@@ -1,35 +1,35 @@
 [
           {
                     "featureType": "land",
-                    "elementType": "all",
+                    "elementType": "geometry",
                     "stylers": {
                               "color": "#ffffff"
                     }
           },
           {
                     "featureType": "highway",
-                    "elementType": "all",
+                    "elementType": "geometry",
                     "stylers": {
                               "color": "#ffffff"
                     }
           },
           {
                     "featureType": "arterial",
-                    "elementType": "all",
+                    "elementType": "geometry",
                     "stylers": {
                               "color": "#ffffff"
                     }
           },
           {
                     "featureType": "local",
-                    "elementType": "all",
+                    "elementType": "geometry",
                     "stylers": {
                               "color": "#ffffff"
                     }
           },
           {
                     "featureType": "railway",
-                    "elementType": "all",
+                    "elementType": "geometry",
                     "stylers": {
                               "color": "#ffffff"
                     }
@@ -44,28 +44,28 @@
           },
           {
                     "featureType": "water",
-                    "elementType": "all",
+                    "elementType": "geometry",
                     "stylers": {
                               "color": "#ffffff"
                     }
           },
           {
                     "featureType": "green",
-                    "elementType": "all",
+                    "elementType": "geometry",
                     "stylers": {
                               "color": "#ffffff"
                     }
           },
           {
                     "featureType": "manmade",
-                    "elementType": "all",
+                    "elementType": "geometry",
                     "stylers": {
                               "color": "#ffffff"
                     }
           },
           {
                     "featureType": "building",
-                    "elementType": "all",
+                    "elementType": "geometry",
                     "stylers": {
                               "color": "#ffffff"
                     }
