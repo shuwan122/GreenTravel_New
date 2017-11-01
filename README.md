@@ -197,6 +197,10 @@ Android App GreenTravel
 	 	<th>销售——从服务器获取热门优惠券，领取成功</th>
 	 	<th>个人中心——调试登录注册接口</th>
 	 </tr>
+    <tr>
+		<th>171031</th>
+		<th colspan="3">第六次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -394,6 +398,10 @@ Android App GreenTravel
 	 	<th>无</th>
 	 	<th>如何简便的存储用户信息</th>
 	 </tr>
+    <tr>
+		<th>171031</th>
+		<th colspan="3">暂时没有发现bug</th>
+	</tr>
 </table>
 
 ## 参考
@@ -591,4 +599,8 @@ Android App GreenTravel
 	 	<th>http://blog.csdn.net/guolin_blog/article/details/53759439</th>
 	 	<th>http://www.cnblogs.com/zhujiabin/p/4546826.html</th>
 	 </tr>
+    <tr>
+		<th>171031</th>
+		<th colspan="3">无</th>
+	</tr>
 </table>
