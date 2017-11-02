@@ -37,6 +37,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name="com.example.zero.util.MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -66,6 +67,7 @@
         <activity android:name="com.example.zero.activity.FriendActivity" />
         <activity android:name="com.example.zero.activity.AboutActivity" />
         <activity android:name="com.example.zero.activity.LoginActivity" />
+        <activity android:name="com.example.zero.activity.ResetPwActivity"/>
         <activity
             android:name="com.example.zero.activity.RegisterActivity"
             android:windowSoftInputMode="stateVisible" />

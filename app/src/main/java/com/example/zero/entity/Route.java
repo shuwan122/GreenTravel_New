@@ -30,7 +30,8 @@ public class Route {
     public enum RouteType {
         FAST, // 最快速
         LESSBUSY, // 最少拥堵
-        LESSCHANGE // 最少换乘
+        LESSCHANGE, // 最少换乘
+        MULTI // 多人
     }
 
     public Route(){

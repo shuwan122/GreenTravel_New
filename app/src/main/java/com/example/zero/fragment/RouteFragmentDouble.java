@@ -1,8 +1,10 @@
 package com.example.zero.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -17,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,9 +27,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -51,7 +56,9 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.RouteLine;
 import com.example.zero.activity.RouteResultActivity;
+import com.example.zero.adapter.RouteLineAdapter;
 import com.example.zero.adapter.RouteSearchAdapter;
 import com.example.zero.bean.RouteSearchBean;
 import com.example.zero.bean.SaleBean;
@@ -86,6 +93,7 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.zero.fragment.RouteFragmentDouble.Origin.DATA;
+import static com.example.zero.fragment.RouteFragmentDouble.Origin.MULTI;
 import static com.example.zero.fragment.RouteFragmentDouble.Origin.SINGLE;
 
 public class RouteFragmentDouble extends Fragment implements SearchPopView.SearchPopViewListener {
@@ -249,9 +257,15 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
      */
     private RouteSearchAdapter resultAdapter0;
 
+    boolean hasShownDialogue = false;
+
     private Context context;
 
     private int cModel = 1;
+
+    int sceneWhich;
+
+    String sceneSel;
 
     private Origin origin;
 
@@ -260,6 +274,8 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         MULTI,
         DATA
     }
+
+    final private String[] stationDe = {"广州塔", "广州火车站"};
 
     /**
      * 设置提示框显示项的个数
@@ -377,7 +393,6 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Toast.makeText(getActivity(), "开始搜索", Toast.LENGT H_SHORT).show();
                 boolean JUD = false;
                 final String beginStation = searchView.getText();
                 final String endStation = searchView2.getText();
@@ -417,38 +432,147 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         btnSearch0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Toast.makeText(getActivity(), "开始搜索", Toast.LENGTH_SHORT).show();String beginStation = searchView.getText();
-                int beginNum = 0;
-                boolean JUD = false;
-                String endStation = endSearchView0.getText();
-                ArrayList<String> beginStationList = new ArrayList<String>();
-                beginStationList.add(searchViewList0.get(0).getText());
-                beginStationList.add(searchViewList0.get(1).getText());
-                beginStationList.add(searchViewList0.get(2).getText());
-                for (String str : beginStationList) {
-                    if (!str.equals("")) {
-                        beginNum++;
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setIcon(R.drawable.android);
+                builder.setTitle("请选择汇聚情景");
+                final String[] scene = {"智能推荐", "直接到达", "购物", "餐饮", "其他"};
+                final String[] sceneChar = {"auto", "direct", "shopping", "eatting"};
+                /**
+                 * 设置一个单项选择下拉框
+                 * 第一个参数指定我们要显示的一组下拉单选框的数据集合
+                 * 第二个参数代表索引，指定默认哪一个单选框被勾选上，1表示默认'女' 会被勾选上
+                 * 第三个参数给每一个单选项绑定一个监听器
+                 */
+                builder.setSingleChoiceItems(scene, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sceneWhich = which;
+                        Toast.makeText(context, "选择了：" + scene[which], Toast.LENGTH_SHORT).show();
                     }
-                }
-                if (endStation.equals(beginStationList.get(0)) | endStation.equals(beginStationList.get(1)) | endStation.equals(beginStationList.get(2))) {
-                    JUD = true;
-                }
-                Bundle mBundle = new Bundle();
-                mBundle.putString("origin", "Multi");
-                mBundle.putString("endStation", endStation);
-                mBundle.putStringArrayList("beginStationList", beginStationList);
-                mBundle.putInt("beginNum", beginNum);
-                if ((!endStation.equals("")) & (beginNum != 0)) {
-                    if (!JUD) {
-                        Intent intent = new Intent(getActivity(), RouteResultActivity.class);
-                        intent.putExtras(mBundle);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(getActivity(), "起终点信息不能相同，请重新输入！", Toast.LENGTH_LONG).show();
+                });
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (scene[sceneWhich].equals("其他")) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setIcon(R.drawable.android);
+                            builder.setTitle("请输入您的汇聚情景关键词");
+                            View view = LayoutInflater.from(context).inflate(R.layout.route_scene_pop, null);
+                            builder.setView(view);
+
+                            final EditText other_scene = (EditText) view.findViewById(R.id.other_scene);
+
+                            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    sceneSel = other_scene.getText().toString().trim();
+                                    int beginNum = 0;
+                                    boolean JUD = false;
+                                    String endStation = endSearchView0.getText();
+                                    ArrayList<String> beginStationList = new ArrayList<String>();
+                                    beginStationList.add(searchViewList0.get(0).getText());
+                                    beginStationList.add(searchViewList0.get(1).getText());
+                                    beginStationList.add(searchViewList0.get(2).getText());
+                                    for (String str : beginStationList) {
+                                        if (!str.equals("")) {
+                                            beginNum++;
+                                        }
+                                    }
+                                    if (endStation.equals(beginStationList.get(0)) | endStation.equals(beginStationList.get(1)) | endStation.equals(beginStationList.get(2))) {
+                                        JUD = true;
+                                    }
+                                    Bundle mBundle = new Bundle();
+                                    mBundle.putString("userId", "guest");
+                                    mBundle.putString("endStation", endStation);
+                                    mBundle.putStringArrayList("beginStationList", beginStationList);
+                                    mBundle.putInt("beginNum", beginNum);
+                                    mBundle.putString("Scene", sceneSel);
+                                    if ((!endStation.equals("")) & (beginNum != 0)) {
+                                        if (!JUD) {
+                                            HttpUtil.sendMultiOkHttpRequest(mBundle, new okhttp3.Callback() {
+                                                @Override
+                                                public void onResponse(Call call, Response response) throws IOException {
+                                                    String responseData = response.body().string();
+                                                    origin = MULTI;
+                                                    parseJSONWithJSONObject(responseData);
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call call, IOException e) {
+                                                    Log.d(TAG, "onFailure: ERROR!");
+                                                    Toast.makeText(getActivity(), "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        } else {
+                                            Toast.makeText(getActivity(), "起终点信息不能相同，请重新输入！", Toast.LENGTH_LONG).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(getActivity(), "搜索框消息不完善，请填充完整后在开始搜索！", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            builder.show();
+                        } else {
+                            sceneSel = sceneChar[sceneWhich];
+                            int beginNum = 0;
+                            boolean JUD = false;
+                            String endStation = endSearchView0.getText();
+                            ArrayList<String> beginStationList = new ArrayList<String>();
+                            beginStationList.add(searchViewList0.get(0).getText());
+                            beginStationList.add(searchViewList0.get(1).getText());
+                            beginStationList.add(searchViewList0.get(2).getText());
+                            for (String str : beginStationList) {
+                                if (!str.equals("")) {
+                                    beginNum++;
+                                }
+                            }
+                            if (endStation.equals(beginStationList.get(0)) | endStation.equals(beginStationList.get(1)) | endStation.equals(beginStationList.get(2))) {
+                                JUD = true;
+                            }
+                            Bundle mBundle = new Bundle();
+                            mBundle.putString("userId", "guest");
+                            mBundle.putString("endStation", endStation);
+                            mBundle.putStringArrayList("beginStationList", beginStationList);
+                            mBundle.putInt("beginNum", beginNum);
+                            mBundle.putString("Scene", sceneSel);
+                            if ((!endStation.equals("")) & (beginNum != 0)) {
+                                if (!JUD) {
+                                    HttpUtil.sendMultiOkHttpRequest(mBundle, new okhttp3.Callback() {
+                                        @Override
+                                        public void onResponse(Call call, Response response) throws IOException {
+                                            String responseData = response.body().string();
+                                            origin = MULTI;
+                                            parseJSONWithJSONObject(responseData);
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            Log.d(TAG, "onFailure: ERROR!");
+                                            Toast.makeText(getActivity(), "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                } else {
+                                    Toast.makeText(getActivity(), "起终点信息不能相同，请重新输入！", Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), "搜索框消息不完善，请填充完整后在开始搜索！", Toast.LENGTH_LONG).show();
+                            }
+                        }
                     }
-                } else {
-                    Toast.makeText(getActivity(), "搜索框消息不完善，请填充完整后在开始搜索！", Toast.LENGTH_LONG).show();
-                }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.show();
             }
         });
 
@@ -651,6 +775,7 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         });
     }
 
+
     /**
      * 初始化数据
      */
@@ -734,27 +859,41 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                     int count = 0;
                     for (int i = 0; i < fastStationList.size(); i++) {
                         for (int j = 0; j < sellerRange; j++) {
-                            fastSellerLatList[count] = seller.getJSONArray(fastStationList.get(i)).getJSONObject(j).getDouble("lat");
-                            fastSellerLngList[count] = seller.getJSONArray(fastStationList.get(i)).getJSONObject(j).getDouble("lng");
-                            count++;
+                            if (seller.has(fastStationList.get(i))) {
+                                if (j < seller.getJSONArray(fastStationList.get(i)).length()) {
+                                    fastSellerLatList[count] = seller.getJSONArray(fastStationList.get(i)).getJSONObject(j).getDouble("lat");
+                                    fastSellerLngList[count] = seller.getJSONArray(fastStationList.get(i)).getJSONObject(j).getDouble("lng");
+                                    count++;
+                                }
+                            }
                         }
                     }
                     mBundleHttp.putInt("fastCount", count);
+
                     count = 0;
                     for (int i = 0; i < lessbusyStationList.size(); i++) {
                         for (int j = 0; j < sellerRange; j++) {
-                            lessbusySellerLatList[count] = seller.getJSONArray(lessbusyStationList.get(i)).getJSONObject(j).getDouble("lat");
-                            lessbusySellerLngList[count] = seller.getJSONArray(lessbusyStationList.get(i)).getJSONObject(j).getDouble("lng");
-                            count++;
+                            if (seller.has(lessbusyStationList.get(i))) {
+                                if (j < seller.getJSONArray(lessbusyStationList.get(i)).length()) {
+                                    lessbusySellerLatList[count] = seller.getJSONArray(lessbusyStationList.get(i)).getJSONObject(j).getDouble("lat");
+                                    lessbusySellerLngList[count] = seller.getJSONArray(lessbusyStationList.get(i)).getJSONObject(j).getDouble("lng");
+                                    count++;
+                                }
+                            }
                         }
                     }
                     mBundleHttp.putInt("lessbusyCount", count);
+
                     count = 0;
                     for (int i = 0; i < lesschangeStationList.size(); i++) {
                         for (int j = 0; j < sellerRange; j++) {
-                            lesschangeSellerLatList[count] = seller.getJSONArray(lesschangeStationList.get(i)).getJSONObject(j).getDouble("lat");
-                            lesschangeSellerLngList[count] = seller.getJSONArray(lesschangeStationList.get(i)).getJSONObject(j).getDouble("lng");
-                            count++;
+                            if (seller.has(lesschangeStationList.get(i))) {
+                                if (j < seller.getJSONArray(lesschangeStationList.get(i)).length()) {
+                                    lesschangeSellerLatList[count] = seller.getJSONArray(lesschangeStationList.get(i)).getJSONObject(j).getDouble("lat");
+                                    lesschangeSellerLngList[count] = seller.getJSONArray(lesschangeStationList.get(i)).getJSONObject(j).getDouble("lng");
+                                    count++;
+                                }
+                            }
                         }
                     }
                     mBundleHttp.putInt("lesschangeCount", count);
@@ -776,10 +915,171 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                 }
                 break;
 
+            case MULTI:
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonData);
+
+                    JSONObject sellers = jsonObject.getJSONObject("sellers");
+                    JSONArray routes = jsonObject.getJSONArray("routes");
+                    JSONObject busy = jsonObject.getJSONObject("busy");
+
+                    JSONArray routeBfMeet = routes.getJSONArray(0);
+                    JSONArray routeAfMeet = routes.getJSONArray(1);
+
+                    ArrayList<String> stationList1 = new ArrayList<String>();
+                    ArrayList<String> stationList2 = new ArrayList<String>();
+                    ArrayList<String> stationList3 = new ArrayList<String>();
+                    ArrayList<String> routeList1 = new ArrayList<String>();
+                    ArrayList<String> routeList2 = new ArrayList<String>();
+                    ArrayList<String> routeList3 = new ArrayList<String>();
+
+                    ArrayList<String> stationAfMeetList = new ArrayList<String>();
+                    ArrayList<String> routeAfMeetList = new ArrayList<String>();
+
+                    for (int i = 0; i < routeBfMeet.length(); i++) {
+                        for (int j = 0; j < routeBfMeet.getJSONObject(i).getJSONArray("route").length(); j++) {
+                            if (j % 2 == 0) {
+                                switch (i) {
+                                    case 0:
+                                        stationList1.add(routeBfMeet.getJSONObject(i).getJSONArray("route").getString(j));
+                                        break;
+                                    case 1:
+                                        stationList2.add(routeBfMeet.getJSONObject(i).getJSONArray("route").getString(j));
+                                        break;
+                                    case 2:
+                                        stationList3.add(routeBfMeet.getJSONObject(i).getJSONArray("route").getString(j));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                switch (i) {
+                                    case 0:
+                                        routeList1.add(routeBfMeet.getJSONObject(i).getJSONArray("route").getString(j));
+                                        break;
+                                    case 1:
+                                        routeList2.add(routeBfMeet.getJSONObject(i).getJSONArray("route").getString(j));
+                                        break;
+                                    case 2:
+                                        routeList3.add(routeBfMeet.getJSONObject(i).getJSONArray("route").getString(j));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                    }
+
+                    if(!routeAfMeet.isNull(0)){
+                        for (int i = 0; i < routeAfMeet.getJSONObject(0).getJSONArray("route").length(); i++) {
+                            if (i % 2 == 0) {
+                                stationAfMeetList.add(routeAfMeet.getJSONObject(0).getJSONArray("route").getString(i));
+                            } else {
+                                routeAfMeetList.add(routeAfMeet.getJSONObject(0).getJSONArray("route").getString(i));
+                            }
+                        }
+                    }
+
+                    mBundleHttp.putStringArrayList("stationList1", stationList1);
+                    mBundleHttp.putStringArrayList("stationList2", stationList2);
+                    mBundleHttp.putStringArrayList("stationList3", stationList3);
+                    mBundleHttp.putStringArrayList("routeList1", routeList1);
+                    mBundleHttp.putStringArrayList("routeList2", routeList2);
+                    mBundleHttp.putStringArrayList("routeList3", routeList3);
+                    mBundleHttp.putStringArrayList("stationAfMeetList", stationAfMeetList);
+                    mBundleHttp.putStringArrayList("routeAfMeetList", routeAfMeetList);
+
+                    int size = 100;
+                    double[] firstSellerLatList = new double[size];
+                    double[] firstSellerLngList = new double[size];
+                    double[] secondSellerLatList = new double[size];
+                    double[] secondSellerLngList = new double[size];
+                    double[] thirdSellerLatList = new double[size];
+                    double[] thirdSellerLngList = new double[size];
+
+                    double[] afMeetSellerLatList = new double[size];
+                    double[] afMeetSellerLngList = new double[size];
+
+                    int sellerRange = 2;
+                    int count = 0;
+                    for (int i = 0; i < stationList1.size(); i++) {
+                        for (int j = 0; j < sellerRange; j++) {
+                            if (sellers.has(stationList1.get(i))) {
+                                if (j < sellers.getJSONArray(stationList1.get(i)).length()) {
+                                    firstSellerLatList[count] = sellers.getJSONArray(stationList1.get(i)).getJSONObject(j).getDouble("lat");
+                                    firstSellerLngList[count] = sellers.getJSONArray(stationList1.get(i)).getJSONObject(j).getDouble("lng");
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    mBundleHttp.putInt("firstCount", count);
+
+                    count = 0;
+                    for (int i = 0; i < stationList2.size(); i++) {
+                        for (int j = 0; j < sellerRange; j++) {
+                            if (sellers.has(stationList2.get(i))) {
+                                if (j < sellers.getJSONArray(stationList2.get(i)).length()) {
+                                    secondSellerLatList[count] = sellers.getJSONArray(stationList2.get(i)).getJSONObject(j).getDouble("lat");
+                                    secondSellerLngList[count] = sellers.getJSONArray(stationList2.get(i)).getJSONObject(j).getDouble("lng");
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    mBundleHttp.putInt("secondCount", count);
+
+                    count = 0;
+                    for (int i = 0; i < stationList3.size(); i++) {
+                        for (int j = 0; j < sellerRange; j++) {
+                            if (sellers.has(stationList3.get(i))) {
+                                if (j < sellers.getJSONArray(stationList3.get(i)).length()) {
+                                    thirdSellerLatList[count] = sellers.getJSONArray(stationList3.get(i)).getJSONObject(j).getDouble("lat");
+                                    thirdSellerLngList[count] = sellers.getJSONArray(stationList3.get(i)).getJSONObject(j).getDouble("lng");
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    mBundleHttp.putInt("thirdCount", count);
+
+                    count = 0;
+                    for (int i = 0; i < stationAfMeetList.size(); i++) {
+                        for (int j = 0; j < sellerRange; j++) {
+                            if (sellers.has(stationAfMeetList.get(i))) {
+                                if (j < sellers.getJSONArray(stationAfMeetList.get(i)).length()) {
+                                    afMeetSellerLatList[count] = sellers.getJSONArray(stationAfMeetList.get(i)).getJSONObject(j).getDouble("lat");
+                                    afMeetSellerLngList[count] = sellers.getJSONArray(stationAfMeetList.get(i)).getJSONObject(j).getDouble("lng");
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    mBundleHttp.putInt("afMeetCount", count);
+
+                    mBundleHttp.putDoubleArray("firstSellerLatList", firstSellerLatList);
+                    mBundleHttp.putDoubleArray("firstSellerLngList", firstSellerLngList);
+                    mBundleHttp.putDoubleArray("secondSellerLatList", secondSellerLatList);
+                    mBundleHttp.putDoubleArray("secondSellerLngList", secondSellerLngList);
+                    mBundleHttp.putDoubleArray("thirdSellerLatList", thirdSellerLatList);
+                    mBundleHttp.putDoubleArray("thirdSellerLngList", thirdSellerLngList);
+                    mBundleHttp.putDoubleArray("afMeetSellerLatList", afMeetSellerLatList);
+                    mBundleHttp.putDoubleArray("afMeetSellerLngList", afMeetSellerLngList);
+
+                    mBundleHttp.putString("origin", "Multi");
+
+                    Intent intent = new Intent(getActivity(), RouteResultActivity.class);
+                    intent.putExtras(mBundleHttp);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+
             case DATA:
                 HashMap<String, String> params = new HashMap<>();
                 params.put("userId", "guest");
-                RequestManager.getInstance(context).requestAsyn("http://10.108.120.91:8080/route/station",
+                RequestManager.getInstance(context).requestAsyn("http://10.108.120.154:8080/route/station",
                         RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
                             @Override
                             public void onReqSuccess(String result) {
@@ -822,7 +1122,25 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
 
                             @Override
                             public void onReqFailed(String errorMsg) {
-                                Toast.makeText(getContext(), "站点List请求失败", Toast.LENGTH_SHORT).show();
+                                dbData = new ArrayList<>();
+                                dbData0 = new ArrayList<>();
+                                for (int i = 0; i < stationDe.length; i++) {
+                                    dbData.add(new RouteSearchBean(R.drawable.title_icon, stationDe[i],
+                                            "周围简介\n热门吃、喝、玩、乐", ""));
+                                    dbData0.add(new RouteSearchBean(R.drawable.title_icon, stationDe[i],
+                                            "周围简介\n热门吃、喝、玩、乐", ""));
+                                }
+                                Log.d(TAG, "parseJSONWithJSONObject: " + dbData.size());
+
+                                hintData = new ArrayList<>();
+                                hintData0 = new ArrayList<>();
+                                hintData.add("广州塔");
+                                hintData.add("体育西路");
+                                hintData.add("广州火车站");
+                                hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
+                                hintAdapter0 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData0);
+                                initViews();
+                                Toast.makeText(getContext(), "站点List请求失败,使用默认列表页。", Toast.LENGTH_SHORT).show();
                             }
                         });
                 break;

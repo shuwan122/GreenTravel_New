@@ -119,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private MyLocationData locData;
     private float direction;
 
-//    private static String PATH = "style_json.json";
-    private static String PATH = "only_subway.json";
+    private static String PATH = "style_json.json";
+//    private static String PATH = "only_subway.json";
 
     private static final String TAG = "MainActivity";
 
