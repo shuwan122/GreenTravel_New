@@ -201,6 +201,11 @@ Android App GreenTravel
 		<th>171031</th>
 		<th colspan="3">第六次程序合并</th>
 	</tr>
+	<tr>
+		<th>171102</th>
+		<th>路线——多人出行联调完成</th>
+		<th>个人中心——收藏站点和商家（部分完成）</th>
+		<th个人中心——修改建议数据结构，添加修改头像接口</th>
 </table>
 
 ## 遇到bug或难点
@@ -401,6 +406,12 @@ Android App GreenTravel
     <tr>
 		<th>171031</th>
 		<th colspan="3">暂时没有发现bug</th>
+	</tr>
+	<tr>
+		<th>171102</th>
+		<th>路线——多人出行模式选择框</th>
+		<th>无</th>
+		<th>上传图片接口参数不熟，图片文件找不到</th>
 	</tr>
 </table>
 
@@ -603,4 +614,10 @@ Android App GreenTravel
 		<th>171031</th>
 		<th colspan="3">无</th>
 	</tr>
+	<tr>
+	 	<th>171102</th>
+	 	<th>http://www.cnblogs.com/xiaoluo501395377/p/3419398.html</th>
+	 	<th>无</th>
+	 	<th>上传文件http://blog.csdn.net/lmj623565791/article/details/47911083<br>https://stackoverflow.com/questions/23512547/how-to-use-okhttp-to-upload-a-file<br>文件访问权限https://stackoverflow.com/questions/8854359/exception-open-failed-eacces-permission-denied-on-android</th>
+	 </tr>
 </table>
