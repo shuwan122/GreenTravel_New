@@ -272,7 +272,8 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
     public enum Origin {
         SINGLE,
         MULTI,
-        DATA
+        DATA,
+        ADVICE
     }
 
     final private String[] stationDe = {"广州塔", "广州火车站"};
@@ -970,7 +971,7 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                         }
                     }
 
-                    if(!routeAfMeet.isNull(0)){
+                    if (!routeAfMeet.isNull(0)) {
                         for (int i = 0; i < routeAfMeet.getJSONObject(0).getJSONArray("route").length(); i++) {
                             if (i % 2 == 0) {
                                 stationAfMeetList.add(routeAfMeet.getJSONObject(0).getJSONArray("route").getString(i));
@@ -1402,11 +1403,11 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
             if (endSearchView0.isFocus()) {
                 if (lvResults0.getAdapter() == null) {
                     //获取搜索数据 设置适配器
-                    resultAdapter0.getItem(0).setComments("起点");
+                    resultAdapter0.getItem(0).setComments("终点");
                     lvResults0.setAdapter(resultAdapter0);
                 } else {
                     //更新搜索数据
-                    resultAdapter0.getItem(0).setComments("起点");
+                    resultAdapter0.getItem(0).setComments("终点");
                     resultAdapter0.notifyDataSetChanged();
                 }
             }

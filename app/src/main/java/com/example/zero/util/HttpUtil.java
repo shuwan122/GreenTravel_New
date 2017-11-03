@@ -28,6 +28,22 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
+    public static void sendAdviceOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("User_id", mBundle.getString("userId"))
+                .add("Start", mBundle.getString("beginStation"))
+                .add("End", mBundle.getString("endStation"))
+                .add("timeStart", mBundle.getString("time").substring(0, 5))
+                .add("timeEnd", mBundle.getString("time").substring(8, 13))
+                .build();
+        Request request = new Request.Builder()
+                .url("http://10.108.120.154:8080/route/advice")
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
     public static void sendMultiOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
         int JUD = 0;
         OkHttpClient client = new OkHttpClient();

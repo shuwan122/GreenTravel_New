@@ -19,6 +19,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -158,8 +159,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private ArrayList<String> sellerList = new ArrayList<String>();
     private ArrayList<List<TransitRouteLine>> modelSelect = new ArrayList<List<TransitRouteLine>>();
 
-    private Route.RouteType cModel = Route.RouteType.FAST;
-
     private double[] fastSellerLatList;
     private double[] fastSellerLngList;
     private double[] lessbusySellerLatList;
@@ -174,6 +173,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private LatLng stNode;
     private LatLng edNode;
 
+    private LinearLayout singleBtn = null;
     private Button fastBtn = null;
     private Button lessbusyBtn = null;
     private Button lesschangeBtn = null;
@@ -207,9 +207,31 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private LatLng stNodeM3;
     private LatLng edNodeM;
 
+    //建议
+    private LinearLayout textAdviceLayout = null;
+    private TextView textAdvice = null;
+
+    private ArrayList<String> stationList = new ArrayList<String>();
+    private ArrayList<String> routeList = new ArrayList<String>();
+
+    private double[] sellerLatList;
+    private double[] sellerLngList;
+
+    private int count;
+
+    private Route.RouteType cModel = Route.RouteType.FAST;
+
     int nowSearchType = -1; // 当前节点
 
     boolean hasShownDialogue = false;
+
+    //图标
+    BitmapDescriptor stS = BitmapDescriptorFactory
+            .fromResource(R.drawable.icon_st);
+    BitmapDescriptor enS = BitmapDescriptorFactory
+            .fromResource(R.drawable.icon_en);
+    BitmapDescriptor pop = BitmapDescriptorFactory
+            .fromResource(R.drawable.icon_gcoding);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -297,14 +319,22 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         mSearch = RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
 
+        singleBtn = (LinearLayout) findViewById(R.id.route_result_single_btn);
+
         fastBtn = (Button) findViewById(R.id.fastStation);
         lessbusyBtn = (Button) findViewById(R.id.lessbusyStation);
         lesschangeBtn = (Button) findViewById(R.id.lesschangeStation);
 
+        textAdviceLayout = (LinearLayout) findViewById(R.id.route_advice_text_layout);
+        textAdvice = (TextView) findViewById(R.id.route_advice_text);
+
         if (mBundle.getString("origin").equals("Single")) {
+            singleBtn.setVisibility(View.VISIBLE);
             fastBtn.setVisibility(View.VISIBLE);
             lessbusyBtn.setVisibility(View.VISIBLE);
             lesschangeBtn.setVisibility(View.VISIBLE);
+            textAdviceLayout.setVisibility(View.GONE);
+            textAdvice.setVisibility(View.GONE);
 
             fastStationList = mBundle.getStringArrayList("fastStationList");
             lessbusyStationList = mBundle.getStringArrayList("lessbusyStationList");
@@ -394,8 +424,15 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     nowSearchType = 2;
                 }
             });
-        } else {
+        } else if (mBundle.getString("origin").equals("Multi")) {
+            singleBtn.setVisibility(View.GONE);
+            fastBtn.setVisibility(View.GONE);
+            lessbusyBtn.setVisibility(View.GONE);
+            lesschangeBtn.setVisibility(View.GONE);
+            textAdviceLayout.setVisibility(View.GONE);
+            textAdvice.setVisibility(View.GONE);
             cModel = Route.RouteType.MULTI;
+
             stationList1 = mBundle.getStringArrayList("stationList1");
             stationList2 = mBundle.getStringArrayList("stationList2");
             stationList3 = mBundle.getStringArrayList("stationList3");
@@ -461,6 +498,42 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             mBaidumap.animateMapStatus(mapStatusUpdate);
             nowSearchType = 2;
             JUD = 1;
+        } else if (mBundle.getString("origin").equals("Advice")) {
+            singleBtn.setVisibility(View.GONE);
+            fastBtn.setVisibility(View.GONE);
+            lessbusyBtn.setVisibility(View.GONE);
+            lesschangeBtn.setVisibility(View.GONE);
+            textAdviceLayout.setVisibility(View.VISIBLE);
+            textAdvice.setVisibility(View.VISIBLE);
+            cModel = Route.RouteType.ADVICE;
+
+            JUD = 1;
+            textAdvice.setText("建议您出行的时间：" + mBundle.getString("time"));
+
+            stationList = mBundle.getStringArrayList("stationList");
+
+            sellerLatList = mBundle.getDoubleArray("sellerLatList");
+            sellerLngList = mBundle.getDoubleArray("sellerLngList");
+
+            count = mBundle.getInt("count");
+
+            mBaidumap.clear();
+            TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+            if (stationList.size() > 1) {
+                for (int i = 0; i < stationList.size() - 1; i++) {
+                    mSearch.transitSearch(transitRouteFast
+                            .from(PlanNode.withCityNameAndPlaceName("广州", stationList.get(i)))
+                            .city("广州")
+                            .to(PlanNode.withCityNameAndPlaceName("广州", stationList.get(i + 1))));
+                }
+                addstEdNode();
+
+                MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                mBaidumap.animateMapStatus(mapStatusUpdate);
+            } else {
+                Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
+            }
+            nowSearchType = 2;
         }
     }
 
@@ -762,6 +835,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                         e.printStackTrace();
                                     }
                                 }
+
                                 @Override
                                 public void onReqFailed(String errorMsg) {
                                     Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
@@ -791,13 +865,74 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                         e.printStackTrace();
                                     }
                                 }
+
                                 @Override
                                 public void onReqFailed(String errorMsg) {
                                     Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }
+
+            case ADVICE:
+                params.clear();
+                params.put("address", "广州" + stationList.get(0) + "地铁站");
+                params.put("output", "json");
+                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+                params.put("callback", "0");
+                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                try {
+                                    JSONObject jsonData = new JSONObject(result);
+
+                                    JSONObject res = jsonData.getJSONObject("result");
+                                    JSONObject location = res.getJSONObject("location");
+
+                                    double lat = location.getDouble("lat");
+                                    double lng = location.getDouble("lng");
+                                    stNode = new LatLng(lat, lng);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                params.clear();
+                params.put("address", "广州" + stationList.get(stationList.size() - 1) + "地铁站");
+                params.put("output", "json");
+                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+                params.put("callback", "0");
+                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                try {
+                                    JSONObject jsonData = new JSONObject(result);
+
+                                    JSONObject res = jsonData.getJSONObject("result");
+                                    JSONObject location = res.getJSONObject("location");
+
+                                    double lat = location.getDouble("lat");
+                                    double lng = location.getDouble("lng");
+                                    edNode = new LatLng(lat, lng);
+                                    addMarker();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                 break;
+
             default:
                 break;
         }
@@ -811,10 +946,10 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 options.clear();
                 OverlayOptions option1 = new MarkerOptions()
                         .position(stNode)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st));
+                        .icon(stS);
                 OverlayOptions option2 = new MarkerOptions()
                         .position(edNode)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_en));
+                        .icon(enS);
                 options.add(option1);
                 options.add(option2);
                 mBaidumap.addOverlays(options);
@@ -822,12 +957,22 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 //seller
                 options.clear();
                 for (int i = 0; i < fastCount; i++) {
-                    OverlayOptions option = new MarkerOptions()
+//                    OverlayOptions option = new MarkerOptions()
+//                            .position(new LatLng(fastSellerLatList[i], fastSellerLngList[i]))
+//                            .icon(pop);
+//                    options.add(option);
+
+                    Marker mMarker;
+                    MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(fastSellerLatList[i], fastSellerLngList[i]))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mark_pop));
-                    options.add(option);
+                            .icon(pop)
+                            .zIndex(9)
+                            .draggable(true);
+                    // 掉下动画
+                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                    mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
-                mBaidumap.addOverlays(options);
+//                mBaidumap.addOverlays(options);
                 break;
 
             case LESSBUSY:
@@ -835,10 +980,10 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 options.clear();
                 OverlayOptions option3 = new MarkerOptions()
                         .position(stNode)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st));
+                        .icon(stS);
                 OverlayOptions option4 = new MarkerOptions()
                         .position(edNode)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_en));
+                        .icon(enS);
                 options.add(option3);
                 options.add(option4);
                 mBaidumap.addOverlays(options);
@@ -846,12 +991,22 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 //seller
                 options.clear();
                 for (int i = 0; i < lessbusyCount; i++) {
-                    OverlayOptions option = new MarkerOptions()
+//                    OverlayOptions option = new MarkerOptions()
+//                            .position(new LatLng(lessbusySellerLatList[i], lessbusySellerLngList[i]))
+//                            .icon(pop);
+//                    options.add(option);
+
+                    Marker mMarker;
+                    MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(lessbusySellerLatList[i], lessbusySellerLngList[i]))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mark_pop));
-                    options.add(option);
+                            .icon(pop)
+                            .zIndex(9)
+                            .draggable(true);
+                    // 掉下动画
+                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                    mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
-                mBaidumap.addOverlays(options);
+//                mBaidumap.addOverlays(options);
                 break;
 
             case LESSCHANGE:
@@ -859,10 +1014,10 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 options.clear();
                 OverlayOptions option5 = new MarkerOptions()
                         .position(stNode)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st));
+                        .icon(stS);
                 OverlayOptions option6 = new MarkerOptions()
                         .position(edNode)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_en));
+                        .icon(enS);
                 options.add(option5);
                 options.add(option6);
                 mBaidumap.addOverlays(options);
@@ -870,12 +1025,22 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 //seller
                 options.clear();
                 for (int i = 0; i < lesschangeCount; i++) {
-                    OverlayOptions option = new MarkerOptions()
-                            .position(new LatLng(lesschangeSellerLatList[i], lesschangeSellerLngList[i]))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mark_pop));
-                    options.add(option);
+//                    OverlayOptions option = new MarkerOptions()
+//                            .position(new LatLng(lesschangeSellerLatList[i], lesschangeSellerLngList[i]))
+//                            .icon(pop);
+//                    options.add(option);
+
+                    Marker mMarker;
+                    MarkerOptions ooA = new MarkerOptions()
+                            .position(new LatLng(lesschangeSellerLatList[i], lesschangeSellerLatList[i]))
+                            .icon(pop)
+                            .zIndex(9)
+                            .draggable(true);
+                    // 掉下动画
+                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                    mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
-                mBaidumap.addOverlays(options);
+//                mBaidumap.addOverlays(options);
                 break;
 
             case MULTI:
@@ -884,54 +1049,128 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 if (stationList1.size() > 0) {
                     OverlayOptions option7 = new MarkerOptions()
                             .position(stNodeM1)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st));
+                            .icon(stS);
                     options.add(option7);
                 }
                 if (stationList2.size() > 0) {
                     OverlayOptions option8 = new MarkerOptions()
                             .position(stNodeM2)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st));
+                            .icon(stS);
                     options.add(option8);
                 }
                 if (stationList3.size() > 0) {
                     OverlayOptions option9 = new MarkerOptions()
                             .position(stNodeM3)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_st));
+                            .icon(stS);
                     options.add(option9);
                 }
                 OverlayOptions option10 = new MarkerOptions()
                         .position(edNodeM)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_en));
+                        .icon(enS);
                 options.add(option10);
                 mBaidumap.addOverlays(options);
 
                 //seller
                 options.clear();
                 for (int i = 0; i < firstCount; i++) {
-                    OverlayOptions option = new MarkerOptions()
+//                    OverlayOptions option = new MarkerOptions()
+//                            .position(new LatLng(firstSellerLatList[i], firstSellerLngList[i]))
+//                            .icon(pop);
+//                    options.add(option);
+
+                    Marker mMarker;
+                    MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(firstSellerLatList[i], firstSellerLngList[i]))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mark_pop));
-                    options.add(option);
+                            .icon(pop)
+                            .zIndex(9)
+                            .draggable(true);
+                    // 掉下动画
+                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                    mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
                 for (int i = 0; i < secondCount; i++) {
-                    OverlayOptions option = new MarkerOptions()
+//                    OverlayOptions option = new MarkerOptions()
+//                            .position(new LatLng(secondSellerLatList[i], secondSellerLngList[i]))
+//                            .icon(pop);
+//                    options.add(option);
+
+                    Marker mMarker;
+                    MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(secondSellerLatList[i], secondSellerLngList[i]))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mark_pop));
-                    options.add(option);
+                            .icon(pop)
+                            .zIndex(9)
+                            .draggable(true);
+                    // 掉下动画
+                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                    mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
                 for (int i = 0; i < thirdCount; i++) {
-                    OverlayOptions option = new MarkerOptions()
+//                    OverlayOptions option = new MarkerOptions()
+//                            .position(new LatLng(thirdSellerLatList[i], thirdSellerLngList[i]))
+//                            .icon(pop);
+//                    options.add(option);
+
+                    Marker mMarker;
+                    MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(thirdSellerLatList[i], thirdSellerLngList[i]))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mark_pop));
-                    options.add(option);
+                            .icon(pop)
+                            .zIndex(9)
+                            .draggable(true);
+                    // 掉下动画
+                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                    mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
                 for (int i = 0; i < afMeetCount; i++) {
-                    OverlayOptions option = new MarkerOptions()
+//                    OverlayOptions option = new MarkerOptions()
+//                            .position(new LatLng(afMeetSellerLatList[i], afMeetSellerLngList[i]))
+//                            .icon(pop);
+//                    options.add(option);
+
+                    Marker mMarker;
+                    MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(afMeetSellerLatList[i], afMeetSellerLngList[i]))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mark_pop));
-                    options.add(option);
+                            .icon(pop)
+                            .zIndex(9)
+                            .draggable(true);
+                    // 掉下动画
+                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                    mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
+//                mBaidumap.addOverlays(options);
+                break;
+
+            case ADVICE:
+                //起终点
+                options.clear();
+                OverlayOptions option11 = new MarkerOptions()
+                        .position(stNode)
+                        .icon(stS);
+                OverlayOptions option12 = new MarkerOptions()
+                        .position(edNode)
+                        .icon(enS);
+                options.add(option11);
+                options.add(option12);
                 mBaidumap.addOverlays(options);
+
+                //seller
+                options.clear();
+                for (int i = 0; i < count; i++) {
+//                    OverlayOptions option = new MarkerOptions()
+//                            .position(new LatLng(fastSellerLatList[i], fastSellerLngList[i]))
+//                            .icon(pop);
+//                    options.add(option);
+
+                    Marker mMarker;
+                    MarkerOptions ooA = new MarkerOptions()
+                            .position(new LatLng(sellerLatList[i], sellerLngList[i]))
+                            .icon(pop)
+                            .zIndex(9)
+                            .draggable(true);
+                    // 掉下动画
+                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                    mMarker = (Marker) (mBaidumap.addOverlay(ooA));
+                }
+//                mBaidumap.addOverlays(options);
                 break;
 
             default:
