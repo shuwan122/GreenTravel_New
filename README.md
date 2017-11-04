@@ -205,7 +205,14 @@ Android App GreenTravel
 		<th>171102</th>
 		<th>路线——多人出行联调完成</th>
 		<th>个人中心——收藏站点和商家（部分完成）</th>
-		<th个人中心——修改建议数据结构，添加修改头像接口</th>
+		<th>个人中心——修改建议数据结构，添加修改头像接口</th>
+	</tr>
+	<tr>
+		<th>171103</th>
+		<th>路线——出行建议联调完成</th>
+		<th>个人中心——联调个人中心剩余接口</th>
+		<th>调试修改头像接口 根据接口调整部分页面</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -412,6 +419,12 @@ Android App GreenTravel
 		<th>路线——多人出行模式选择框</th>
 		<th>无</th>
 		<th>上传图片接口参数不熟，图片文件找不到</th>
+	</tr>
+	<tr>
+		<th>171103</th>
+		<th>timePickle的使用</th>
+		<th>个人中心——收藏站点时要给不同的item添加不同的监听事件</th>
+		<th>无</th>
 	</tr>
 </table>
 
@@ -620,4 +633,10 @@ Android App GreenTravel
 	 	<th>无</th>
 	 	<th>上传文件http://blog.csdn.net/lmj623565791/article/details/47911083<br>https://stackoverflow.com/questions/23512547/how-to-use-okhttp-to-upload-a-file<br>文件访问权限https://stackoverflow.com/questions/8854359/exception-open-failed-eacces-permission-denied-on-android</th>
 	 </tr>
+	<tr>
+		<th>171103</th>
+		<th>http://bbs.csdn.net/topics/390932478?page=1</th>
+		<th>无</th>
+		<th>调色网站http://www.peise.net/tools/web/<br>页面层次http://blog.csdn.net/a396901990/article/details/40153035</th>
+	</tr>
 </table>
