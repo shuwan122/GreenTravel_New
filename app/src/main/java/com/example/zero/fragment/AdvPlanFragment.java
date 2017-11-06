@@ -419,6 +419,10 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                                 hintData.add("体育西路");
                                 hintData.add("广州火车站");
                                 hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
+                                //初始化自动补全数据
+                                getAutoCompleteData(null);
+                                //初始化搜索结果数据
+                                getResultData(null);
                                 initViews();
                                 Toast.makeText(getContext(), "站点List请求失败,使用默认列表页。", Toast.LENGTH_SHORT).show();
                             }

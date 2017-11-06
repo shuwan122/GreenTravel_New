@@ -50,7 +50,7 @@ public class AdvSearchActivity extends AppCompatActivity {
     private RecyclerView adv_recv;
     private List<AdvDestinSearchBean> dataList = new ArrayList<>();
     private List<AdvDestinSearchBean> showList = new ArrayList<>();
-    private Map<String,Boolean> toggleState;
+    private Map<String, Boolean> toggleState;
     private ListPopupWindow popupWindow1;
     private ListPopupWindow popupWindow2;
     private ListPopupWindow popupWindow3;
@@ -69,9 +69,9 @@ public class AdvSearchActivity extends AppCompatActivity {
         initData();
         showData();
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
+        if (actionBar != null) {
             actionBar.hide();
-
+        }
     }
 
     private void initView() {
@@ -151,11 +151,11 @@ public class AdvSearchActivity extends AppCompatActivity {
             public void onDismiss() {
                 //TODO 多标签搜索更新
                 String s = "";
-                for(int i = 0;i < 3;i++) {
+                for (int i = 0; i < 3; i++) {
                     LabelsView labelsView = popupWindow3.getListView().getChildAt(i).findViewById(R.id.labelsViewCheck);
                     choice3.get(i).setSelected(labelsView.getSelectLabels());
                 }
-                Toast.makeText(getBaseContext(),"dismiss"+s,Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "dismiss" + s, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -169,16 +169,16 @@ public class AdvSearchActivity extends AppCompatActivity {
         labels.add("学生党");
         AdvDestinSearchBean searchBean1 = new AdvDestinSearchBean();
         AdvDestinSearchBean searchBean2 = new AdvDestinSearchBean();
-        searchBean1.setText(false,"肯德基","肯德基", 900, 50, "快餐  129米",
+        searchBean1.setText(false, "肯德基", "肯德基", 900, 50, "快餐  129米",
                 R.drawable.kfc, (float) 4.3, labels);
-        searchBean2.setText(false,"麦当劳","麦当劳", 900, 50, "相关商家129家",
+        searchBean2.setText(false, "麦当劳", "麦当劳", 900, 50, "相关商家129家",
                 R.drawable.mcdonald, (float) 4.3, labels);
         AdvDestinSearchBean searchBean3 = new AdvDestinSearchBean();
         AdvDestinSearchBean searchBean4 = new AdvDestinSearchBean();
         searchBean3.setText(true,"肯德基","肯德基", 900, 50, "快餐  129米",
                 R.drawable.kfc, (float) 4.3, labels);
         searchBean4.setText(true,"麦当劳","麦当劳", 900, 50, "相关商家129家",
-                R.drawable.mcdonald, (float) 4.3, labels);
+        R.drawable.mcdonald, (float) 4.3, labels);
         dataList.add(searchBean3);
         for (int i = 0; i < 10; i++) {
             dataList.add(searchBean1);
@@ -190,30 +190,30 @@ public class AdvSearchActivity extends AppCompatActivity {
         showList.add(searchBean3);
         showList.add(searchBean4);
         toggleState = new HashMap<String, Boolean>();
-        toggleState.put("肯德基",false);
-        toggleState.put("麦当劳",false);
-        final AdvDestinSearchAdapter adapter1 = new AdvDestinSearchAdapter(this,showList);
+        toggleState.put("肯德基", false);
+        toggleState.put("麦当劳", false);
+        final AdvDestinSearchAdapter adapter1 = new AdvDestinSearchAdapter(this, showList);
         adv_recv.setAdapter(adapter1);
         adapter1.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                if(showList.get(position).isStation()) {
+                if (showList.get(position).isStation()) {
                     String s = showList.get(position).getStationTag();
-                    toggleState.put(s,!toggleState.get(s));
-                    Toast.makeText(getBaseContext(),position+"yes  "+s,Toast.LENGTH_SHORT).show();
+                    toggleState.put(s, !toggleState.get(s));
+                    Toast.makeText(getBaseContext(), position + "yes  " + s, Toast.LENGTH_SHORT).show();
                     showList.clear();
-                    for(AdvDestinSearchBean bean : dataList) {
-                        if(bean.isStation()) {
+                    for (AdvDestinSearchBean bean : dataList) {
+                        if (bean.isStation()) {
                             showList.add(bean);
                             bean.setToggle(toggleState.get(bean.getStationTag()));
-                        }
-                        else if(toggleState.get(bean.getStationTag())) {
+                        } else if (toggleState.get(bean.getStationTag())) {
                             showList.add(bean);
                         }
                     }
                     adapter1.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getBaseContext(), position + "no", Toast.LENGTH_SHORT).show();
                 }
-                else Toast.makeText(getBaseContext(),position+"no",Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -243,12 +243,12 @@ public class AdvSearchActivity extends AppCompatActivity {
         sub3.add("WiFi");
         sub3.add("团购");
         sub3.add("营业中");
-        choice3.add(new AdvDestinMultiBean("价格",true,new ArrayList<Integer>(),sub2));
-        choice3.add(new AdvDestinMultiBean("服务",false,new ArrayList<Integer>(),sub1));
-        choice3.add(new AdvDestinMultiBean("更多",false,new ArrayList<Integer>(),sub3));
+        choice3.add(new AdvDestinMultiBean("价格", true, new ArrayList<Integer>(), sub2));
+        choice3.add(new AdvDestinMultiBean("服务", false, new ArrayList<Integer>(), sub1));
+        choice3.add(new AdvDestinMultiBean("更多", false, new ArrayList<Integer>(), sub3));
         choiceAdapter1 = new ArrayAdapter<>(this, R.layout.adv_pop_item, R.id.textViewPop, choice1);
-        choiceAdapter2 = new ArrayAdapter<>(this, R.layout.adv_pop_item, R.id.textViewPop,choice2);
-        choiceAdapter3 = new AdvDestinMultiAdapter(choice3,this);
+        choiceAdapter2 = new ArrayAdapter<>(this, R.layout.adv_pop_item, R.id.textViewPop, choice2);
+        choiceAdapter3 = new AdvDestinMultiAdapter(choice3, this);
         popupWindow1.setAdapter(choiceAdapter1);
         popupWindow2.setAdapter(choiceAdapter2);
         popupWindow3.setAdapter(choiceAdapter3);

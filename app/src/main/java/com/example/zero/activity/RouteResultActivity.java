@@ -92,8 +92,11 @@ import com.alibaba.fastjson.*;
 import org.json.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -148,6 +151,9 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     boolean isFirstLoc = true; // 是否首次定位
     private MyLocationData locData;
 
+    //周围优惠券查看
+    private Button couponDisplayBtn;
+
     // 路线节点
     private List<String> mPathList = new ArrayList<String>();
 
@@ -158,6 +164,9 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private ArrayList<String> lesschangeStationList = new ArrayList<String>();
     private ArrayList<String> sellerList = new ArrayList<String>();
     private ArrayList<List<TransitRouteLine>> modelSelect = new ArrayList<List<TransitRouteLine>>();
+    private ArrayList<String> fastStationDetailList = new ArrayList<String>();
+    private ArrayList<String> lessbusyStationDetailList = new ArrayList<String>();
+    private ArrayList<String> lesschangeStationDetailList = new ArrayList<String>();
 
     private double[] fastSellerLatList;
     private double[] fastSellerLngList;
@@ -177,6 +186,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private Button fastBtn = null;
     private Button lessbusyBtn = null;
     private Button lesschangeBtn = null;
+
+    private String stationName;
 
     //多人
     private ArrayList<String> stationList1 = new ArrayList<String>();
@@ -207,6 +218,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private LatLng stNodeM3;
     private LatLng edNodeM;
 
+    private String[] multiStationList;
+
     //建议
     private LinearLayout textAdviceLayout = null;
     private TextView textAdvice = null;
@@ -219,7 +232,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
     private int count;
 
-    private Route.RouteType cModel = Route.RouteType.FAST;
+    private Context context;
+
+    private int stedFlag = 0;
+
+    private Route.RouteType cModel = Route.RouteType.MULTI;
 
     int nowSearchType = -1; // 当前节点
 
@@ -234,7 +251,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             .fromResource(R.drawable.icon_gcoding);
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_result);
         Intent intent = getIntent();
@@ -243,6 +260,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         if (actionBar != null) {
             actionBar.hide();
         }
+
+        context = RouteResultActivity.this;
 
         CharSequence titleLable = "路线";
         setTitle(titleLable);
@@ -305,6 +324,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
         // 开启定位图层
         mBaidumap.setMyLocationEnabled(true);
+        //POI说明关闭
+//        mBaidumap.showMapPoi(false);
 //        mBaidumap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
 //        mBaidumap.setTrafficEnabled(true);
 
@@ -318,6 +339,73 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
         // 初始化搜索模块，注册事件监听
         mSearch = RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
+
+        couponDisplayBtn = (Button) findViewById(R.id.route_coupon_display);
+        couponDisplayBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: 2017/11/4 站点周围优惠信息展示
+                final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+                builder.setIcon(R.drawable.android);
+                builder.setTitle("请选择查看站点");
+                String[] scene = (String[]) fastStationDetailList.toArray(new String[fastStationDetailList.size()]);
+                switch (cModel) {
+                    case FAST:
+                        scene = (String[]) fastStationDetailList.toArray(new String[fastStationDetailList.size()]);
+                        break;
+                    case LESSBUSY:
+                        scene = (String[]) lessbusyStationDetailList.toArray(new String[lessbusyStationDetailList.size()]);
+                        break;
+                    case LESSCHANGE:
+                        scene = (String[]) lesschangeStationDetailList.toArray(new String[lesschangeStationDetailList.size()]);
+                        break;
+                    case MULTI:
+                        Set<String> set = new HashSet<>();
+                        for (int i = 0; i < multiStationList.length; i++) {
+                            set.add(multiStationList[i]);
+                        }
+                        String[] arrayResult = (String[]) set.toArray(new String[set.size()]);
+                        scene = (String[]) arrayResult;
+                        break;
+                    case ADVICE:
+                        scene = (String[]) stationList.toArray(new String[stationList.size()]);
+                        break;
+                    default:
+                        break;
+                }
+
+                final String[] finalScene = scene;
+
+                /**
+                 * 设置一个单项选择下拉框
+                 * 第一个参数指定我们要显示的一组下拉单选框的数据集合
+                 * 第二个参数代表索引，指定默认哪一个单选框被勾选上
+                 * 第三个参数给每一个单选项绑定一个监听器
+                 */
+                builder.setSingleChoiceItems(finalScene, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        stationName = finalScene[which];
+                        Toast.makeText(context, "选择了" + stationName + "站", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(RouteResultActivity.this, StationDisplayActivity.class);
+                        intent.putExtra("stationName", stationName);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                builder.show();
+            }
+        });
 
         singleBtn = (LinearLayout) findViewById(R.id.route_result_single_btn);
 
@@ -340,6 +428,10 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             lessbusyStationList = mBundle.getStringArrayList("lessbusyStationList");
             lesschangeStationList = mBundle.getStringArrayList("lesschangeStationList");
 
+            fastStationDetailList = mBundle.getStringArrayList("fastStationDetailList");
+            lessbusyStationDetailList = mBundle.getStringArrayList("lessbusyStationDetailList");
+            lesschangeStationDetailList = mBundle.getStringArrayList("lesschangeStationDetailList");
+
             fastSellerLatList = mBundle.getDoubleArray("fastSellerLatList");
             fastSellerLngList = mBundle.getDoubleArray("fastSellerLngList");
             lessbusySellerLatList = mBundle.getDoubleArray("lessbusySellerLatList");
@@ -361,6 +453,13 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
                     if (fastStationList.size() > 1) {
                         for (int i = 0; i < fastStationList.size() - 1; i++) {
+                            if (i == 0) {
+                                stedFlag = 1;
+                            } else if (i == fastStationList.size() - 2) {
+                                stedFlag = 2;
+                            } else {
+                                stedFlag = 0;
+                            }
                             mSearch.transitSearch(transitRouteFast
                                     .from(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i)))
                                     .city("广州")
@@ -368,7 +467,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         }
                         addstEdNode();
 
-                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(11);
                         mBaidumap.animateMapStatus(mapStatusUpdate);
                     } else {
                         Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
@@ -382,17 +481,24 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     cModel = Route.RouteType.LESSBUSY;
                     mBaidumap.clear();
 
-                    TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+                    TransitRoutePlanOption transitRouteLessbusy = new TransitRoutePlanOption();
                     if (lessbusyStationList.size() > 1) {
                         for (int i = 0; i < lessbusyStationList.size() - 1; i++) {
-                            mSearch.transitSearch(transitRouteFast
+                            if (i == 0) {
+                                stedFlag = 1;
+                            } else if (i == lessbusyStationList.size() - 2) {
+                                stedFlag = 2;
+                            } else {
+                                stedFlag = 0;
+                            }
+                            mSearch.transitSearch(transitRouteLessbusy
                                     .from(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i)))
                                     .city("广州")
                                     .to(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i + 1))));
                         }
                         addstEdNode();
 
-                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(11);
                         mBaidumap.animateMapStatus(mapStatusUpdate);
                     } else {
                         Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
@@ -406,17 +512,24 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     cModel = Route.RouteType.LESSCHANGE;
                     mBaidumap.clear();
 
-                    TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+                    TransitRoutePlanOption transitRouteLesschange = new TransitRoutePlanOption();
                     if (lesschangeStationList.size() > 1) {
                         for (int i = 0; i < lesschangeStationList.size() - 1; i++) {
-                            mSearch.transitSearch(transitRouteFast
+                            if (i == 0) {
+                                stedFlag = 1;
+                            } else if (i == lesschangeStationList.size() - 2) {
+                                stedFlag = 2;
+                            } else {
+                                stedFlag = 0;
+                            }
+                            mSearch.transitSearch(transitRouteLesschange
                                     .from(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i)))
                                     .city("广州")
                                     .to(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i + 1))));
                         }
                         addstEdNode();
 
-                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
+                        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(11);
                         mBaidumap.animateMapStatus(mapStatusUpdate);
                     } else {
                         Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
@@ -442,6 +555,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             stationAfMeetList = mBundle.getStringArrayList("stationAfMeetList");
             routeAfMeetList = mBundle.getStringArrayList("routeAfMeetList");
 
+            multiStationList = concatAll(stationList1.toArray(new String[stationList1.size()]),
+                    stationList2.toArray(new String[stationList2.size()]),
+                    stationList3.toArray(new String[stationList3.size()]),
+                    stationAfMeetList.toArray(new String[stationAfMeetList.size()]));
+
             firstSellerLatList = mBundle.getDoubleArray("firstSellerLatList");
             firstSellerLngList = mBundle.getDoubleArray("firstSellerLngList");
             secondSellerLatList = mBundle.getDoubleArray("secondSellerLatList");
@@ -451,7 +569,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             afMeetSellerLatList = mBundle.getDoubleArray("afMeetSellerLatList");
             afMeetSellerLngList = mBundle.getDoubleArray("afMeetSellerLngList");
 
-
             firstCount = mBundle.getInt("firstCount");
             secondCount = mBundle.getInt("secondCount");
             thirdCount = mBundle.getInt("thirdCount");
@@ -460,6 +577,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
             if (stationList1.size() > 1) {
                 for (int i = 0; i < stationList1.size() - 1; i++) {
+                    if (i == 0) {
+                        stedFlag = 1;
+                    } else {
+                        stedFlag = 0;
+                    }
                     mSearch.transitSearch(transitRouteFast
                             .from(PlanNode.withCityNameAndPlaceName("广州", stationList1.get(i)))
                             .city("广州")
@@ -468,6 +590,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             }
             if (stationList2.size() > 1) {
                 for (int i = 0; i < stationList2.size() - 1; i++) {
+                    if (i == 0) {
+                        stedFlag = 1;
+                    } else {
+                        stedFlag = 0;
+                    }
                     mSearch.transitSearch(transitRouteFast
                             .from(PlanNode.withCityNameAndPlaceName("广州", stationList2.get(i)))
                             .city("广州")
@@ -476,6 +603,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             }
             if (stationList3.size() > 1) {
                 for (int i = 0; i < stationList3.size() - 1; i++) {
+                    if (i == 0) {
+                        stedFlag = 1;
+                    } else {
+                        stedFlag = 0;
+                    }
                     mSearch.transitSearch(transitRouteFast
                             .from(PlanNode.withCityNameAndPlaceName("广州", stationList3.get(i)))
                             .city("广州")
@@ -486,6 +618,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             }
             if (stationAfMeetList.size() > 1) {
                 for (int i = 0; i < stationAfMeetList.size() - 1; i++) {
+                    if (i == stationAfMeetList.size() - 2) {
+                        stedFlag = 2;
+                    } else {
+                        stedFlag = 0;
+                    }
                     mSearch.transitSearch(transitRouteFast
                             .from(PlanNode.withCityNameAndPlaceName("广州", stationAfMeetList.get(i)))
                             .city("广州")
@@ -511,7 +648,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             textAdvice.setText("建议您出行的时间：" + mBundle.getString("time"));
 
             stationList = mBundle.getStringArrayList("stationList");
-
             sellerLatList = mBundle.getDoubleArray("sellerLatList");
             sellerLngList = mBundle.getDoubleArray("sellerLngList");
 
@@ -521,6 +657,13 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
             if (stationList.size() > 1) {
                 for (int i = 0; i < stationList.size() - 1; i++) {
+                    if (i == 0) {
+                        stedFlag = 1;
+                    } else if (i == stationList.size() - 2) {
+                        stedFlag = 2;
+                    } else {
+                        stedFlag = 0;
+                    }
                     mSearch.transitSearch(transitRouteFast
                             .from(PlanNode.withCityNameAndPlaceName("广州", stationList.get(i)))
                             .city("广州")
@@ -535,6 +678,20 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             }
             nowSearchType = 2;
         }
+    }
+
+    public static <T> T[] concatAll(T[] first, T[]... rest) {
+        int totalLength = first.length;
+        for (T[] array : rest) {
+            totalLength += array.length;
+        }
+        T[] result = Arrays.copyOf(first, totalLength);
+        int offset = first.length;
+        for (T[] array : rest) {
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+        return result;
     }
 
     private void addstEdNode() {
@@ -649,12 +806,14 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                     edNode = new LatLng(lat, lng);
                                     addMarker();
                                 } catch (Exception e) {
+                                    addMarker();
                                     e.printStackTrace();
                                 }
                             }
 
                             @Override
                             public void onReqFailed(String errorMsg) {
+                                addMarker();
                                 Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -680,12 +839,14 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                     double lng = location.getDouble("lng");
                                     stNode = new LatLng(lat, lng);
                                 } catch (Exception e) {
+                                    addMarker();
                                     e.printStackTrace();
                                 }
                             }
 
                             @Override
                             public void onReqFailed(String errorMsg) {
+                                addMarker();
                                 Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -709,12 +870,14 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                     edNode = new LatLng(lat, lng);
                                     addMarker();
                                 } catch (Exception e) {
+                                    addMarker();
                                     e.printStackTrace();
                                 }
                             }
 
                             @Override
                             public void onReqFailed(String errorMsg) {
+                                addMarker();
                                 Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -952,16 +1115,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         .icon(enS);
                 options.add(option1);
                 options.add(option2);
-                mBaidumap.addOverlays(options);
+//                mBaidumap.addOverlays(options);
 
                 //seller
                 options.clear();
                 for (int i = 0; i < fastCount; i++) {
-//                    OverlayOptions option = new MarkerOptions()
-//                            .position(new LatLng(fastSellerLatList[i], fastSellerLngList[i]))
-//                            .icon(pop);
-//                    options.add(option);
-
                     Marker mMarker;
                     MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(fastSellerLatList[i], fastSellerLngList[i]))
@@ -972,7 +1130,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
-//                mBaidumap.addOverlays(options);
                 break;
 
             case LESSBUSY:
@@ -986,16 +1143,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         .icon(enS);
                 options.add(option3);
                 options.add(option4);
-                mBaidumap.addOverlays(options);
+//                mBaidumap.addOverlays(options);
 
                 //seller
                 options.clear();
                 for (int i = 0; i < lessbusyCount; i++) {
-//                    OverlayOptions option = new MarkerOptions()
-//                            .position(new LatLng(lessbusySellerLatList[i], lessbusySellerLngList[i]))
-//                            .icon(pop);
-//                    options.add(option);
-
                     Marker mMarker;
                     MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(lessbusySellerLatList[i], lessbusySellerLngList[i]))
@@ -1006,7 +1158,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
-//                mBaidumap.addOverlays(options);
                 break;
 
             case LESSCHANGE:
@@ -1020,19 +1171,14 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         .icon(enS);
                 options.add(option5);
                 options.add(option6);
-                mBaidumap.addOverlays(options);
+//                mBaidumap.addOverlays(options);
 
                 //seller
                 options.clear();
                 for (int i = 0; i < lesschangeCount; i++) {
-//                    OverlayOptions option = new MarkerOptions()
-//                            .position(new LatLng(lesschangeSellerLatList[i], lesschangeSellerLngList[i]))
-//                            .icon(pop);
-//                    options.add(option);
-
                     Marker mMarker;
                     MarkerOptions ooA = new MarkerOptions()
-                            .position(new LatLng(lesschangeSellerLatList[i], lesschangeSellerLatList[i]))
+                            .position(new LatLng(lesschangeSellerLatList[i], lesschangeSellerLngList[i]))
                             .icon(pop)
                             .zIndex(9)
                             .draggable(true);
@@ -1040,7 +1186,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
-//                mBaidumap.addOverlays(options);
                 break;
 
             case MULTI:
@@ -1068,16 +1213,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         .position(edNodeM)
                         .icon(enS);
                 options.add(option10);
-                mBaidumap.addOverlays(options);
+//                mBaidumap.addOverlays(options);
 
                 //seller
                 options.clear();
                 for (int i = 0; i < firstCount; i++) {
-//                    OverlayOptions option = new MarkerOptions()
-//                            .position(new LatLng(firstSellerLatList[i], firstSellerLngList[i]))
-//                            .icon(pop);
-//                    options.add(option);
-
                     Marker mMarker;
                     MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(firstSellerLatList[i], firstSellerLngList[i]))
@@ -1089,11 +1229,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
                 for (int i = 0; i < secondCount; i++) {
-//                    OverlayOptions option = new MarkerOptions()
-//                            .position(new LatLng(secondSellerLatList[i], secondSellerLngList[i]))
-//                            .icon(pop);
-//                    options.add(option);
-
                     Marker mMarker;
                     MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(secondSellerLatList[i], secondSellerLngList[i]))
@@ -1105,11 +1240,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
                 for (int i = 0; i < thirdCount; i++) {
-//                    OverlayOptions option = new MarkerOptions()
-//                            .position(new LatLng(thirdSellerLatList[i], thirdSellerLngList[i]))
-//                            .icon(pop);
-//                    options.add(option);
-
                     Marker mMarker;
                     MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(thirdSellerLatList[i], thirdSellerLngList[i]))
@@ -1121,11 +1251,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
                 for (int i = 0; i < afMeetCount; i++) {
-//                    OverlayOptions option = new MarkerOptions()
-//                            .position(new LatLng(afMeetSellerLatList[i], afMeetSellerLngList[i]))
-//                            .icon(pop);
-//                    options.add(option);
-
                     Marker mMarker;
                     MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(afMeetSellerLatList[i], afMeetSellerLngList[i]))
@@ -1136,7 +1261,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
-//                mBaidumap.addOverlays(options);
                 break;
 
             case ADVICE:
@@ -1150,16 +1274,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         .icon(enS);
                 options.add(option11);
                 options.add(option12);
-                mBaidumap.addOverlays(options);
+//                mBaidumap.addOverlays(options);
 
                 //seller
                 options.clear();
                 for (int i = 0; i < count; i++) {
-//                    OverlayOptions option = new MarkerOptions()
-//                            .position(new LatLng(fastSellerLatList[i], fastSellerLngList[i]))
-//                            .icon(pop);
-//                    options.add(option);
-
                     Marker mMarker;
                     MarkerOptions ooA = new MarkerOptions()
                             .position(new LatLng(sellerLatList[i], sellerLngList[i]))
@@ -1170,10 +1289,10 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     mMarker = (Marker) (mBaidumap.addOverlay(ooA));
                 }
-//                mBaidumap.addOverlays(options);
                 break;
 
             default:
+                Toast.makeText(context, "无掉落动画", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -1544,12 +1663,13 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                     overlay.zoomToSpan();
                 } else {
                     Log.d("route result", "结果数<0");
-                    return;
                 }
             } else {
                 route = result.getRouteLines().get(0);
                 TransitRouteOverlay overlay = new MyTransitRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
+                overlay.setStedFlag(stedFlag);
+                stedFlag = 0;
                 routeOverlay = overlay;
                 overlay.setData(result.getRouteLines().get(0));
                 overlay.addToMap();

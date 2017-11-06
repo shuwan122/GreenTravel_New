@@ -641,7 +641,6 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         searchView2.setSearchPopViewListener(this);
         //设置adapter
         if (hintAdapter != null) {
-            Log.d(TAG, "initViews: start123 " + hintAdapter.getCount());
             searchView.setTipsHintAdapter(hintAdapter);
             searchView2.setTipsHintAdapter(hintAdapter);
         }
@@ -670,7 +669,6 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
         searchViewList0.get(2).setSearchPopViewListener(this);
         //设置adapter
         if (hintAdapter0 != null) {
-            Log.d(TAG, "initViews: start123 " + hintAdapter.getCount());
             endSearchView0.setTipsHintAdapter(hintAdapter0);
             searchViewList0.get(0).setTipsHintAdapter(hintAdapter0);
             searchViewList0.get(1).setTipsHintAdapter(hintAdapter0);
@@ -818,6 +816,10 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                     ArrayList<String> lessbusyRouteList = new ArrayList<String>();
                     ArrayList<String> lesschangeRouteList = new ArrayList<String>();
 
+                    ArrayList<String> fastStationDetailList = new ArrayList<String>();
+                    ArrayList<String> lessbusyStationDetailList = new ArrayList<String>();
+                    ArrayList<String> lesschangeStationDetailList = new ArrayList<String>();
+
                     for (int i = 0; i < routeFast.length(); i++) {
                         if (i % 2 == 0) {
                             fastStationList.add(routeFast.getString(i));
@@ -825,8 +827,14 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                             fastRouteList.add(routeFast.getString(i));
                         }
                     }
+                    for (int i = 0; i < routeFastDetail.length(); i++) {
+                        if (i % 2 == 0) {
+                            fastStationDetailList.add(routeFastDetail.getString(i));
+                        }
+                    }
                     mBundleHttp.putStringArrayList("fastStationList", fastStationList);
                     mBundleHttp.putStringArrayList("fastRouteList", fastRouteList);
+                    mBundleHttp.putStringArrayList("fastStationDetailList", fastStationDetailList);
 
                     for (int i = 0; i < routeLessbusy.length(); i++) {
                         if (i % 2 == 0) {
@@ -835,8 +843,14 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                             lessbusyRouteList.add(routeLessbusy.getString(i));
                         }
                     }
+                    for (int i = 0; i < routeLessbusyDetail.length(); i++) {
+                        if (i % 2 == 0) {
+                            lessbusyStationDetailList.add(routeLessbusyDetail.getString(i));
+                        }
+                    }
                     mBundleHttp.putStringArrayList("lessbusyStationList", lessbusyStationList);
                     mBundleHttp.putStringArrayList("lessbusyRouteList", lessbusyRouteList);
+                    mBundleHttp.putStringArrayList("lessbusyStationDetailList", lessbusyStationDetailList);
 
                     for (int i = 0; i < routeLesschange.length(); i++) {
                         if (i % 2 == 0) {
@@ -845,8 +859,14 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                             lesschangeRouteList.add(routeLesschange.getString(i));
                         }
                     }
+                    for (int i = 0; i < routeLesschangeDetail.length(); i++) {
+                        if (i % 2 == 0) {
+                            lesschangeStationDetailList.add(routeLesschangeDetail.getString(i));
+                        }
+                    }
                     mBundleHttp.putStringArrayList("lesschangeStationList", lesschangeStationList);
                     mBundleHttp.putStringArrayList("lesschangeRouteList", lesschangeRouteList);
+                    mBundleHttp.putStringArrayList("lesschangeStationDetailList", lesschangeStationDetailList);
 
                     int size = 100;
                     double[] fastSellerLatList = new double[size];
@@ -1140,6 +1160,15 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                                 hintData.add("广州火车站");
                                 hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
                                 hintAdapter0 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData0);
+                                //初始化自动补全数据
+                                getAutoCompleteData(null);
+                                //初始化搜索结果数据
+                                getResultData(null);
+                                //初始化自动补全数据
+                                getAutoCompleteData0(null);
+                                //初始化搜索结果数据
+                                getResultData0(null);
+
                                 initViews();
                                 Toast.makeText(getContext(), "站点List请求失败,使用默认列表页。", Toast.LENGTH_SHORT).show();
                             }

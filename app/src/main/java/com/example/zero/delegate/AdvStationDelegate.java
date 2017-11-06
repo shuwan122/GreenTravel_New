@@ -12,27 +12,23 @@ import com.example.zero.util.RecycleViewHolder;
  * Created by kazu_0122 on 2017/10/19.
  */
 
-public class AdvStationDelegate implements ItemViewDelegate<AdvDestinSearchBean>
-{
+public class AdvStationDelegate implements ItemViewDelegate<AdvDestinSearchBean> {
 
     @Override
-    public int getItemViewLayoutId()
-    {
+    public int getItemViewLayoutId() {
         return R.layout.adv_destin_station;
     }
 
     @Override
-    public boolean isForViewType(AdvDestinSearchBean item, int position)
-    {
+    public boolean isForViewType(AdvDestinSearchBean item, int position) {
         return item.isStation();
     }
 
     @Override
-    public void convert(final RecycleViewHolder holder, AdvDestinSearchBean bean, int position)
-    {
-        holder.setText(R.id.adv_destin_station_title,bean.getTitle()+"车站");
-        holder.setText(R.id.adv_destin_station_keyword,bean.getTime());
-        holder.setTextList(R.id.adv_destin_station_labels,bean.getLabels());
+    public void convert(final RecycleViewHolder holder, AdvDestinSearchBean bean, int position) {
+        holder.setText(R.id.adv_destin_station_title, bean.getTitle() + "车站");
+        holder.setText(R.id.adv_destin_station_keyword, bean.getTime());
+        holder.setTextList(R.id.adv_destin_station_labels, bean.getLabels());
         holder.setImageResource(R.id.adv_destin_station_img, bean.getImg());
         final LabelsView lv = holder.getView(R.id.adv_destin_station_labels);
         lv.setSelects(0);
@@ -43,9 +39,8 @@ public class AdvStationDelegate implements ItemViewDelegate<AdvDestinSearchBean>
                 lv.setSelects(0);
             }
         });
-        if(bean.getToggle()) {
-            holder.setImageResource(R.id.adv_destin_station_toggle,R.drawable.slide_up);
-        }
-        else holder.setImageResource(R.id.adv_destin_station_toggle,R.drawable.slide_down);
+        if (bean.getToggle()) {
+            holder.setImageResource(R.id.adv_destin_station_toggle, R.drawable.slide_up);
+        } else holder.setImageResource(R.id.adv_destin_station_toggle, R.drawable.slide_down);
     }
 }

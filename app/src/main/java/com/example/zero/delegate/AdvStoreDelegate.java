@@ -12,30 +12,26 @@ import com.example.zero.util.RecycleViewHolder;
  * Created by kazu_0122 on 2017/10/19.
  */
 
-public class AdvStoreDelegate implements ItemViewDelegate<AdvDestinSearchBean>
-{
+public class AdvStoreDelegate implements ItemViewDelegate<AdvDestinSearchBean> {
 
     @Override
-    public int getItemViewLayoutId()
-    {
+    public int getItemViewLayoutId() {
         return R.layout.adv_destin_store;
     }
 
     @Override
-    public boolean isForViewType(AdvDestinSearchBean item, int position)
-    {
+    public boolean isForViewType(AdvDestinSearchBean item, int position) {
         return item.isStore();
     }
 
     @Override
-    public void convert(RecycleViewHolder holder, AdvDestinSearchBean bean, int position)
-    {
-        holder.setText(R.id.adv_destin_store_title,bean.getTitle()+"商家");
-        holder.setText(R.id.adv_destin_store_comments,bean.getComments()+"条评论");
-        holder.setText(R.id.adv_destin_store_price,"￥"+bean.getPrice());
-        holder.setText(R.id.adv_destin_store_keyword,bean.getTime());
-        holder.setRating(R.id.adv_destin_store_rate,bean.getRate());
-        holder.setTextList(R.id.adv_destin_store_labels,bean.getLabels());
+    public void convert(RecycleViewHolder holder, AdvDestinSearchBean bean, int position) {
+        holder.setText(R.id.adv_destin_store_title, bean.getTitle() + "商家");
+        holder.setText(R.id.adv_destin_store_comments, bean.getComments() + "条评论");
+        holder.setText(R.id.adv_destin_store_price, "￥" + bean.getPrice());
+        holder.setText(R.id.adv_destin_store_keyword, bean.getTime());
+        holder.setRating(R.id.adv_destin_store_rate, bean.getRate());
+        holder.setTextList(R.id.adv_destin_store_labels, bean.getLabels());
         holder.setImageResource(R.id.adv_destin_store_img, bean.getImg());
         final LabelsView lv = holder.getView(R.id.adv_destin_store_labels);
         lv.setSelects(0);

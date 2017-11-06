@@ -15,6 +15,7 @@ public class AdvDestinSearchBean {
     private String time;
     private int comments;
     private int img;
+    private String img_url;
     private int price;
     private float rate;
     private ArrayList<String> labels;
@@ -28,6 +29,20 @@ public class AdvDestinSearchBean {
         this.time = time;
         this.comments = comments;
         this.img = imgId;
+        this.price = price;
+        this.rate = rate;
+        this.labels = labels;
+    }
+
+    public void setText(boolean isStation,String stationTag,String title, int comments, int
+            price, String time, String img_url, float rate, ArrayList<String> labels) {
+        this.isStation = isStation;
+        this.isExtend = false;
+        this.stationTag = stationTag;
+        this.title = title;
+        this.time = time;
+        this.comments = comments;
+        this.img_url = img_url;
         this.price = price;
         this.rate = rate;
         this.labels = labels;

@@ -44,6 +44,21 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
+    public static void sendStationDisplayOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("User_id", mBundle.getString("userId"))
+                .add("Start", mBundle.getString("stationName"))
+                .add("End", "广州火车站")
+//                .add("End", mBundle.getString("stationName"))
+                .build();
+        Request request = new Request.Builder()
+                .url("http://10.108.120.154:8080/route/single")
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
     public static void sendMultiOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
         int JUD = 0;
         OkHttpClient client = new OkHttpClient();

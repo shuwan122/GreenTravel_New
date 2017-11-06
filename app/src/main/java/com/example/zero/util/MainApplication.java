@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baidu.mapapi.SDKInitializer;
 
 import java.util.HashMap;
 
@@ -22,6 +23,12 @@ public class MainApplication extends Application {
     private String token;
     private String avator;
     private String TAG = "MainApplication";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        SDKInitializer.initialize(this);
+    }
 
     public boolean isOnline() {
         return isOnline;

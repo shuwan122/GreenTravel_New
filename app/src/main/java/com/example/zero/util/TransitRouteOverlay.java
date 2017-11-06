@@ -19,6 +19,7 @@ import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.search.route.TransitRouteLine;
 import com.example.zero.fragment.OverlayManager;
+import com.example.zero.greentravel_new.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,8 @@ import static android.content.ContentValues.TAG;
 public class TransitRouteOverlay extends OverlayManager {
 
     private TransitRouteLine mRouteLine = null;
+
+    private int stedFlag = 0;
 
     /**
      * 构造函数
@@ -52,7 +55,6 @@ public class TransitRouteOverlay extends OverlayManager {
         // step node
         if (mRouteLine.getAllStep() != null
                 && mRouteLine.getAllStep().size() > 0) {
-
             for (TransitRouteLine.TransitStep step : mRouteLine.getAllStep()) {
                 Bundle b = new Bundle();
                 b.putInt("index", mRouteLine.getAllStep().indexOf(step));
@@ -63,8 +65,8 @@ public class TransitRouteOverlay extends OverlayManager {
                             .icon(getIconForStep(step)));
                 }
                 // 最后路段绘制出口点
-                if (mRouteLine.getAllStep().indexOf(step) == (mRouteLine
-                        .getAllStep().size() - 1) && step.getExit() != null) {
+                if (mRouteLine.getAllStep().indexOf(step) == (mRouteLine.getAllStep().size() - 1)
+                        && step.getExit() != null) {
                     overlayOptionses.add((new MarkerOptions())
                             .position(step.getExit().getLocation())
                             .anchor(0.5f, 0.5f).zIndex(10)
@@ -74,20 +76,16 @@ public class TransitRouteOverlay extends OverlayManager {
         }
 
         if (mRouteLine.getStarting() != null) {
-//            overlayOptionses.add((new MarkerOptions())
-//                    .position(mRouteLine.getStarting().getLocation())
-//                    .icon(getStartMarker() != null ? getStartMarker() :
-//                            BitmapDescriptorFactory
-//                                    .fromAssetWithDpi("Icon_start.png")).zIndex(10));
+                overlayOptionses.add((new MarkerOptions())
+                        .position(mRouteLine.getStarting().getLocation())
+                        .icon(getStartMarker() != null ? getStartMarker() :
+                                BitmapDescriptorFactory.fromResource(R.drawable.icon_station)).zIndex(10));
         }
         if (mRouteLine.getTerminal() != null) {
-//            overlayOptionses
-//                    .add((new MarkerOptions())
-//                            .position(mRouteLine.getTerminal().getLocation())
-//                            .icon(getTerminalMarker() != null ? getTerminalMarker() :
-//                                    BitmapDescriptorFactory
-//                                            .fromAssetWithDpi("Icon_end.png"))
-//                            .zIndex(10));
+                overlayOptionses.add((new MarkerOptions())
+                        .position(mRouteLine.getTerminal().getLocation())
+                        .icon(getTerminalMarker() != null ? getTerminalMarker() :
+                                BitmapDescriptorFactory.fromResource(R.drawable.icon_station)).zIndex(10));
         }
         // polyline
         if (mRouteLine.getAllStep() != null
@@ -111,6 +109,10 @@ public class TransitRouteOverlay extends OverlayManager {
             }
         }
         return overlayOptionses;
+    }
+
+    public void setStedFlag(int i){
+        stedFlag = i;
     }
 
     private BitmapDescriptor getIconForStep(TransitRouteLine.TransitStep step) {

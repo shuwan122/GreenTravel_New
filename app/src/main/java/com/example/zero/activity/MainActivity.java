@@ -173,6 +173,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         MapView.setMapCustomEnable(true);
         // 开启定位图层
         mBaiduMap.setMyLocationEnabled(true);
+        //POI说明关闭
+//        mBaiduMap.showMapPoi(false);
 //        mBaiduMap.setTrafficEnabled(true);
 
         // 定位初始化

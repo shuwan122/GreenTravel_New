@@ -61,13 +61,12 @@
         <activity android:name="com.example.zero.activity.SettingActivity" />
         <activity android:name="com.example.zero.activity.MsgActivity" />
         <activity android:name="com.example.zero.activity.UserActivity" />
-
         <activity android:name="com.example.zero.activity.HelpFeedbackActivity" />
         <activity android:name="com.example.zero.activity.FavorActivity" />
         <activity android:name="com.example.zero.activity.FriendActivity" />
         <activity android:name="com.example.zero.activity.AboutActivity" />
         <activity android:name="com.example.zero.activity.LoginActivity" />
-        <activity android:name="com.example.zero.activity.ResetPwActivity"/>
+        <activity android:name="com.example.zero.activity.ResetPwActivity" />
         <activity
             android:name="com.example.zero.activity.RegisterActivity"
             android:windowSoftInputMode="stateVisible" />
@@ -80,12 +79,13 @@
             </intent-filter>
         </service>
 
-        <!--<service-->
-            <!--android:name="com.baidu.location.f"-->
-            <!--android:enabled="true"-->
-            <!--android:process=":remote"></service>-->
+        <!-- <service -->
+        <!-- android:name="com.baidu.location.f" -->
+        <!-- android:enabled="true" -->
+        <!-- android:process=":remote"></service> -->
 
-        <activity android:name="com.example.zero.activity.RouteDrawerActivity"></activity>
+        <activity android:name="com.example.zero.activity.RouteDrawerActivity" />
+        <activity android:name="com.example.zero.activity.StationDisplayActivity"></activity>
     </application>
 
 </manifest>
