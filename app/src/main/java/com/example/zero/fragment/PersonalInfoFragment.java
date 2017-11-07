@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.zero.activity.FavorActivity;
 import com.example.zero.activity.FriendActivity;
 import com.example.zero.activity.HelpFeedbackActivity;
@@ -22,8 +23,10 @@ import com.example.zero.activity.SettingActivity;
 import com.example.zero.activity.UserActivity;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.MainApplication;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 /**
+ * @author
  * Created by jojo on 2017/9/22.
  */
 
@@ -31,9 +34,12 @@ public class PersonalInfoFragment extends Fragment {
     private View person_frag;
     private Context context;
     private TextView setting;
+    private TextView login;
+    private TextView register;
+    private TextView user_name;
+    private RoundedImageView img;
     private LinearLayout msg;
     private LinearLayout user;
-    private TextView login, register, user_name;
     private LinearLayout favor;
     private LinearLayout friend;
     private LinearLayout help_feedback;
@@ -41,12 +47,18 @@ public class PersonalInfoFragment extends Fragment {
     private static final int START_LOGIN_ACTIVITY = 1;
     private static final int START_REGISTER_ACTIVITY = 2;
     private static final int START_USER_ACTIVITY = 3;
+    private static final String TAG = "PersonalInfoFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
         person_frag = inflater.inflate(R.layout.fragment_personal_info, container, false);
+        context = getContext();
         innitView();
+        Glide.with(getContext())
+                .load("http://10.108.120.91:8080/users/XkF171031150359171103175428.jpg?type=1")
+                .placeholder(R.drawable.personal_img)
+                .into(img);
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,13 +73,13 @@ public class PersonalInfoFragment extends Fragment {
                 MainApplication mainApplication = (MainApplication) getActivity().getApplication();
                 if(mainApplication.isOnline()) {
                     Intent intent = new Intent();
-                    intent.setClass(getActivity(), UserActivity.class);
+                    intent.setClass(getContext(), UserActivity.class);
                     startActivity(intent);
-                    Log.d("MainPersonal","online");
+                    Log.d(TAG,"online");
                 }
                 else {
-                    Toast.makeText(getActivity(),"请先登录",Toast.LENGTH_SHORT);
-                    Log.d("MainPersonal","offline");
+                    Toast.makeText(getContext(),"请先登录",Toast.LENGTH_SHORT).show();
+                    Log.d(TAG,"offline");
                 }
             }
         });
@@ -130,11 +142,11 @@ public class PersonalInfoFragment extends Fragment {
         login = (TextView) person_frag.findViewById(R.id.login);
         register = (TextView) person_frag.findViewById(R.id.register);
         user_name = (TextView) person_frag.findViewById(R.id.user_name);
+        img = (RoundedImageView) person_frag.findViewById(R.id.user_img);
         msg = (LinearLayout) person_frag.findViewById(R.id.msg);
         favor = (LinearLayout) person_frag.findViewById(R.id.favor);
         friend = (LinearLayout) person_frag.findViewById(R.id.friends);
         help_feedback = (LinearLayout) person_frag.findViewById(R.id.help_feedback);
-        //OnRefreshOnlineState();
     }
 
     @Override
@@ -144,11 +156,9 @@ public class PersonalInfoFragment extends Fragment {
         if (resultCode == -1) {
             switch (requestCode) {
                 case START_LOGIN_ACTIVITY:
-                    //user_name.setText(data.getStringExtra("username"));
                     OnRefreshOnlineState();
                     break;
                 case START_REGISTER_ACTIVITY:
-                    //user_name.setText(data.getStringExtra("username"));
                     OnRefreshOnlineState();
                     break;
                 case START_USER_ACTIVITY:
@@ -166,6 +176,14 @@ public class PersonalInfoFragment extends Fragment {
             login.setVisibility(View.GONE);
             register.setVisibility(View.GONE);
             user_name.setText(mainApplication.getUsername());
+            String avator = mainApplication.getAvator();
+            if(avator!=null&&!avator.equals("")) {
+                Glide.with(getContext())
+                        .load(avator)
+                        .dontAnimate()
+                        .placeholder(R.drawable.personal_img)
+                        .into(img);
+            }
         }
         else {
             user_name.setVisibility(View.GONE);

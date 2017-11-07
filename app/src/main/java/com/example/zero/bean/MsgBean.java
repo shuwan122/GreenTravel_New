@@ -4,9 +4,9 @@ public class MsgBean {
     private String title;
     private String content;
     private String time;
-    private int img;
+    private String img;
 
-    public void setText(String title, String content, String time, int imgId) {
+    public void setText(String title, String content, String time, String imgId) {
         this.title = title;
         this.content = content;
         this.time = time;
@@ -25,7 +25,7 @@ public class MsgBean {
         return time;
     }
 
-    public int getImg() {
+    public String getImage() {
         return img;
     }
 }

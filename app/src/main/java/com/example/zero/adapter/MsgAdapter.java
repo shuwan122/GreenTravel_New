@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.zero.bean.MsgBean;
 import com.example.zero.greentravel_new.R;
 
@@ -33,7 +34,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.MsgViewHolder> {
         holder.title.setText(dataList.get(position).getTitle());
         holder.content.setText(dataList.get(position).getContent());
         holder.time.setText(dataList.get(position).getTime());
-        holder.img.setImageResource(dataList.get(position).getImg());
+        Glide.with(context).load(dataList.get(position).getImage()).placeholder(R.drawable.loading).into(holder.img);
     }
 
     @Override

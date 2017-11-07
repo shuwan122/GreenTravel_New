@@ -17,10 +17,21 @@
         <item>综合排序</item>
         <item>距离优先</item>
         <item>热门优先</item>
-        <item>冷门优先</item>
         <item>低价优先</item>
-        <item>高价优先</item>
     </string-array>
+    <string-array name="prices">
+        <item>不限人均</item>
+        <item>小于50元</item>
+        <item>小于100元</item>
+        <item>小于150元</item>
+    </string-array>
+    <string-array name="distances">
+        <item>不限距离</item>
+        <item>小于5km</item>
+        <item>小于10km</item>
+        <item>小于15km</item>
+    </string-array>
+
     <string-array name="mores">
         <item>更多</item>
         <item>可团购</item>

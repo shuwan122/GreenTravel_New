@@ -1,5 +1,7 @@
 package com.example.zero.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
@@ -29,6 +31,7 @@ import com.example.zero.adapter.TypeAdapter;
 import com.example.zero.entity.GoodsItem;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.view.DividerDecoration;
+import com.example.zero.view.TitleShopLayout;
 import com.flipboard.bottomsheet.BottomSheetLayout;
 
 import java.text.NumberFormat;
@@ -46,6 +49,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     private View bottomSheet;
     private StickyListHeadersListView listView;
 
+    private TitleShopLayout title;
+    private String shopImg;
+    private String shopName;
+
+    private Context context;
 
     private ArrayList<GoodsItem> dataList, typeList;
     private SparseArray<GoodsItem> selectedList;
@@ -69,6 +77,12 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         typeList = GoodsItem.getTypeList();
         selectedList = new SparseArray<>();
         groupSelect = new SparseIntArray();
+
+        context = getBaseContext();
+        Intent intent = getIntent();
+        shopName = intent.getStringExtra("shopName");
+        shopImg = intent.getStringExtra("shopImg");
+
         initView();
 
         ActionBar actionBar = getSupportActionBar();
@@ -89,6 +103,10 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomSheetLayout);
 
         listView = (StickyListHeadersListView) findViewById(R.id.itemListView);
+
+        title = (TitleShopLayout) findViewById(R.id.shop_title);
+        title.setText(shopName);
+        title.setImg(context, shopImg);
 
         rvType.setLayoutManager(new LinearLayoutManager(this));
         typeAdapter = new TypeAdapter(this, typeList);
@@ -192,7 +210,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 clearCart();
                 break;
             case R.id.tvSubmit:
-                Toast.makeText(ShoppingCartActivity.this, "结算", Toast.LENGTH_SHORT).show();
+                Bundle mBundle = new Bundle();
+                Intent intent = new Intent(context, ShopOrderActivity.class);
+                intent.putExtras(mBundle);
+                startActivity(intent);
+                Toast.makeText(context, "结算", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

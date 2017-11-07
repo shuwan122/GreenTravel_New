@@ -19,6 +19,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 读扩展存储，从扩展卡读数据，用于获得头像 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- 访问网络，网络定位需要上网 -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -87,7 +89,8 @@
 
         <activity android:name="com.example.zero.activity.RouteDrawerActivity" />
         <activity android:name="com.example.zero.activity.StationDisplayActivity" />
-        <activity android:name="com.example.zero.activity.ShopDetailActivity"></activity>
+        <activity android:name="com.example.zero.activity.ShopDetailActivity" />
+        <activity android:name="com.example.zero.activity.ShopOrderActivity"/>
     </application>
 
 </manifest>

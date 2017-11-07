@@ -1,9 +1,11 @@
 package com.example.zero.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -17,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -26,14 +29,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.alibaba.fastjson.JSON;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.CacheDataManager;
+
+import com.alibaba.fastjson.JSONObject;
+import com.example.zero.util.MainApplication;
+import com.example.zero.util.RequestManager;
+
+import java.util.HashMap;
 
 /**
  * Created by jojo on 2017/9/25.
  */
 
 public class SettingActivity extends AppCompatActivity {
+
+    private String TAG = "SettingActivity";
     private LinearLayout location, map, city, about, safety, update;
     private ToggleButton apk, newMsg, pic;
     private Button clean;
@@ -42,6 +54,9 @@ public class SettingActivity extends AppCompatActivity {
     private Context mContext;
     private AlertDialog alertDialog = null;
     private AlertDialog.Builder builder = null;
+    private int serviceVersionCode; //服务器端apk版本号
+    private String description;   //新版本功能描述
+    private String download_url;  //apk下载url
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +64,6 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
         mContext = SettingActivity.this;
         innitView();
-        /**
-         * 监听器
-         */
         checkLocationPermission();
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,43 +94,64 @@ public class SettingActivity extends AppCompatActivity {
                 Toast.makeText(SettingActivity.this, "city", Toast.LENGTH_SHORT).show();
             }
         });
+        MainApplication application = (MainApplication) getApplication();
+        newMsg.setChecked(application.getMsgBtn());
         newMsg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 if (compoundButton.isChecked()) {
                     // 启动Service
-                    Toast.makeText(SettingActivity.this, "open", Toast.LENGTH_SHORT).show();
+                    editor.putBoolean("send_msg", true);
+                    editor.commit();
                     Intent intent = new Intent();
                     intent.setAction("MSG_SERVICE");
-                    intent.setPackage("com.example.zero.greentravel");
+                    intent.setPackage("com.example.zero.greentravel_new");
                     startService(intent);
                 } else {
                     // 关闭Service
+                    editor.putBoolean("send_msg", false);
+                    editor.commit();
                     Intent intent = new Intent();
                     intent.setAction("MSG_SERVICE");
-                    intent.setPackage("com.example.zero.greentravel");
+                    intent.setPackage("com.example.zero.greentravel_new");
                     stopService(intent);
                 }
             }
         });
+        apk.setChecked(application.getApkBtn());
         apk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 if (compoundButton.isChecked()) {
-
+                    editor.putBoolean("apk_download", true);
+                    editor.commit();
+                } else {
+                    editor.putBoolean("apk_download", false);
+                    editor.commit();
                 }
             }
         });
+        pic.setChecked(application.getPicBtn());
         pic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 if (compoundButton.isChecked()) {
+                    editor.putBoolean("pic_download", true);
+                    editor.commit();
                     if (isWifiConnected(SettingActivity.this)) {
                         //由于当前图片均使用本地的，所以该部分代码待写//TODO:下载图片
                     } else {
                         //不下载图片，显示图片占位符
                     }
                 } else {
+                    editor.putBoolean("pic_download", true);
+                    editor.commit();
                     //直接下载图片
                 }
             }
@@ -137,7 +170,6 @@ public class SettingActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         try {
             current_ver.setText("当前版本：" + getVersionName());
         } catch (Exception e) {
@@ -154,7 +186,6 @@ public class SettingActivity extends AppCompatActivity {
                 }
             }
         });
-
         try {
             clean.setText("清除缓存 " + CacheDataManager.getTotalCacheSize(this));
         } catch (Exception e) {
@@ -171,8 +202,8 @@ public class SettingActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 new Thread(new clearCache()).start();
                             }
-                        }).create();             //创建AlertDialog对象
-                alertDialog.show();                    //显示对话框
+                        }).create();
+                alertDialog.show();
             }
         });
     }
@@ -194,6 +225,15 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     /**
+     * 刷新界面
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkLocationPermission();
+    }
+
+    /**
      * 检查位置权限是否打开
      */
     public void checkLocationPermission() {
@@ -207,32 +247,23 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     /**
-     * 刷新界面
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        checkLocationPermission();
-    }
-
-    /**
      * 判断GPS是否开启，GPS或者AGPS开启一个就认为是开启的
      *
      * @param context
      * @return true 表示开启
      */
-//    public static final boolean isLocationOpen(final Context context) {
-//        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-//        // 通过GPS卫星定位，定位级别可以精确到街（通过24颗卫星定位，在室外和空旷的地方定位准确、速度快）
-//        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-//        // 通过WLAN或移动网络(3G/2G)确定的位置（也称作AGPS，辅助GPS定位。主要用于在室内或遮盖物（建筑群或茂密的深林等）密集的地方定位）
-//        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-//        if (gps || network) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
+    public static final boolean isGPSOpen(final Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        // 通过GPS卫星定位，定位级别可以精确到街（通过24颗卫星定位，在室外和空旷的地方定位准确、速度快）
+        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        // 通过WLAN或移动网络(3G/2G)确定的位置（也称作AGPS，辅助GPS定位。主要用于在室内或遮盖物（建筑群或茂密的深林等）密集的地方定位）
+        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (gps || network) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * 获取当前程序的版本号
@@ -256,8 +287,40 @@ public class SettingActivity extends AppCompatActivity {
         return packInfo.versionName;
     }
 
-    //TODO:从服务器端获取版本号，代码待写
-    private int serviceVersionCode = 3;
+    public void getServiceVerCode() {
+        HashMap<String, String> params = new HashMap<>();
+        RequestManager.getInstance(this).requestAsyn("get_latest _version", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
+            @Override
+            public void onReqSuccess(String result) {
+                JSONObject jo = JSON.parseObject(result);
+                serviceVersionCode = jo.getInteger("version");
+                description = jo.getString("desc");
+                download_url = jo.getString("download_url");
+            }
+
+            @Override
+            public void onReqFailed(String errorMsg) {
+
+            }
+        });
+    }
+
+    public void downloadNewVersion() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("type", 1 + "");
+        params.put("file_path", download_url);
+        RequestManager.getInstance(this).requestAsyn("download_file", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+            @Override
+            public void onReqSuccess(String result) {
+//TODO:下载新版本
+            }
+
+            @Override
+            public void onReqFailed(String errorMsg) {
+
+            }
+        });
+    }
 
     /**
      * 对比本程序的版本号和最新程序的版本号
@@ -271,7 +334,7 @@ public class SettingActivity extends AppCompatActivity {
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //loadNewVersionProgress();  //TODO:下载新版本
+                            downloadNewVersion();
                         }
                     }).create();             //创建AlertDialog对象
             alertDialog.show();              //弹出提示版本更新的对话框
@@ -321,12 +384,15 @@ public class SettingActivity extends AppCompatActivity {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case 0:
-                    Toast.makeText(SettingActivity.this, "清理完成", Toast.LENGTH_SHORT).show();
                     try {
                         clean.setText("清除缓存 " + CacheDataManager.getTotalCacheSize(SettingActivity.this));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    Toast.makeText(SettingActivity.this, "清理完成", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    break;
             }
         }
     };

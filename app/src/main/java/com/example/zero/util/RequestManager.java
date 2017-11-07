@@ -7,7 +7,11 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSONException;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +20,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -30,12 +35,13 @@ public class RequestManager {
     private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//这个需要和服务端保持一致
     //private static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");//这个需要和服务端保持一致
     private static final String TAG = RequestManager.class.getSimpleName();
-    private static final String BASE_URL = "http://10.108.120.154:8080";//请求接口根地址
+    private static final String BASE_URL = "http://10.108.120.91:8080";//请求接口根地址10.108.122.50:8080
     private static volatile RequestManager mInstance;//单例引用
     public static final int TYPE_GET = 0;//get请求
     public static final int TYPE_POST_JSON = 1;//post请求参数为json
     public static final int TYPE_POST_FORM = 2;//post请求参数为表单
-    public static final int TYPE_GET_Z = 3;
+    public static final int TYPE_GET_Z = 3;//navi
+    public static final int TYPE_DEL = 4;
     private OkHttpClient mOkHttpClient;//okHttpClient 实例
     private Handler okHttpHandler;//全局处理子线程和M主线程通信
 
@@ -223,6 +229,9 @@ public class RequestManager {
                 break;
             case TYPE_GET_Z:
                 call = requestGetByAsynZ(actionUrl, paramsMap, callBack);
+                break;
+            case TYPE_DEL:
+                call = requestDelByAsyn(actionUrl, paramsMap, callBack);
                 break;
             default:
                 break;
@@ -420,6 +429,200 @@ public class RequestManager {
         return null;
     }
 
+    /**
+     * okHttp delete异步请求
+     *
+     * @param actionUrl 接口地址
+     * @param paramsMap 请求参数
+     * @param callBack  请求返回数据回调
+     * @param <T>       数据泛型
+     * @return
+     */
+    private <T> Call requestDelByAsyn(String actionUrl, HashMap<String, String> paramsMap, final ReqCallBack<T> callBack) {
+        try {
+            StringBuilder tempParams = new StringBuilder();
+            int pos = 0;
+            for (String key : paramsMap.keySet()) {
+                if (pos > 0) {
+                    tempParams.append("&");
+                }
+                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
+                pos++;
+            }
+            String params = tempParams.toString();
+            RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, params);
+            String requestUrl = String.format("%s/%s?%s", BASE_URL, actionUrl, tempParams.toString());
+            final Request request = addHeaders().url(requestUrl).delete().build();
+            final Call call = mOkHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    failedCallBack("访问失败", callBack);
+                    Log.e(TAG, e.toString());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String string = response.body().string();
+                        Log.e(TAG, "response ----->" + string);
+                        successCallBack((T) string, callBack);
+                    } else {
+                        failedCallBack(response.body().string(), callBack);
+                    }
+                }
+            });
+            return call;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+        return null;
+    }
+
+    /**
+     *上传文件
+     * @param actionUrl 接口地址
+     * @param paramsMap 参数
+     * @param callBack 回调
+     * @param <T>
+     */
+    public <T>void upLoadFile(String actionUrl, HashMap<String, Object> paramsMap, final ReqCallBack<T> callBack) {
+        try {
+            //补全请求地址
+            String requestUrl = String.format("%s/%s", BASE_URL, actionUrl);
+            MultipartBody.Builder builder = new MultipartBody.Builder();
+            //设置类型
+            builder.setType(MultipartBody.FORM);
+            //追加参数
+            for (String key : paramsMap.keySet()) {
+                Object object = paramsMap.get(key);
+                if (!(object instanceof File)) {
+                    builder.addFormDataPart(key, object.toString());
+                } else {
+                    File file = (File) object;
+                    builder.addFormDataPart(key, file.getName(), RequestBody.create(null, file));
+                }
+            }
+            //创建RequestBody
+            RequestBody body = builder.build();
+            //创建Request
+            final Request request = new Request.Builder().url(requestUrl).post(body).build();
+            //单独设置参数 比如读取超时时间
+            final Call call = mOkHttpClient.newBuilder().writeTimeout(50, TimeUnit.SECONDS).build().newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, e.toString());
+                    failedCallBack(e.toString(), callBack);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String string = response.body().string();
+                        Log.e(TAG, "response ----->" + string);
+                        successCallBack((T) string, callBack);
+                    } else {
+                        Log.e(TAG,response.body().string());
+                        failedCallBack("上传失败", callBack);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+
+    /**
+     * 下载文件
+     * @param fileUrl 文件url
+     * @param destFileDir 存储目标目录
+     */
+    /**
+     * 下载文件
+     * @param fileUrl 文件url
+     * @param destFileDir 存储目标目录
+     */
+    public <T> void downLoadFile(String fileUrl, final String destFileDir, final ReqProgressCallBack<T> callBack) {
+        //final String fileName = MD5.encode(fileUrl);
+        HashMap<String,String> paramsMap = new HashMap<>();
+        paramsMap.put("type","0");
+        paramsMap.put("download_url","XkF171031150359171106122043.jpg");
+        StringBuilder tempParams = new StringBuilder();
+        int pos = 0;
+        for (String key : paramsMap.keySet()) {
+            if (pos > 0) {
+                tempParams.append("&");
+            }
+            try {
+                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            pos++;
+        }
+        String params = tempParams.toString();
+        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, params);
+        String requestUrl = String.format("%s/%s", BASE_URL,"/users/download_file");
+        final Request request = addHeaders().url(requestUrl).post(body).build();
+
+
+
+       final String fileName = fileUrl;
+       final File file = new File(destFileDir, fileName);
+//        if (file.exists()) {
+//            successCallBack((T) file, callBack);
+//            return;
+//        }
+//        final Request request = new Request.Builder().url(fileUrl).build();
+
+        final Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, e.toString());
+                failedCallBack("下载失败", callBack);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                InputStream is = null;
+                byte[] buf = new byte[2048];
+                int len = 0;
+                FileOutputStream fos = null;
+                try {
+                    long total = response.body().contentLength();
+                    Log.e(TAG, "total------>" + total);
+                    long current = 0;
+                    is = response.body().byteStream();
+                    fos = new FileOutputStream(file);
+                    while ((len = is.read(buf)) != -1) {
+                        current += len;
+                        fos.write(buf, 0, len);
+                        Log.e(TAG, "current------>" + current);
+                        progressCallBack(total, current, callBack);
+                    }
+                    fos.flush();
+                    successCallBack((T) file, callBack);
+                } catch (IOException e) {
+                    Log.e(TAG, e.toString());
+                    failedCallBack("下载失败", callBack);
+                } finally {
+                    try {
+                        if (is != null) {
+                            is.close();
+                        }
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
+                    }
+                }
+            }
+        });
+    }
+
     public interface ReqCallBack<T> {
         /**
          * 响应成功
@@ -459,12 +662,6 @@ public class RequestManager {
             @Override
             public void run() {
                 if (callBack != null) {
-//                    TypeInfo typeInfo = ReqClassUtils.getCallbackGenericType(callBack.getClass());
-//                    try {
-//                        callBack.onReqSuccess((T) ReqJsonUtils.parseHttpResult(typeInfo, result));
-//                    } catch (org.json.JSONException e) {
-//                        e.printStackTrace();
-//                    }
                     callBack.onReqSuccess(result);
                 }
             }
@@ -484,6 +681,24 @@ public class RequestManager {
             public void run() {
                 if (callBack != null) {
                     callBack.onReqFailed(errorMsg);
+                }
+            }
+        });
+    }
+
+    /**
+     * 统一处理进度信息
+     * @param total    总计大小
+     * @param current  当前进度
+     * @param callBack
+     * @param <T>
+     */
+    private <T> void progressCallBack(final long total, final long current, final ReqProgressCallBack<T> callBack) {
+        okHttpHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (callBack != null) {
+                    callBack.onProgress(total, current);
                 }
             }
         });

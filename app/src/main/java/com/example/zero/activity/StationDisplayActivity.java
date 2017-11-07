@@ -269,8 +269,8 @@ public class StationDisplayActivity extends AppCompatActivity {
             double distance = GetDistance(lat, lng, sellerLatList[i], sellerLngList[i]);
             DecimalFormat df = new DecimalFormat(".##");
             AdvDestinSearchBean searchBean = new AdvDestinSearchBean();
-            searchBean.setText(false, tagList[i], shopNameList[i], 999,
-                    50, "距您" + df.format(distance) + "米", posterList[i], (float) starList[i], labels);
+            searchBean.setText(false, tagList[i], shopNameList[i], stationName, "123456789", posterList[i],
+                    999, 50, (float)distance, (float) starList[i], labels);
             showList.add(searchBean);
         }
 
@@ -283,6 +283,7 @@ public class StationDisplayActivity extends AppCompatActivity {
                 Bundle mBundle = new Bundle();
                 Intent intent = new Intent(context, ShoppingCartActivity.class);
                 mBundle.putString("shopName", shopNameList[position]);
+                mBundle.putString("shopImg", posterList[position]);
                 intent.putExtras(mBundle);
                 startActivity(intent);
             }

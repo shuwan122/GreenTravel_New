@@ -1,11 +1,11 @@
 package com.example.zero.activity;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,13 +20,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.MainApplication;
+import com.example.zero.util.ReqProgressCallBack;
 import com.example.zero.util.RequestManager;
 import com.example.zero.view.SimpleTextView;
 
+
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
+
+import static com.baidu.mapapi.BMapManager.getContext;
 
 /**
  * Created by jojo on 2017/9/27.
@@ -79,8 +89,39 @@ public class UserActivity extends Activity implements View.OnClickListener {
         MainApplication application = (MainApplication) getApplication();
         user_name.setText(application.getUsername());
         String s = application.getPhone();
-        s = s.substring(0,3) + "****" + s.substring(9,11);
-        user_phone.setText(s);
+        if(s!=null){
+            s = s.substring(0,3) + "****" + s.substring(9,11);
+            user_phone.setText(s);
+        }
+
+//        String avator = application.getAvator();
+//        if(avator!=null&&!avator.equals("")) {
+//            Glide.with(getContext())
+//                    .load("http://10.108.120.91:8080/users/XkF171031150359171103175428.jpg?type=1")
+//                    .dontAnimate()
+//                    .placeholder(R.drawable.personal_img)
+//                    .into(mImage);
+//        }
+//        final File extDir = getContext().getFilesDir();
+//        RequestManager.getInstance(getBaseContext()).downLoadFile("XkF171031150359171103175428.jpg", extDir.toString(), new ReqProgressCallBack<File>() {
+//
+//            @Override
+//            public void onReqSuccess(File result) {
+//                Bitmap bitmap= BitmapFactory.decodeFile(result.getAbsolutePath());
+//                mImage.setImageBitmap(bitmap);
+//                Log.d(TAG,result.getAbsolutePath());
+//            }
+//
+//            @Override
+//            public void onReqFailed(String errorMsg) {
+//
+//            }
+//
+//            @Override
+//            public void onProgress(long total, long current) {
+//
+//            }
+//        });
     }
 
     /**
@@ -188,14 +229,11 @@ public class UserActivity extends Activity implements View.OnClickListener {
     protected void showChangePhoneDialog() {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.dialog_change_phone, null);
-        final SimpleTextView prePhone = view.findViewById(R.id.dialog_phone_pre);
         final SimpleTextView newPhone = view.findViewById(R.id.dialog_phone_new);
-        final SimpleTextView confirm = view.findViewById(R.id.dialog_phone_new_confirm);
-        final Button sendConfirm = view.findViewById(R.id.dialog_phone_new_button);
-        prePhone.setHintText("原手机号");
+        final SimpleTextView confirm = view.findViewById(R.id.dialog_phone_pre_confirm);
+        final Button sendConfirm = view.findViewById(R.id.dialog_phone_pre_button);
         newPhone.setHintText("新手机号");
         confirm.setHintText("新手机的验证码");
-        prePhone.setLeftImage(R.drawable.user_fill);
         newPhone.setLeftImage(R.drawable.user_fill);
         confirm.setLeftImage(R.drawable.identify);
         sendConfirm.setOnClickListener(new View.OnClickListener() {
@@ -206,6 +244,8 @@ public class UserActivity extends Activity implements View.OnClickListener {
                     HashMap<String, String> params = new HashMap<>();
                     params.put("type", "2");
                     params.put("phone", newPhone.getText());
+                    MainApplication application = (MainApplication) getApplication();
+                    params.put("user_id",application.getUser_id());
                     RequestManager.getInstance(getBaseContext()).requestAsyn("/users/send_verification_code", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
                         @Override
                         public void onReqSuccess(String result) {
@@ -239,7 +279,6 @@ public class UserActivity extends Activity implements View.OnClickListener {
                     HashMap<String, String> params = new HashMap<>();
                     SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
                     params.put("user_id", sharedPreferences.getString("user_id", ""));
-                    params.put("old_phone", prePhone.getText().trim());
                     params.put("new_phone", newPhone.getText().trim());
                     params.put("verification_code", confirm.getText().trim());
                     RequestManager.getInstance(getBaseContext()).requestAsyn("/users/update_phone", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
@@ -311,7 +350,6 @@ public class UserActivity extends Activity implements View.OnClickListener {
                     cutImage(tempUri); // 对图片进行裁剪处理
                     break;
                 case CHOOSE_PICTURE:
-                    Toast.makeText(UserActivity.this, "pic", Toast.LENGTH_SHORT).show();
                     cutImage(data.getData()); // 对图片进行裁剪处理
                     break;
                 case CROP_SMALL_PICTURE:
@@ -356,6 +394,61 @@ public class UserActivity extends Activity implements View.OnClickListener {
             //这里图片是方形的，可以用一个工具类处理成圆形
             mImage.setImageBitmap(mBitmap);//显示图片
             //在这个地方可以写上上传该图片到服务器的代码
+            File extDir = getContext().getFilesDir();
+            String filename = "temp.jpg";
+            File file = new File(extDir, filename);
+            try {
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                mBitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+                bos.flush();
+                bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG,e.getLocalizedMessage());
+            }
+
+            final HashMap<String,Object> params = new HashMap<>();
+            final MainApplication application = (MainApplication) getApplication();
+            params.put("user_id",application.getUser_id());
+            params.put("file",file);
+
+            RequestManager.getInstance(getBaseContext()).upLoadFile("/users/upload_photo",params,new RequestManager.ReqCallBack<String>() {
+
+                @Override
+                public void onReqSuccess(String result) {
+
+                    Log.d(TAG,result.toString());
+                    JSONObject object = JSON.parseObject(result);
+                    String url = object.getString("avator_url");
+
+                    final HashMap<String,String> params2 = new HashMap<>();
+                    params2.put("user_id",application.getUser_id());
+                    params2.put("photo_url",url);
+                    application.setAvator(url);
+                    RequestManager.getInstance(getBaseContext()).requestAsyn("/users/update_user_info",RequestManager.TYPE_POST_JSON,params2,new RequestManager.ReqCallBack<String>() {
+
+                        @Override
+                        public void onReqSuccess(String result) {
+                            Toast.makeText(getBaseContext(),"修改成功",Toast.LENGTH_SHORT).show();
+                            Log.d(TAG,result);
+                        }
+
+                        @Override
+                        public void onReqFailed(String errorMsg) {
+                            Toast.makeText(getBaseContext(),"修改失败",Toast.LENGTH_SHORT).show();
+                            Log.d(TAG,errorMsg);
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onReqFailed(String errorMsg) {
+                    Toast.makeText(getBaseContext(),"修改失败",Toast.LENGTH_SHORT).show();
+                    Log.d(TAG,errorMsg);
+                }
+            });
+
         }
     }
 
@@ -381,6 +474,7 @@ public class UserActivity extends Activity implements View.OnClickListener {
             case R.id.sign_out:
                 MainApplication application = (MainApplication) getApplication();
                 application.logout();
+                finish();
                 break;
             default:break;
         }
