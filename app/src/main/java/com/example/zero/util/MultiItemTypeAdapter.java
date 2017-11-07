@@ -26,7 +26,9 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<RecycleViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (!useItemViewDelegateManager()) return super.getItemViewType(position);
+        if (!useItemViewDelegateManager()) {
+            return super.getItemViewType(position);
+        }
         return mItemViewDelegateManager.getItemViewType(mDatas.get(position), position);
     }
 
@@ -36,13 +38,13 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<RecycleViewHol
         ItemViewDelegate itemViewDelegate = mItemViewDelegateManager.getItemViewDelegate(viewType);
         int layoutId = itemViewDelegate.getItemViewLayoutId();
         RecycleViewHolder holder = RecycleViewHolder.createViewHolder(mContext, parent, layoutId);
-        onViewHolderCreated(holder,holder.getConvertView());
+        onViewHolderCreated(holder, holder.getConvertView());
         setListener(parent, holder, viewType);
         return holder;
     }
 
 
-    public void onViewHolderCreated(RecycleViewHolder holder,View itemView){
+    public void onViewHolderCreated(RecycleViewHolder holder, View itemView) {
 
     }
 
@@ -56,13 +58,15 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<RecycleViewHol
 
 
     protected void setListener(final ViewGroup parent, final RecycleViewHolder viewHolder, int viewType) {
-        if (!isEnabled(viewType)) return;
+        if (!isEnabled(viewType)) {
+            return;
+        }
         viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mOnItemClickListener != null) {
                     int position = viewHolder.getAdapterPosition();
-                    mOnItemClickListener.onItemClick(v, viewHolder , position);
+                    mOnItemClickListener.onItemClick(v, viewHolder, position);
                 }
             }
         });

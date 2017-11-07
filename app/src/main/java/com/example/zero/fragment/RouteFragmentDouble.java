@@ -484,6 +484,7 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                                     }
                                     Bundle mBundle = new Bundle();
                                     mBundle.putString("userId", "guest");
+                                    mBundle.putString("userId", "guest");
                                     mBundle.putString("endStation", endStation);
                                     mBundle.putStringArrayList("beginStationList", beginStationList);
                                     mBundle.putInt("beginNum", beginNum);

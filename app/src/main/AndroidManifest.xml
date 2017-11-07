@@ -72,6 +72,7 @@
             android:windowSoftInputMode="stateVisible" />
         <activity android:name="com.example.zero.activity.AdvSearchActivity" />
         <activity android:name="com.example.zero.activity.AdvMapResultActivity" />
+        <activity android:name="com.example.zero.activity.ShoppingCartActivity" />
 
         <service android:name="com.example.zero.util.NotificationService">
             <intent-filter>
@@ -85,7 +86,8 @@
         <!-- android:process=":remote"></service> -->
 
         <activity android:name="com.example.zero.activity.RouteDrawerActivity" />
-        <activity android:name="com.example.zero.activity.StationDisplayActivity"></activity>
+        <activity android:name="com.example.zero.activity.StationDisplayActivity" />
+        <activity android:name="com.example.zero.activity.ShopDetailActivity"></activity>
     </application>
 
 </manifest>

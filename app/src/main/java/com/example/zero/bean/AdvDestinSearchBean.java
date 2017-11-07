@@ -88,6 +88,10 @@ public class AdvDestinSearchBean {
         return price;
     }
 
+    public String getImg_url() {
+        return img_url;
+    }
+
     public float getRate() {
         return rate;
     }

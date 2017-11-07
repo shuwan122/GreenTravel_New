@@ -236,7 +236,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
     private int stedFlag = 0;
 
-    private Route.RouteType cModel = Route.RouteType.MULTI;
+    private Route.RouteType cModel;
 
     int nowSearchType = -1; // 当前节点
 
@@ -465,7 +465,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                     .city("广州")
                                     .to(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i + 1))));
                         }
-                        addstEdNode();
+                        addMarker();
 
                         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(11);
                         mBaidumap.animateMapStatus(mapStatusUpdate);
@@ -496,7 +496,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                     .city("广州")
                                     .to(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i + 1))));
                         }
-                        addstEdNode();
+                        addMarker();
 
                         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(11);
                         mBaidumap.animateMapStatus(mapStatusUpdate);
@@ -527,7 +527,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                     .city("广州")
                                     .to(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i + 1))));
                         }
-                        addstEdNode();
+                        addMarker();
 
                         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(11);
                         mBaidumap.animateMapStatus(mapStatusUpdate);
@@ -629,7 +629,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             .to(PlanNode.withCityNameAndPlaceName("广州", stationAfMeetList.get(i + 1))));
                 }
             }
-            addstEdNode();
+            addMarker();
 
             MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(14);
             mBaidumap.animateMapStatus(mapStatusUpdate);
@@ -669,7 +669,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                             .city("广州")
                             .to(PlanNode.withCityNameAndPlaceName("广州", stationList.get(i + 1))));
                 }
-                addstEdNode();
+                addMarker();
 
                 MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.zoomBy(12);
                 mBaidumap.animateMapStatus(mapStatusUpdate);
@@ -695,428 +695,416 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     }
 
     private void addstEdNode() {
-        HashMap<String, String> params = new HashMap<>();
-        switch (cModel) {
-            case FAST:
-                params.clear();
-                params.put("address", "广州" + fastStationList.get(0) + "地铁站");
-                params.put("output", "json");
-                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                params.put("callback", "0");
-                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                            @Override
-                            public void onReqSuccess(String result) {
-                                try {
-                                    JSONObject jsonData = new JSONObject(result);
-
-                                    JSONObject res = jsonData.getJSONObject("result");
-                                    JSONObject location = res.getJSONObject("location");
-
-                                    double lat = location.getDouble("lat");
-                                    double lng = location.getDouble("lng");
-                                    stNode = new LatLng(lat, lng);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onReqFailed(String errorMsg) {
-                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                params.clear();
-                params.put("address", "广州" + fastStationList.get(fastStationList.size() - 1) + "地铁站");
-                params.put("output", "json");
-                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                params.put("callback", "0");
-                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                            @Override
-                            public void onReqSuccess(String result) {
-                                try {
-                                    JSONObject jsonData = new JSONObject(result);
-
-                                    JSONObject res = jsonData.getJSONObject("result");
-                                    JSONObject location = res.getJSONObject("location");
-
-                                    double lat = location.getDouble("lat");
-                                    double lng = location.getDouble("lng");
-                                    edNode = new LatLng(lat, lng);
-                                    addMarker();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onReqFailed(String errorMsg) {
-                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                break;
-
-            case LESSBUSY:
-                params.clear();
-                params.put("address", "广州" + lessbusyStationList.get(0) + "地铁站");
-                params.put("output", "json");
-                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                params.put("callback", "0");
-                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                            @Override
-                            public void onReqSuccess(String result) {
-                                try {
-                                    JSONObject jsonData = new JSONObject(result);
-
-                                    JSONObject res = jsonData.getJSONObject("result");
-                                    JSONObject location = res.getJSONObject("location");
-
-                                    double lat = location.getDouble("lat");
-                                    double lng = location.getDouble("lng");
-                                    stNode = new LatLng(lat, lng);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onReqFailed(String errorMsg) {
-                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                params.clear();
-                params.put("address", "广州" + lessbusyStationList.get(lessbusyStationList.size() - 1) + "地铁站");
-                params.put("output", "json");
-                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                params.put("callback", "0");
-                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                            @Override
-                            public void onReqSuccess(String result) {
-                                try {
-                                    JSONObject jsonData = new JSONObject(result);
-
-                                    JSONObject res = jsonData.getJSONObject("result");
-                                    JSONObject location = res.getJSONObject("location");
-
-                                    double lat = location.getDouble("lat");
-                                    double lng = location.getDouble("lng");
-                                    edNode = new LatLng(lat, lng);
-                                    addMarker();
-                                } catch (Exception e) {
-                                    addMarker();
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onReqFailed(String errorMsg) {
-                                addMarker();
-                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                break;
-
-            case LESSCHANGE:
-                params.clear();
-                params.put("address", "广州" + lesschangeStationList.get(0) + "地铁站");
-                params.put("output", "json");
-                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                params.put("callback", "0");
-                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                            @Override
-                            public void onReqSuccess(String result) {
-                                try {
-                                    JSONObject jsonData = new JSONObject(result);
-
-                                    JSONObject res = jsonData.getJSONObject("result");
-                                    JSONObject location = res.getJSONObject("location");
-
-                                    double lat = location.getDouble("lat");
-                                    double lng = location.getDouble("lng");
-                                    stNode = new LatLng(lat, lng);
-                                } catch (Exception e) {
-                                    addMarker();
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onReqFailed(String errorMsg) {
-                                addMarker();
-                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                params.clear();
-                params.put("address", "广州" + lesschangeStationList.get(lesschangeStationList.size() - 1) + "地铁站");
-                params.put("output", "json");
-                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                params.put("callback", "0");
-                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                            @Override
-                            public void onReqSuccess(String result) {
-                                try {
-                                    JSONObject jsonData = new JSONObject(result);
-
-                                    JSONObject res = jsonData.getJSONObject("result");
-                                    JSONObject location = res.getJSONObject("location");
-
-                                    double lat = location.getDouble("lat");
-                                    double lng = location.getDouble("lng");
-                                    edNode = new LatLng(lat, lng);
-                                    addMarker();
-                                } catch (Exception e) {
-                                    addMarker();
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onReqFailed(String errorMsg) {
-                                addMarker();
-                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                break;
-
-            case MULTI:
-                if (stationList1.size() > 0) {
-                    params.clear();
-                    params.put("address", "广州" + stationList1.get(0) + "地铁站");
-                    params.put("output", "json");
-                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                    params.put("callback", "0");
-                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                                @Override
-                                public void onReqSuccess(String result) {
-                                    try {
-                                        JSONObject jsonData = new JSONObject(result);
-
-                                        JSONObject res = jsonData.getJSONObject("result");
-                                        JSONObject location = res.getJSONObject("location");
-
-                                        double lat = location.getDouble("lat");
-                                        double lng = location.getDouble("lng");
-                                        stNodeM1 = new LatLng(lat, lng);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onReqFailed(String errorMsg) {
-                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-                if (stationList2.size() > 0) {
-                    params.clear();
-                    params.put("address", "广州" + stationList2.get(0) + "地铁站");
-                    params.put("output", "json");
-                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                    params.put("callback", "0");
-                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                                @Override
-                                public void onReqSuccess(String result) {
-                                    try {
-                                        JSONObject jsonData = new JSONObject(result);
-
-                                        JSONObject res = jsonData.getJSONObject("result");
-                                        JSONObject location = res.getJSONObject("location");
-
-                                        double lat = location.getDouble("lat");
-                                        double lng = location.getDouble("lng");
-                                        stNodeM2 = new LatLng(lat, lng);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onReqFailed(String errorMsg) {
-                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-                if (stationList3.size() > 0) {
-                    params.clear();
-                    params.put("address", "广州" + stationList3.get(0) + "地铁站");
-                    params.put("output", "json");
-                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                    params.put("callback", "0");
-                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                                @Override
-                                public void onReqSuccess(String result) {
-                                    try {
-                                        JSONObject jsonData = new JSONObject(result);
-
-                                        JSONObject res = jsonData.getJSONObject("result");
-                                        JSONObject location = res.getJSONObject("location");
-
-                                        double lat = location.getDouble("lat");
-                                        double lng = location.getDouble("lng");
-                                        stNodeM3 = new LatLng(lat, lng);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onReqFailed(String errorMsg) {
-                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-                if (stationAfMeetList.size() > 0) {
-                    params.clear();
-                    params.put("address", "广州" + stationAfMeetList.get(stationAfMeetList.size() - 1) + "地铁站");
-                    params.put("output", "json");
-                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                    params.put("callback", "0");
-                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                                @Override
-                                public void onReqSuccess(String result) {
-                                    try {
-                                        JSONObject jsonData = new JSONObject(result);
-
-                                        JSONObject res = jsonData.getJSONObject("result");
-                                        JSONObject location = res.getJSONObject("location");
-
-                                        double lat = location.getDouble("lat");
-                                        double lng = location.getDouble("lng");
-                                        edNodeM = new LatLng(lat, lng);
-                                        addMarker();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onReqFailed(String errorMsg) {
-                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                } else {
-                    params.clear();
-                    params.put("address", "广州" + stationList1.get(stationList1.size() - 1) + "地铁站");
-                    params.put("output", "json");
-                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                    params.put("callback", "0");
-                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                                @Override
-                                public void onReqSuccess(String result) {
-                                    try {
-                                        JSONObject jsonData = new JSONObject(result);
-
-                                        JSONObject res = jsonData.getJSONObject("result");
-                                        JSONObject location = res.getJSONObject("location");
-
-                                        double lat = location.getDouble("lat");
-                                        double lng = location.getDouble("lng");
-                                        edNodeM = new LatLng(lat, lng);
-                                        addMarker();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onReqFailed(String errorMsg) {
-                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-
-            case ADVICE:
-                params.clear();
-                params.put("address", "广州" + stationList.get(0) + "地铁站");
-                params.put("output", "json");
-                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                params.put("callback", "0");
-                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                            @Override
-                            public void onReqSuccess(String result) {
-                                try {
-                                    JSONObject jsonData = new JSONObject(result);
-
-                                    JSONObject res = jsonData.getJSONObject("result");
-                                    JSONObject location = res.getJSONObject("location");
-
-                                    double lat = location.getDouble("lat");
-                                    double lng = location.getDouble("lng");
-                                    stNode = new LatLng(lat, lng);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onReqFailed(String errorMsg) {
-                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                params.clear();
-                params.put("address", "广州" + stationList.get(stationList.size() - 1) + "地铁站");
-                params.put("output", "json");
-                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
-                params.put("callback", "0");
-                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
-                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
-                            @Override
-                            public void onReqSuccess(String result) {
-                                try {
-                                    JSONObject jsonData = new JSONObject(result);
-
-                                    JSONObject res = jsonData.getJSONObject("result");
-                                    JSONObject location = res.getJSONObject("location");
-
-                                    double lat = location.getDouble("lat");
-                                    double lng = location.getDouble("lng");
-                                    edNode = new LatLng(lat, lng);
-                                    addMarker();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onReqFailed(String errorMsg) {
-                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                break;
-
-            default:
-                break;
-        }
+//        HashMap<String, String> params = new HashMap<>();
+//        switch (cModel) {
+//            case FAST:
+//                params.clear();
+//                params.put("address", "广州" + fastStationList.get(0) + "地铁站");
+//                params.put("output", "json");
+//                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                params.put("callback", "0");
+//                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                            @Override
+//                            public void onReqSuccess(String result) {
+//                                try {
+//                                    JSONObject jsonData = new JSONObject(result);
+//
+//                                    JSONObject res = jsonData.getJSONObject("result");
+//                                    JSONObject location = res.getJSONObject("location");
+//
+//                                    double lat = location.getDouble("lat");
+//                                    double lng = location.getDouble("lng");
+//                                    stNode = new LatLng(lat, lng);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onReqFailed(String errorMsg) {
+//                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                params.clear();
+//                params.put("address", "广州" + fastStationList.get(fastStationList.size() - 1) + "地铁站");
+//                params.put("output", "json");
+//                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                params.put("callback", "0");
+//                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                            @Override
+//                            public void onReqSuccess(String result) {
+//                                try {
+//                                    JSONObject jsonData = new JSONObject(result);
+//
+//                                    JSONObject res = jsonData.getJSONObject("result");
+//                                    JSONObject location = res.getJSONObject("location");
+//
+//                                    double lat = location.getDouble("lat");
+//                                    double lng = location.getDouble("lng");
+//                                    edNode = new LatLng(lat, lng);
+//                                    addMarker();
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onReqFailed(String errorMsg) {
+//                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                break;
+//
+//            case LESSBUSY:
+//                params.clear();
+//                params.put("address", "广州" + lessbusyStationList.get(0) + "地铁站");
+//                params.put("output", "json");
+//                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                params.put("callback", "0");
+//                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                            @Override
+//                            public void onReqSuccess(String result) {
+//                                try {
+//                                    JSONObject jsonData = new JSONObject(result);
+//
+//                                    JSONObject res = jsonData.getJSONObject("result");
+//                                    JSONObject location = res.getJSONObject("location");
+//
+//                                    double lat = location.getDouble("lat");
+//                                    double lng = location.getDouble("lng");
+//                                    stNode = new LatLng(lat, lng);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onReqFailed(String errorMsg) {
+//                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                params.clear();
+//                params.put("address", "广州" + lessbusyStationList.get(lessbusyStationList.size() - 1) + "地铁站");
+//                params.put("output", "json");
+//                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                params.put("callback", "0");
+//                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                            @Override
+//                            public void onReqSuccess(String result) {
+//                                try {
+//                                    JSONObject jsonData = new JSONObject(result);
+//
+//                                    JSONObject res = jsonData.getJSONObject("result");
+//                                    JSONObject location = res.getJSONObject("location");
+//
+//                                    double lat = location.getDouble("lat");
+//                                    double lng = location.getDouble("lng");
+//                                    edNode = new LatLng(lat, lng);
+//                                    addMarker();
+//                                } catch (Exception e) {
+//                                    addMarker();
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onReqFailed(String errorMsg) {
+//                                addMarker();
+//                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                break;
+//
+//            case LESSCHANGE:
+//                params.clear();
+//                params.put("address", "广州" + lesschangeStationList.get(0) + "地铁站");
+//                params.put("output", "json");
+//                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                params.put("callback", "0");
+//                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                            @Override
+//                            public void onReqSuccess(String result) {
+//                                try {
+//                                    JSONObject jsonData = new JSONObject(result);
+//
+//                                    JSONObject res = jsonData.getJSONObject("result");
+//                                    JSONObject location = res.getJSONObject("location");
+//
+//                                    double lat = location.getDouble("lat");
+//                                    double lng = location.getDouble("lng");
+//                                    stNode = new LatLng(lat, lng);
+//                                } catch (Exception e) {
+//                                    addMarker();
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onReqFailed(String errorMsg) {
+//                                addMarker();
+//                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                params.clear();
+//                params.put("address", "广州" + lesschangeStationList.get(lesschangeStationList.size() - 1) + "地铁站");
+//                params.put("output", "json");
+//                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                params.put("callback", "0");
+//                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                            @Override
+//                            public void onReqSuccess(String result) {
+//                                try {
+//                                    JSONObject jsonData = new JSONObject(result);
+//
+//                                    JSONObject res = jsonData.getJSONObject("result");
+//                                    JSONObject location = res.getJSONObject("location");
+//
+//                                    double lat = location.getDouble("lat");
+//                                    double lng = location.getDouble("lng");
+//                                    edNode = new LatLng(lat, lng);
+//                                    addMarker();
+//                                } catch (Exception e) {
+//                                    addMarker();
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onReqFailed(String errorMsg) {
+//                                addMarker();
+//                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                break;
+//
+//            case MULTI:
+//                if (stationList1.size() > 0) {
+//                    params.clear();
+//                    params.put("address", "广州" + stationList1.get(0) + "地铁站");
+//                    params.put("output", "json");
+//                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                    params.put("callback", "0");
+//                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                                @Override
+//                                public void onReqSuccess(String result) {
+//                                    try {
+//                                        JSONObject jsonData = new JSONObject(result);
+//
+//                                        JSONObject res = jsonData.getJSONObject("result");
+//                                        JSONObject location = res.getJSONObject("location");
+//
+//                                        double lat = location.getDouble("lat");
+//                                        double lng = location.getDouble("lng");
+//                                        stNodeM1 = new LatLng(lat, lng);
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onReqFailed(String errorMsg) {
+//                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
+//                }
+//                if (stationList2.size() > 0) {
+//                    params.clear();
+//                    params.put("address", "广州" + stationList2.get(0) + "地铁站");
+//                    params.put("output", "json");
+//                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                    params.put("callback", "0");
+//                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                                @Override
+//                                public void onReqSuccess(String result) {
+//                                    try {
+//                                        JSONObject jsonData = new JSONObject(result);
+//
+//                                        JSONObject res = jsonData.getJSONObject("result");
+//                                        JSONObject location = res.getJSONObject("location");
+//
+//                                        double lat = location.getDouble("lat");
+//                                        double lng = location.getDouble("lng");
+//                                        stNodeM2 = new LatLng(lat, lng);
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onReqFailed(String errorMsg) {
+//                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
+//                }
+//                if (stationList3.size() > 0) {
+//                    params.clear();
+//                    params.put("address", "广州" + stationList3.get(0) + "地铁站");
+//                    params.put("output", "json");
+//                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                    params.put("callback", "0");
+//                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                                @Override
+//                                public void onReqSuccess(String result) {
+//                                    try {
+//                                        JSONObject jsonData = new JSONObject(result);
+//
+//                                        JSONObject res = jsonData.getJSONObject("result");
+//                                        JSONObject location = res.getJSONObject("location");
+//
+//                                        double lat = location.getDouble("lat");
+//                                        double lng = location.getDouble("lng");
+//                                        stNodeM3 = new LatLng(lat, lng);
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onReqFailed(String errorMsg) {
+//                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
+//                }
+//                if (stationAfMeetList.size() > 0) {
+//                    params.clear();
+//                    params.put("address", "广州" + stationAfMeetList.get(stationAfMeetList.size() - 1) + "地铁站");
+//                    params.put("output", "json");
+//                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                    params.put("callback", "0");
+//                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                                @Override
+//                                public void onReqSuccess(String result) {
+//                                    try {
+//                                        JSONObject jsonData = new JSONObject(result);
+//
+//                                        JSONObject res = jsonData.getJSONObject("result");
+//                                        JSONObject location = res.getJSONObject("location");
+//
+//                                        double lat = location.getDouble("lat");
+//                                        double lng = location.getDouble("lng");
+//                                        edNodeM = new LatLng(lat, lng);
+//                                        addMarker();
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onReqFailed(String errorMsg) {
+//                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
+//                } else {
+//                    params.clear();
+//                    params.put("address", "广州" + stationList1.get(stationList1.size() - 1) + "地铁站");
+//                    params.put("output", "json");
+//                    params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                    params.put("callback", "0");
+//                    RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                            RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                                @Override
+//                                public void onReqSuccess(String result) {
+//                                    try {
+//                                        JSONObject jsonData = new JSONObject(result);
+//
+//                                        JSONObject res = jsonData.getJSONObject("result");
+//                                        JSONObject location = res.getJSONObject("location");
+//
+//                                        double lat = location.getDouble("lat");
+//                                        double lng = location.getDouble("lng");
+//                                        edNodeM = new LatLng(lat, lng);
+//                                        addMarker();
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onReqFailed(String errorMsg) {
+//                                    Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
+//                }
+//
+//            case ADVICE:
+//                params.clear();
+//                params.put("address", "广州" + stationList.get(0) + "地铁站");
+//                params.put("output", "json");
+//                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                params.put("callback", "0");
+//                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                            @Override
+//                            public void onReqSuccess(String result) {
+//                                try {
+//                                    JSONObject jsonData = new JSONObject(result);
+//
+//                                    JSONObject res = jsonData.getJSONObject("result");
+//                                    JSONObject location = res.getJSONObject("location");
+//
+//                                    double lat = location.getDouble("lat");
+//                                    double lng = location.getDouble("lng");
+//                                    stNode = new LatLng(lat, lng);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onReqFailed(String errorMsg) {
+//                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                params.clear();
+//                params.put("address", "广州" + stationList.get(stationList.size() - 1) + "地铁站");
+//                params.put("output", "json");
+//                params.put("ak", "5r5Yuqvnb9NQGoiGLszs9SvMT32r1bBn");
+//                params.put("callback", "0");
+//                RequestManager.getInstance(RouteResultActivity.this).requestAsyn("http://api.map.baidu.com/geocoder/v2/",
+//                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+//                            @Override
+//                            public void onReqSuccess(String result) {
+//                                try {
+//                                    JSONObject jsonData = new JSONObject(result);
+//
+//                                    JSONObject res = jsonData.getJSONObject("result");
+//                                    JSONObject location = res.getJSONObject("location");
+//
+//                                    double lat = location.getDouble("lat");
+//                                    double lng = location.getDouble("lng");
+//                                    edNode = new LatLng(lat, lng);
+//                                    addMarker();
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onReqFailed(String errorMsg) {
+//                                Toast.makeText(RouteResultActivity.this, "起终点经纬度请求失败", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                break;
+//
+//            default:
+//                break;
+//        }
     }
 
     private void addMarker() {
         List<OverlayOptions> options = new ArrayList<OverlayOptions>();
         switch (cModel) {
             case FAST:
-                //起终点
-                options.clear();
-                OverlayOptions option1 = new MarkerOptions()
-                        .position(stNode)
-                        .icon(stS);
-                OverlayOptions option2 = new MarkerOptions()
-                        .position(edNode)
-                        .icon(enS);
-                options.add(option1);
-                options.add(option2);
-//                mBaidumap.addOverlays(options);
-
                 //seller
                 options.clear();
                 for (int i = 0; i < fastCount; i++) {
@@ -1133,18 +1121,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 break;
 
             case LESSBUSY:
-                //起终点
-                options.clear();
-                OverlayOptions option3 = new MarkerOptions()
-                        .position(stNode)
-                        .icon(stS);
-                OverlayOptions option4 = new MarkerOptions()
-                        .position(edNode)
-                        .icon(enS);
-                options.add(option3);
-                options.add(option4);
-//                mBaidumap.addOverlays(options);
-
                 //seller
                 options.clear();
                 for (int i = 0; i < lessbusyCount; i++) {
@@ -1161,18 +1137,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 break;
 
             case LESSCHANGE:
-                //起终点
-                options.clear();
-                OverlayOptions option5 = new MarkerOptions()
-                        .position(stNode)
-                        .icon(stS);
-                OverlayOptions option6 = new MarkerOptions()
-                        .position(edNode)
-                        .icon(enS);
-                options.add(option5);
-                options.add(option6);
-//                mBaidumap.addOverlays(options);
-
                 //seller
                 options.clear();
                 for (int i = 0; i < lesschangeCount; i++) {
@@ -1189,32 +1153,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 break;
 
             case MULTI:
-                //起终点
-                options.clear();
-                if (stationList1.size() > 0) {
-                    OverlayOptions option7 = new MarkerOptions()
-                            .position(stNodeM1)
-                            .icon(stS);
-                    options.add(option7);
-                }
-                if (stationList2.size() > 0) {
-                    OverlayOptions option8 = new MarkerOptions()
-                            .position(stNodeM2)
-                            .icon(stS);
-                    options.add(option8);
-                }
-                if (stationList3.size() > 0) {
-                    OverlayOptions option9 = new MarkerOptions()
-                            .position(stNodeM3)
-                            .icon(stS);
-                    options.add(option9);
-                }
-                OverlayOptions option10 = new MarkerOptions()
-                        .position(edNodeM)
-                        .icon(enS);
-                options.add(option10);
-//                mBaidumap.addOverlays(options);
-
                 //seller
                 options.clear();
                 for (int i = 0; i < firstCount; i++) {
@@ -1264,18 +1202,6 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 break;
 
             case ADVICE:
-                //起终点
-                options.clear();
-                OverlayOptions option11 = new MarkerOptions()
-                        .position(stNode)
-                        .icon(stS);
-                OverlayOptions option12 = new MarkerOptions()
-                        .position(edNode)
-                        .icon(enS);
-                options.add(option11);
-                options.add(option12);
-//                mBaidumap.addOverlays(options);
-
                 //seller
                 options.clear();
                 for (int i = 0; i < count; i++) {

@@ -1,8 +1,11 @@
 package com.example.zero.delegate;
 
+import android.app.Activity;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.donkingliang.labels.LabelsView;
+import com.example.zero.activity.StationDisplayActivity;
 import com.example.zero.bean.AdvDestinSearchBean;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.ItemViewDelegate;
@@ -33,6 +36,7 @@ public class AdvStoreDelegate implements ItemViewDelegate<AdvDestinSearchBean> {
         holder.setRating(R.id.adv_destin_store_rate, bean.getRate());
         holder.setTextList(R.id.adv_destin_store_labels, bean.getLabels());
         holder.setImageResource(R.id.adv_destin_store_img, bean.getImg());
+        holder.getView(R.id.adv_destin_store_img);
         final LabelsView lv = holder.getView(R.id.adv_destin_store_labels);
         lv.setSelects(0);
         lv.setOnLabelClickListener(new LabelsView.OnLabelClickListener() {

@@ -13,10 +13,8 @@ import java.util.List;
  * Created by kazu_0122 on 2017/10/19.
  */
 
-public class AdvDestinSearchAdapter extends MultiItemTypeAdapter<AdvDestinSearchBean>
-{
-    public AdvDestinSearchAdapter(Context context, List<AdvDestinSearchBean> datas)
-    {
+public class AdvDestinSearchAdapter extends MultiItemTypeAdapter<AdvDestinSearchBean> {
+    public AdvDestinSearchAdapter(Context context, List<AdvDestinSearchBean> datas) {
         super(context, datas);
         addItemViewDelegate(new AdvStoreDelegate());
         addItemViewDelegate(new AdvStationDelegate());

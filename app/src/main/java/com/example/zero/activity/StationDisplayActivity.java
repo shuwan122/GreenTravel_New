@@ -53,19 +53,15 @@ public class StationDisplayActivity extends AppCompatActivity {
     private TextView textView;
     private TextView spinner1;
     private TextView spinner2;
-    private TextView spinner3;
     private List<String> choice1;
-    private List<String> choice2;
-    private ArrayList<AdvDestinMultiBean> choice3;
+    private ArrayList<AdvDestinMultiBean> choice2;
     private ArrayAdapter<String> choiceAdapter1;
-    private ArrayAdapter<String> choiceAdapter2;
-    private AdvDestinMultiAdapter choiceAdapter3;
+    private AdvDestinMultiAdapter choiceAdapter2;
     private RecyclerView adv_recv;
     private List<AdvDestinSearchBean> dataList = new ArrayList<>();
     private List<AdvDestinSearchBean> showList = new ArrayList<>();
     private ListPopupWindow popupWindow1;
     private ListPopupWindow popupWindow2;
-    private ListPopupWindow popupWindow3;
 
     //前后端接口
     private String stationName;
@@ -82,6 +78,8 @@ public class StationDisplayActivity extends AppCompatActivity {
     double lat;
     double lng;
     private static double EARTH_RADIUS = 6371.393;
+
+    private ImageView shopImg;
 
     private int stationShopCount = 0;
 
@@ -119,7 +117,6 @@ public class StationDisplayActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-
     }
 
     private void parseJSONWithJSONObject(String jsonData) {
@@ -157,10 +154,11 @@ public class StationDisplayActivity extends AppCompatActivity {
         adv_recv = (RecyclerView) this.findViewById(R.id.station_search_recv);
         adv_recv.setLayoutManager(new LinearLayoutManager(context));
 
+        shopImg = (ImageView) this.findViewById(R.id.adv_destin_store_img);
+
         spinnerSet = (View) this.findViewById(R.id.station_spinner_set);
         spinner1 = (TextView) this.findViewById(R.id.station_spinner1);
         spinner2 = (TextView) this.findViewById(R.id.station_spinner2);
-        spinner3 = (TextView) this.findViewById(R.id.station_spinner3);
 
         DisplayMetrics dm = new DisplayMetrics();// 获取屏幕信息
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -198,36 +196,16 @@ public class StationDisplayActivity extends AppCompatActivity {
                 popupWindow2.show();
             }
         });
-        popupWindow2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            //TODO 排序更新
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                spinner2.setText(choice2.get(i));
-                popupWindow2.dismiss();
-            }
-        });
 
-        popupWindow3 = new ListPopupWindow(this);
-        popupWindow3.setAnchorView(spinnerSet);
-        popupWindow3.setVerticalOffset(1);
-        popupWindow3.setWidth(screenWidth);
-        popupWindow3.setHeight(500);
-        popupWindow3.setModal(true);
-        spinner3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popupWindow3.show();
-            }
-        });
-
-        popupWindow3.setOnDismissListener(new PopupWindow.OnDismissListener() {
+        popupWindow2.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
                 //TODO 多标签搜索更新
                 String s = "";
                 for (int i = 0; i < 3; i++) {
-                    LabelsView labelsView = popupWindow3.getListView().getChildAt(i).findViewById(R.id.labelsViewCheck);
-                    choice3.get(i).setSelected(labelsView.getSelectLabels());
+                    LabelsView labelsView = popupWindow2.getListView().getChildAt(i).findViewById(R.id.labelsViewCheck);
+                    choice2.get(i).setSelected(labelsView.getSelectLabels());
+                    s = s + choice2.get(i).getLabels();
                 }
                 Toast.makeText(getBaseContext(), "dismiss" + s, Toast.LENGTH_LONG).show();
             }
@@ -287,46 +265,39 @@ public class StationDisplayActivity extends AppCompatActivity {
         labels.add("凯德广场");
         labels.add("学生党");
         for (int i = 0; i < stationShopCount; i++) {
-            int max = 1000;
-            int min = 100;
+            // TODO: 2017/11/7 均价、评论数量、关键词（label）
             double distance = GetDistance(lat, lng, sellerLatList[i], sellerLngList[i]);
             DecimalFormat df = new DecimalFormat(".##");
             AdvDestinSearchBean searchBean = new AdvDestinSearchBean();
-            searchBean.setText(false, tagList[i], shopNameList[i], new Random().nextInt(max) % (max - min + 1) + min,
+            searchBean.setText(false, tagList[i], shopNameList[i], 999,
                     50, "距您" + df.format(distance) + "米", posterList[i], (float) starList[i], labels);
-//            Glide.with(context).load(posterList[i]).placeholder(R.drawable.loading).into((ImageView) findViewById(R.id.adv_destin_store_img));
             showList.add(searchBean);
         }
+
         final AdvDestinSearchAdapter adapter1 = new AdvDestinSearchAdapter(this, showList);
         adv_recv.setAdapter(adapter1);
         adapter1.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-//                if (showList.get(position).isStation()) {
-//                    String s = showList.get(position).getStationTag();
-//                    Toast.makeText(getBaseContext(), position + "yes  " + s, Toast.LENGTH_SHORT).show();
-//                    showList.clear();
-//                    for (AdvDestinSearchBean bean : dataList) {
-//                        showList.add(bean);
-//                    }
-//                    adapter1.notifyDataSetChanged();
-//                } else {
-//                    Toast.makeText(getBaseContext(), position + "no", Toast.LENGTH_SHORT).show();
-//                }
+                Toast.makeText(context, "1" + shopNameList[position], Toast.LENGTH_SHORT).show();
+                Bundle mBundle = new Bundle();
+                Intent intent = new Intent(context, ShoppingCartActivity.class);
+                mBundle.putString("shopName", shopNameList[position]);
+                intent.putExtras(mBundle);
+                startActivity(intent);
             }
 
             @Override
             public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
-                Toast.makeText(context, position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "2" + shopNameList[position], Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
     }
 
     private void initData() {
-        choice1 = Arrays.asList(getResources().getStringArray(R.array.blocks));
-        choice2 = Arrays.asList(getResources().getStringArray(R.array.prefers));
-        choice3 = new ArrayList<>();
+        choice1 = Arrays.asList(getResources().getStringArray(R.array.prefers));
+        choice2 = new ArrayList<>();
         ArrayList<String> sub1 = new ArrayList<>();
         sub1.add("预定");
         sub1.add("排队");
@@ -342,14 +313,12 @@ public class StationDisplayActivity extends AppCompatActivity {
         sub3.add("WiFi");
         sub3.add("团购");
         sub3.add("营业中");
-        choice3.add(new AdvDestinMultiBean("价格", true, new ArrayList<Integer>(), sub2));
-        choice3.add(new AdvDestinMultiBean("服务", false, new ArrayList<Integer>(), sub1));
-        choice3.add(new AdvDestinMultiBean("更多", false, new ArrayList<Integer>(), sub3));
+        choice2.add(new AdvDestinMultiBean("价格", true, new ArrayList<Integer>(), sub2));
+        choice2.add(new AdvDestinMultiBean("服务", false, new ArrayList<Integer>(), sub1));
+        choice2.add(new AdvDestinMultiBean("更多", false, new ArrayList<Integer>(), sub3));
         choiceAdapter1 = new ArrayAdapter<>(this, R.layout.adv_pop_item, R.id.textViewPop, choice1);
-        choiceAdapter2 = new ArrayAdapter<>(this, R.layout.adv_pop_item, R.id.textViewPop, choice2);
-        choiceAdapter3 = new AdvDestinMultiAdapter(choice3, this);
+        choiceAdapter2 = new AdvDestinMultiAdapter(choice2, this);
         popupWindow1.setAdapter(choiceAdapter1);
         popupWindow2.setAdapter(choiceAdapter2);
-        popupWindow3.setAdapter(choiceAdapter3);
     }
 }
