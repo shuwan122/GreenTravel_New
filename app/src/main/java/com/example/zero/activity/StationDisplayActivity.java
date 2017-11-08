@@ -139,10 +139,6 @@ public class StationDisplayActivity extends AppCompatActivity {
             }
             stationShopCount = count;
             getLatlng();
-
-            initView();
-            initData();
-            showData();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -230,6 +226,10 @@ public class StationDisplayActivity extends AppCompatActivity {
 
                             lat = location.getDouble("lat");
                             lng = location.getDouble("lng");
+
+                            initView();
+                            initData();
+                            showData();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

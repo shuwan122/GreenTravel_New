@@ -212,6 +212,8 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             case R.id.tvSubmit:
                 Bundle mBundle = new Bundle();
                 Intent intent = new Intent(context, ShopOrderActivity.class);
+                mBundle.putString("shopName", shopName);
+                mBundle.putString("shopImg", shopImg);
                 intent.putExtras(mBundle);
                 startActivity(intent);
                 Toast.makeText(context, "结算", Toast.LENGTH_SHORT).show();
