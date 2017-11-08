@@ -223,6 +223,12 @@ Android App GreenTravel
 		<th>171107</th>
 		<th colspan="3">第七次程序合并</th>
 	</tr>
+	<tr>
+	 	<th>171108</th>
+	 	<th>路线——购物车界面添加</th>
+	 	<th>个人中心——修改优惠券界面bug</th>
+	 	<th>完成推荐搜索接口的连接</th>
+	 </tr>
 </table>
 
 ## 遇到bug或难点
@@ -446,6 +452,12 @@ Android App GreenTravel
 		<th>171107</th>
 		<th colspan="3">暂时没有发现bug</th>
 	</tr>
+	<tr>
+	 	<th>171108</th>
+	 	<th>路线——两个RecycleView联动</th>
+	 	<th>个人中心——下载apk</th>
+	 	<th>新的下载文件接口没有返回文件流 部分情况卡住<br>百度接口测量不到经纬度</th>
+	 </tr>
 </table>
 
 ## 参考
@@ -669,4 +681,10 @@ Android App GreenTravel
 		<th>171107</th>
 		<th colspan="3">无</th>
 	</tr>
+	<tr>
+	 	<th>171108</th>
+	 	<th>http://blog.csdn.net/wingichoy/article/details/50583022</th>
+	 	<th>无</th>
+	 	<th>http://blog.csdn.net/u010940300/article/details/43488651<br>http://www.cnblogs.com/seely/p/5715512.html</th>
+	 </tr>
 </table>
