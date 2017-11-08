@@ -201,6 +201,28 @@ Android App GreenTravel
 		<th>171031</th>
 		<th colspan="3">第六次程序合并</th>
 	</tr>
+	<tr>
+		<th>171102</th>
+		<th>路线——多人出行联调完成</th>
+		<th>个人中心——收藏站点和商家（部分完成）</th>
+		<th>个人中心——修改建议数据结构，添加修改头像接口</th>
+	</tr>
+	<tr>
+		<th>171103</th>
+		<th>路线——出行建议联调完成</th>
+		<th>个人中心——联调个人中心剩余接口</th>
+		<th>调试修改头像接口 根据接口调整部分页面</th>
+	</tr>
+	<tr>
+	 	<th>171106</th>
+	 	<th>路线——按站点展示商家</th>
+	 	<th>个人中心——我的消息、帮助中心接口测试完成，我的收藏接口未完成</th>
+	 	<th>个人中心——修改测试修改手机号 完成下载文件接口</th>
+	 </tr>
+    <tr>
+		<th>171107</th>
+		<th colspan="3">第七次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -402,6 +424,28 @@ Android App GreenTravel
 		<th>171031</th>
 		<th colspan="3">暂时没有发现bug</th>
 	</tr>
+	<tr>
+		<th>171102</th>
+		<th>路线——多人出行模式选择框</th>
+		<th>无</th>
+		<th>上传图片接口参数不熟，图片文件找不到</th>
+	</tr>
+	<tr>
+		<th>171103</th>
+		<th>timePickle的使用</th>
+		<th>个人中心——收藏站点时要给不同的item添加不同的监听事件</th>
+		<th>无</th>
+	</tr>
+	<tr>
+	 	<th>171106</th>
+	 	<th>路线——RecyclerView的运用</th>
+	 	<th>个人中心——收藏功能具体实现还需要讨论</th>
+	 	<th>okhttp下载文件接口暂时不能测试，下载图片没有报错但显示不了</th>
+	 </tr>
+    <tr>
+		<th>171107</th>
+		<th colspan="3">暂时没有发现bug</th>
+	</tr>
 </table>
 
 ## 参考
@@ -601,6 +645,28 @@ Android App GreenTravel
 	 </tr>
     <tr>
 		<th>171031</th>
+		<th colspan="3">无</th>
+	</tr>
+	<tr>
+	 	<th>171102</th>
+	 	<th>http://www.cnblogs.com/xiaoluo501395377/p/3419398.html</th>
+	 	<th>无</th>
+	 	<th>上传文件http://blog.csdn.net/lmj623565791/article/details/47911083<br>https://stackoverflow.com/questions/23512547/how-to-use-okhttp-to-upload-a-file<br>文件访问权限https://stackoverflow.com/questions/8854359/exception-open-failed-eacces-permission-denied-on-android</th>
+	 </tr>
+	<tr>
+		<th>171103</th>
+		<th>http://bbs.csdn.net/topics/390932478?page=1</th>
+		<th>无</th>
+		<th>调色网站http://www.peise.net/tools/web/<br>页面层次http://blog.csdn.net/a396901990/article/details/40153035</th>
+	</tr>
+	<tr>
+	 	<th>171106</th>
+	 	<th>无</th>
+	 	<th>无</th>
+	 	<th>http://www.cnblogs.com/android100/p/java-android-file.html<br>http://blog.csdn.net/zhouxuebao87/article/details/50108913</th>
+	 </tr>
+    <tr>
+		<th>171107</th>
 		<th colspan="3">无</th>
 	</tr>
 </table>

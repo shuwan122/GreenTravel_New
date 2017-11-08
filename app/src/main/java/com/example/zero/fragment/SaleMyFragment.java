@@ -1,9 +1,6 @@
 package com.example.zero.fragment;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,31 +9,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.bumptech.glide.Glide;
 import com.example.zero.adapter.SaleMyCouponAdapter;
 import com.example.zero.bean.SaleBean;
 import com.example.zero.greentravel_new.R;
+import com.example.zero.util.MainApplication;
 import com.example.zero.util.RequestManager;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by jojo on 2017/9/13.
@@ -44,6 +30,7 @@ import okhttp3.Response;
 
 public class SaleMyFragment extends Fragment {
 
+    private String TAG = "SaleMyFragment";
     private View sale_my_frag;
     private RecyclerView my_recv;
     private List<SaleBean> dataList = new ArrayList<>();
@@ -56,6 +43,7 @@ public class SaleMyFragment extends Fragment {
     private String coupon_time;
     private String coupon_img;
     private SaleMyCouponAdapter adapter;
+    private String uid, token;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,37 +61,29 @@ public class SaleMyFragment extends Fragment {
 
             @Override
             public void onBtnClick(View view, int position) {
-                //Toast.makeText(getContext(), "点击条目按钮 " + position, Toast.LENGTH_SHORT).show();
-                OkHttpClient mOkHttpClient = new OkHttpClient();
-                HashMap<String, String> params = new HashMap<>();
-                params.put("couponId", coupon_id.get(position));
-                params.put("userId", "123");
-                params.put("token", "123");
-                String param = params.toString();
-                RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"), param);
-                Request request = new Request.Builder()
-                        .url("http://10.108.112.96:8080//users/me/coupons/" + coupon_id.get(position))
-                        .delete(body)
-                        .build();
-                mOkHttpClient.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        Log.e("SaleMyFragment", e.toString());
-                    }
+                MainApplication application = (MainApplication) getActivity().getApplication();
+                uid = application.getUser_id();
+                token = application.getToken();
+                if (uid == null && token == null) {
+                    Toast.makeText(context, "请您先登录再进行操作", Toast.LENGTH_LONG).show();
+                } else {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("token", uid);
+                    params.put("userId", token);
+                    RequestManager.getInstance(context).requestAsyn("users/me/coupons/" + coupon_id.get(position), RequestManager.TYPE_DEL, params, new RequestManager.ReqCallBack<String>() {
 
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            //String string = response.body().string();
-                            //Log.e("SaleMyFragment", "response ----->" + string);
-                            //JSONObject jo = JSON.parseObject(string);
-                            //Toast.makeText(context, jo.getString("userMessage"), Toast.LENGTH_SHORT).show();
-                            Toast.makeText(context, response.body().toString(), Toast.LENGTH_SHORT).show();
-                        }else {
-                            Log.e("SaleMyFragment", "response ----->" + response.body().toString());
+                        @Override
+                        public void onReqSuccess(String result) {
+                            Toast.makeText(context, "优惠券使用成功", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                });
+
+                        @Override
+                        public void onReqFailed(String errorMsg) {
+                            JSONObject jo = JSON.parseObject(errorMsg);
+                            Toast.makeText(context, jo.getString("userMessage"), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
         return sale_my_frag;
@@ -117,14 +97,24 @@ public class SaleMyFragment extends Fragment {
         my_recv.setLayoutManager(new LinearLayoutManager(context));
     }
 
+    //TODO:fragment切换刷新
+//    @Override
+//    public void setUserVisibleHint(boolean isVisibleToUser) {
+//        super.setUserVisibleHint(isVisibleToUser);
+//        if (isVisibleToUser) {
+//            getCouponData();
+//            adapter.notifyDataSetChanged();
+//        } else {
+//            // 相当于Fragment的onPause
+//        }
+//    }
+
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
             getCouponData();
             adapter.notifyDataSetChanged();
-        } else {
-            // 相当于Fragment的onPause
         }
     }
 
@@ -132,44 +122,62 @@ public class SaleMyFragment extends Fragment {
      * 优惠券内容加载
      */
     public void getCouponData() {
-        dataList.clear();
-        HashMap<String, String> params = new HashMap<>();
-        params.put("userId", "123");
-        params.put("token", "123");
-        RequestManager.getInstance(context).requestAsyn("users/me/coupons", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
+        MainApplication application = (MainApplication) getActivity().getApplication();
+        uid = application.getUser_id();
+        token = application.getToken();
+        if (uid == null && token == null) {
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//                    AlertDialog alertDialog = builder.setTitle("登录提醒").setMessage("您还未登录，是否先去登录?")
+//                            .setNegativeButton("取消", null)
+//                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    Intent intent = new Intent();
+//                                    intent.setClass(context, LoginActivity.class);
+//                                    startActivity(intent);
+//                                }
+//                            }).create();
+//                    alertDialog.show();
+            Toast.makeText(context, "请您先登录再进行操作", Toast.LENGTH_SHORT).show();
+        } else {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("userId", uid);
+            params.put("token", token);
+            RequestManager.getInstance(context).requestAsyn("users/me/coupons?", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
 
-            @Override
-            public void onReqSuccess(String result) {
-                //Toast.makeText(context, "成功", Toast.LENGTH_SHORT).show();
-                //System.out.println(result);
-                JSONArray array = JSONArray.parseArray(result);
-                for (int i = 0; i < array.size(); i++) {
-                    String s = array.get(i).toString();
-                    JSONObject jo = JSON.parseObject(s);
-                    coupon_id.add(jo.getString("id"));
-                    coupon_name = jo.getString("shop_name");
-                    coupon_type = jo.getInteger("type");
-                    if (coupon_type == 1) {
-                        String[] str = jo.getString("coupon_name").split("减");
-                        coupon_price = "¥ " + str[1];
-                        coupon_content = "消费金额" + str[0] + "可用";
-                    } else if (coupon_type == 2) {
-                        coupon_price = jo.getString("coupon_name").substring(0, 2);
-                        coupon_content = "全场商品" + coupon_price + "优惠";
+                @Override
+                public void onReqSuccess(String result) {
+                    dataList.clear();
+                    JSONArray array = JSONArray.parseArray(result);
+                    for (int i = 0; i < array.size(); i++) {
+                        String s = array.get(i).toString();
+                        JSONObject jo = JSON.parseObject(s);
+                        coupon_id.add(jo.getString("id"));
+                        coupon_name = jo.getString("shop_name");
+                        coupon_type = jo.getInteger("type");
+                        if (coupon_type == 1) {
+                            String[] str = jo.getString("coupon_name").split("减");
+                            coupon_price = "¥" + str[1];
+                            coupon_content = "消费金额" + str[0] + "可用";
+                        } else if (coupon_type == 2) {
+                            coupon_price = jo.getString("coupon_name").substring(0, 2);
+                            coupon_content = "全场商品" + coupon_price + "优惠";
+                        }
+                        String[] string = jo.getString("expire_at").split(" ");
+                        coupon_time = string[0];
+                        coupon_img = jo.getString("image_url");
+                        SaleBean saleBean = new SaleBean();
+                        saleBean.setText(coupon_name, coupon_price, coupon_content, coupon_time + "到期", coupon_img);
+                        dataList.add(saleBean);
                     }
-                    String[] string = jo.getString("expire_at").split(" ");
-                    coupon_time = string[0];
-                    coupon_img = jo.getString("image_url");
-                    SaleBean saleBean = new SaleBean();
-                    saleBean.setText(coupon_name, coupon_price, coupon_content, coupon_time + "到期", coupon_img);
-                    dataList.add(saleBean);
                 }
-            }
 
-            @Override
-            public void onReqFailed(String errorMsg) {
-                Toast.makeText(context, "我的优惠券请求失败", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onReqFailed(String errorMsg) {
+                    Log.e(TAG, errorMsg);
+                    Toast.makeText(context, "我的优惠券请求失败", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }

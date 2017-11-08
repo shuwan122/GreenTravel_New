@@ -12,7 +12,8 @@
         android:id="@+id/adv_act"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:text="this is Mukai Shudoku" />
+        android:text="this is Mukai Shudoku"
+        android:visibility="gone"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -23,7 +24,9 @@
         android:id="@+id/adv_spinner_set"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:elevation="5dp"
+        android:background="@color/white">
         <TextView
             android:id="@+id/adv_spinner1"
             android:layout_width="0dp"
@@ -31,7 +34,7 @@
             android:layout_weight="1.0"
             android:padding="10dp"
             android:drawableRight="@drawable/more_unfold"
-            android:text="全市"
+            android:text="综合排序"
             android:textColor="#af000000"
             android:textSize="16sp"
             android:gravity="center"></TextView>
@@ -47,7 +50,7 @@
             android:layout_weight="1.0"
             android:padding="10dp"
             android:drawableRight="@drawable/more_unfold"
-            android:text="综合排序"
+            android:text="不限价格"
             android:textColor="#af000000"
             android:textSize="16sp"
             android:gravity="center"></TextView>
@@ -65,7 +68,7 @@
             android:layout_weight="1.0"
             android:padding="10dp"
             android:drawableRight="@drawable/more_unfold"
-            android:text="更多"
+            android:text="不限距离"
             android:textColor="#af000000"
             android:textSize="16sp"
             android:gravity="center"></TextView>

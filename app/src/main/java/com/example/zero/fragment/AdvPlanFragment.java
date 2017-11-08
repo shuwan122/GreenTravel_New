@@ -1,5 +1,6 @@
 package com.example.zero.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,18 +19,32 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.example.zero.activity.AdvMapResultActivity;
 import com.example.zero.activity.AdvSearchActivity;
 import com.example.zero.activity.RouteResultActivity;
 import com.example.zero.adapter.RouteSearchAdapter;
 import com.example.zero.bean.RouteSearchBean;
 import com.example.zero.greentravel_new.R;
+import com.example.zero.util.HttpUtil;
+import com.example.zero.util.RequestManager;
 import com.example.zero.view.SearchPopView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Response;
+
+import static com.example.zero.fragment.RouteFragmentDouble.Origin.ADVICE;
+import static com.example.zero.fragment.RouteFragmentDouble.Origin.DATA;
+import static com.example.zero.fragment.RouteFragmentDouble.Origin.SINGLE;
 import static com.example.zero.greentravel_new.R.id.editText;
 
 /**
@@ -102,6 +117,12 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
 
     private static final String TAG = "AdvPlanFragment";
 
+    private RouteFragmentDouble.Origin origin;
+
+    final private String[] stationDe = {"广州塔", "广州火车站"};
+
+    private Context context;
+
     /**
      * 设置提示框显示项的个数
      *
@@ -117,14 +138,14 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
         // Inflate the layout for this fragment
         seted = false;
         View view = inflater.inflate(R.layout.fragment_adv_plan, container, false);
-
+        context = view.getContext();
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         initData();
-        initViews();
+//        initViews();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -175,18 +196,41 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean JUD = false;
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), AdvSearchActivity.class);
                 //TODO 具体所需搜索信息
                 String beginStation = searchPopView1.getText();
                 String endStation = searchPopView2.getText();
-                Bundle mBundle = new Bundle();
+                if (beginStation.equals(endStation)) {
+                    JUD = true;
+                }
+
+                final Bundle mBundle = new Bundle();
+                mBundle.putString("userId", "guest");
                 mBundle.putString("beginStation", beginStation);
                 mBundle.putString("endStation", endStation);
+                mBundle.putString("time", textView.getText().toString().trim());
                 if ((!beginStation.equals("")) & (!endStation.equals(""))) {
-                    Intent intent2 = new Intent(getActivity(), AdvMapResultActivity.class);
-                    intent2.putExtras(mBundle);
-                    startActivity(intent2);
+                    if (!JUD) {
+                        // TODO: 2017/10/29  前后端联调
+                        HttpUtil.sendAdviceOkHttpRequest(mBundle, new okhttp3.Callback() {
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                String responseData = response.body().string();
+                                origin = ADVICE;
+                                parseJSONWithJSONObject(responseData);
+                            }
+
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                Log.d(TAG, "onFailure: ERROR!");
+                                Toast.makeText(getActivity(), "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(getActivity(), "起终点信息不能相同，请重新输入！", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(getActivity(), "搜索框消息不完善，请填充完整后在开始搜索！", Toast.LENGTH_LONG).show();
                 }
@@ -265,46 +309,129 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
      */
 
     private void initData() {
-        //从数据库获取数据
-        getDbData();
-        //初始化热搜版数据
-        getHintData();
-        //初始化自动补全数据
-        getAutoCompleteData(null);
-        //初始化搜索结果数据
-        getResultData(null);
+        origin = DATA;
+        parseJSONWithJSONObject(null);
     }
 
-    /**
-     * 获取db数据
-     */
-    private void getDbData() {
-        int size = 100;
-        dbData = new ArrayList<>(size);
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "北京南站地铁站",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "北京邮电大学西门",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "北京大学未名湖",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        for (int i = 0; i < size; i++) {
-            dbData.add(new RouteSearchBean(R.drawable.title_icon, "站点" + (i + 1),
-                    "周围简介\n热门吃、喝、玩、乐", i * 20 + 2 + ""));
-        }
-    }
+    private void parseJSONWithJSONObject(String jsonData) {
+        Bundle mBundleHttp = new Bundle();
+        switch (origin) {
+            case ADVICE:
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonData);
+                    String time = jsonObject.getString("time_advice");
+                    JSONObject sellers = jsonObject.getJSONObject("sellers");
+                    JSONArray route = jsonObject.getJSONArray("route");
+                    JSONArray busy = jsonObject.getJSONArray("busy");
 
-    /**
-     * 获取热搜版data和adapter
-     */
-    private void getHintData() {
-        hintData = new ArrayList<>(hintSize);
-        hintData.add("北京南站地铁站");
-        hintData.add("北京邮电大学西门");
-        hintData.add("北京大学未名湖");
-        for (int i = 1; i <= hintSize; i++) {
-            hintData.add("站点" + i * 10);
+                    ArrayList<String> stationList = new ArrayList<String>();
+                    ArrayList<String> routeList = new ArrayList<String>();
+
+                    mBundleHttp.putString("time", time);
+
+                    for (int i = 0; i < route.length(); i++) {
+                        if (i % 2 == 0) {
+                            stationList.add(route.getString(i));
+                        } else {
+                            routeList.add(route.getString(i));
+                        }
+                    }
+                    mBundleHttp.putStringArrayList("stationList", stationList);
+                    mBundleHttp.putStringArrayList("routeList", routeList);
+
+                    int size = 100;
+                    double[] sellerLatList = new double[size];
+                    double[] sellerLngList = new double[size];
+
+                    int sellerRange = 2;
+                    int count = 0;
+                    for (int i = 0; i < stationList.size(); i++) {
+                        for (int j = 0; j < sellerRange; j++) {
+                            if (sellers.has(stationList.get(i))) {
+                                if (j < sellers.getJSONArray(stationList.get(i)).length()) {
+                                    sellerLatList[count] = sellers.getJSONArray(stationList.get(i)).getJSONObject(j).getDouble("lat");
+                                    sellerLngList[count] = sellers.getJSONArray(stationList.get(i)).getJSONObject(j).getDouble("lng");
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    mBundleHttp.putInt("count", count);
+
+                    mBundleHttp.putDoubleArray("sellerLatList", sellerLatList);
+                    mBundleHttp.putDoubleArray("sellerLngList", sellerLngList);
+
+                    mBundleHttp.putString("origin", "Advice");
+
+                    Intent intent = new Intent(getActivity(), RouteResultActivity.class);
+                    intent.putExtras(mBundleHttp);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            case DATA:
+                HashMap<String, String> params = new HashMap<>();
+                params.put("userId", "guest");
+                RequestManager.getInstance(context).requestAsyn("http://10.108.120.154:8080/route/station",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                com.alibaba.fastjson.JSONObject jsonData = JSON.parseObject(result);
+
+                                com.alibaba.fastjson.JSONArray station = jsonData.getJSONArray("station");
+                                com.alibaba.fastjson.JSONArray busy = jsonData.getJSONArray("busy");
+
+                                dbData = new ArrayList<>(station.size());
+                                for (int i = 0; i < station.size(); i++) {
+                                    dbData.add(new RouteSearchBean(R.drawable.title_icon, station.getString(i),
+                                            "周围简介\n热门吃、喝、玩、乐", ""));
+                                }
+                                Log.d(TAG, "parseJSONWithJSONObject: " + dbData.size());
+
+                                setHintSize(busy.size());
+                                hintData = new ArrayList<>(hintSize);
+                                for (int i = 0; i < hintSize; i++) {
+                                    hintData.add(busy.getString(i));
+                                }
+                                hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
+                                //初始化自动补全数据
+                                getAutoCompleteData(null);
+                                //初始化搜索结果数据
+                                getResultData(null);
+
+                                initViews();
+                                Log.d(TAG, "parseJSONWithJSONObject: " + hintData.size());
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                dbData = new ArrayList<>();
+                                for (int i = 0; i < stationDe.length; i++) {
+                                    dbData.add(new RouteSearchBean(R.drawable.title_icon, stationDe[i],
+                                            "周围简介\n热门吃、喝、玩、乐", ""));
+                                }
+                                Log.d(TAG, "parseJSONWithJSONObject: " + dbData.size());
+
+                                hintData = new ArrayList<>();
+                                hintData.add("广州塔");
+                                hintData.add("体育西路");
+                                hintData.add("广州火车站");
+                                hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
+                                //初始化自动补全数据
+                                getAutoCompleteData(null);
+                                //初始化搜索结果数据
+                                getResultData(null);
+                                initViews();
+                                Toast.makeText(getContext(), "站点List请求失败,使用默认列表页。", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                break;
+
+            default:
+                break;
         }
-        hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
     }
 
     /**
@@ -498,7 +625,6 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
      * 获取时间段的
      */
     private void showTimeDialog() {
-
         final AlertDialog.Builder timeDialog = new AlertDialog.Builder(this.getContext());
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         final View dialogView = inflater.inflate(R.layout.fragment_adv_time_dialog, null);
@@ -506,6 +632,7 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
         timePicker1.setIs24HourView(true);
         final TimePicker timePicker2 = (TimePicker) dialogView.findViewById(R.id.timePicker2);
         timePicker2.setIs24HourView(true);
+
         if (seted) {
             timePicker1.setHour(hour1);
             timePicker1.setMinute(minute1);
@@ -522,12 +649,23 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                         hour2 = timePicker2.getHour();
                         minute1 = timePicker1.getMinute();
                         minute2 = timePicker2.getMinute();
-                        String s = "";
-                        s += timePicker1.getHour() + ":";
-                        s += timePicker1.getMinute() + " - ";
-                        s += timePicker2.getHour() + ":";
-                        s += timePicker2.getMinute();
-                        textView.setText(s);
+                        String h1 = timePicker1.getHour() + ":";
+                        String m1 = timePicker1.getMinute() + " - ";
+                        String h2 = timePicker2.getHour() + ":";
+                        String m2 = String.valueOf(timePicker2.getMinute());
+                        if (timePicker1.getHour() < 10) {
+                            h1 = "0" + h1;
+                        }
+                        if (timePicker2.getHour() < 10) {
+                            h2 = "0" + h2;
+                        }
+                        if (timePicker1.getMinute() < 10) {
+                            m1 = "0" + m1;
+                        }
+                        if (timePicker2.getMinute() < 10) {
+                            m2 = "0" + m2;
+                        }
+                        textView.setText(h1 + m1 + h2 + m2);
                         seted = true;
                     }
                 });
@@ -535,5 +673,4 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
         // 显示
         timeDialog.show();
     }
-
 }

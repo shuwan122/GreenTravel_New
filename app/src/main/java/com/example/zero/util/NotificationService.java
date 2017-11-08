@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import com.example.zero.activity.MsgActivity;
 import com.example.zero.greentravel_new.R;
 
+import java.util.HashMap;
+
 /**
  * Created by jojo on 2017/10/12.
  */
@@ -44,7 +46,6 @@ public class NotificationService extends Service {
         messageThread = new MessageThread();
         messageThread.isRunning = true;
         messageThread.start();
-
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -55,6 +56,7 @@ public class NotificationService extends Service {
         // 设置是否循环推送
         public boolean isRunning = true;
 
+        @Override
         public void run() {
             try {
                 // 间隔时间
@@ -92,6 +94,22 @@ public class NotificationService extends Service {
      * @return 返回服务器要推送的消息，否则如果为空的话，不推送
      */
     public String getServerMessage() {
+//        HashMap<String, String> params = new HashMap<>();
+//        params.put("user_id", "");
+//        params.put("offset", "");
+//        params.put("count", "");
+        //TODO:从服务器获取推送消息
+//        RequestManager.getInstance(this).requestAsyn("get_msgs", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+//            @Override
+//            public void onReqSuccess(String result) {
+//
+//            }
+//
+//            @Override
+//            public void onReqFailed(String errorMsg) {
+//
+//            }
+//        });
         return "NEWS!";
     }
 }

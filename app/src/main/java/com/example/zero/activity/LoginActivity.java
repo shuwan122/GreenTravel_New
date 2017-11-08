@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onReqFailed(String errorMsg) {
-                        Toast.makeText(getBaseContext(), errorMsg+"登录失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "登录失败", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, errorMsg);
                     }
                 });

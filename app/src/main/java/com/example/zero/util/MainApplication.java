@@ -21,6 +21,9 @@ public class MainApplication extends Application {
     private String username;
     private String token;
     private String avator;
+    private boolean send_msg;
+    private boolean apk;
+    private boolean pic;
     private String TAG = "MainApplication";
 
     public boolean isOnline() {
@@ -28,10 +31,13 @@ public class MainApplication extends Application {
     }
 
     public boolean defaultLogin() {
-        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel",MODE_PRIVATE);
-        phone = sharedPreferences.getString("phone","");
-        token = sharedPreferences.getString("token","");
-        if((!phone.equals(""))&&(!token.equals(""))) {
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        phone = sharedPreferences.getString("phone", "");
+        token = sharedPreferences.getString("token", "");
+        send_msg = sharedPreferences.getBoolean("send_msg", true);
+        apk = sharedPreferences.getBoolean("apk_download", false);
+        pic = sharedPreferences.getBoolean("pic_download", false);
+        if ((!phone.equals("")) && (!token.equals(""))) {
             HashMap<String, String> params = new HashMap<>();
             params.put("type", "1");
             params.put("phone", phone);
@@ -47,9 +53,9 @@ public class MainApplication extends Application {
                     avator = jsonObj.getString("avator");
                     SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", Activity.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("phone",phone);
-                    editor.putString("user_id",user_id);
-                    editor.putString("token",token);
+                    editor.putString("phone", phone);
+                    editor.putString("user_id", user_id);
+                    editor.putString("token", token);
                     editor.commit();
                     isOnline = true;
                 }
@@ -69,7 +75,7 @@ public class MainApplication extends Application {
         isOnline = false;
     }
 
-    public void login(String user_id,String phone,String username,String token, String avator) {
+    public void login(String user_id, String phone, String username, String token, String avator) {
         isOnline = true;
         this.user_id = user_id;
         this.phone = phone;
@@ -78,9 +84,9 @@ public class MainApplication extends Application {
         this.avator = avator;
         SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("phone",phone);
-        editor.putString("user_id",user_id);
-        editor.putString("token",token);//TODO 是否还有其他需要的信息
+        editor.putString("phone", phone);
+        editor.putString("user_id", user_id);
+        editor.putString("token", token);//TODO 是否还有其他需要的信息
         editor.commit();
     }
 
@@ -108,7 +114,41 @@ public class MainApplication extends Application {
         return token;
     }
 
+    public void setAvator(String avator) {
+        this.avator = avator;
+    }
+
     public String getAvator() {
         return avator;
+    }
+
+    public void setMsgBtn(boolean msg) {
+        this.send_msg = msg;
+    }
+
+    public boolean getMsgBtn() {
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        send_msg = sharedPreferences.getBoolean("send_msg", true);
+        return send_msg;
+    }
+
+    public void setApkBtn(boolean apk) {
+        this.apk = apk;
+    }
+
+    public boolean getApkBtn() {
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        apk = sharedPreferences.getBoolean("apk_download", false);
+        return apk;
+    }
+
+    public void setPicBtn(boolean pic) {
+        this.pic = pic;
+    }
+
+    public boolean getPicBtn() {
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        pic = sharedPreferences.getBoolean("pic_download", false);
+        return pic;
     }
 }

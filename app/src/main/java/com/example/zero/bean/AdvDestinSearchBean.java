@@ -12,22 +12,41 @@ public class AdvDestinSearchBean {
     private boolean isExtend;
     private String stationTag;
     private String title;
-    private String time;
+    private String img_url;
+    private String address;
+    private String phone;
     private int comments;
-    private int img;
     private int price;
+    private float distance;
     private float rate;
     private ArrayList<String> labels;
 
-    public void setText(boolean isStation,String stationTag,String title, int comments, int
-            price, String time, int imgId, float rate, ArrayList<String> labels) {
+    public void setText(String stationTag, int count) {
+        isStation = true;
+        isExtend = false;
+        this.stationTag = stationTag;
+        this.title = stationTag;
+        this.address = "";
+        this.img_url = "";
+        this.phone = "";
+        this.comments = count;
+        this.distance = 0;
+        this.price = 0;
+        this.rate = 0;
+        this.labels = null;
+    }
+
+    public void setText(boolean isStation, String stationTag, String title, String address, String phone, String img, int comments, int
+            price, float distance, float rate, ArrayList<String> labels) {
         this.isStation = isStation;
         this.isExtend = false;
         this.stationTag = stationTag;
         this.title = title;
-        this.time = time;
+        this.address = address;
         this.comments = comments;
-        this.img = imgId;
+        this.phone = phone;
+        this.distance = distance;
+        this.img_url = img;
         this.price = price;
         this.rate = rate;
         this.labels = labels;
@@ -57,20 +76,28 @@ public class AdvDestinSearchBean {
         return title;
     }
 
-    public String getTime() {
-        return time;
+    public String getAddress() {
+        return address;
     }
 
     public int getComments() {
         return comments;
     }
 
-    public int getImg() {
-        return img;
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getImg() {
+        return img_url;
     }
 
     public int getPrice() {
         return price;
+    }
+
+    public float getDistance() {
+        return distance;
     }
 
     public float getRate() {

@@ -15,8 +15,8 @@
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
         android:orientation="horizontal"
-        android:weightSum="1"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:weightSum="1">
 
         <Button
             android:id="@+id/mass"
@@ -65,43 +65,62 @@
     </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/route_result_single_btn"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
+        android:visibility="gone"
         android:weightSum="3">
 
         <Button
             android:id="@+id/fastStation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginLeft="5dip"
             android:layout_marginRight="5dip"
+            android:layout_weight="1"
             android:onClick="searchButtonProcess"
-            android:visibility="gone"
-            android:text="时间最短" />
+            android:text="时间最短"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/lessbusyStation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginLeft="5dip"
             android:layout_marginRight="5dip"
+            android:layout_weight="1"
             android:onClick="searchButtonProcess"
-            android:visibility="gone"
-            android:text="最少繁忙" />
+            android:text="最少繁忙"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/lesschangeStation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginLeft="5dip"
             android:layout_marginRight="5dip"
+            android:layout_weight="1"
             android:onClick="searchButtonProcess"
-            android:visibility="gone"
-            android:text="最少换乘" />
+            android:text="最少换乘"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/route_advice_text_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/route_advice_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="建议您的出行时间为:"
+            android:textColor="#27408B"
+            android:textSize="25dp"/>
     </LinearLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -139,10 +158,21 @@
             android:id="@+id/route_result_location"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="45dip"
-            android:layout_marginBottom="90dip"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/route_result_location" />
+            android:layout_marginBottom="90dip"
+            android:layout_marginLeft="45dip"
+            android:background="@drawable/route_result_location"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/route_coupon_display"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="90dip"
+            android:layout_marginRight="45dip"
+            android:background="@drawable/route_conpou_display"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
@@ -151,7 +181,8 @@
             android:layout_alignWithParentIfMissing="false"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="false"
-            android:layout_marginBottom="10dip">
+            android:layout_marginBottom="10dip"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/route_result_pre"

@@ -1,5 +1,6 @@
 package com.example.zero.util;
 
+import android.content.Context;
 import android.support.v4.util.SparseArrayCompat;
 
 
@@ -81,7 +82,7 @@ public class ItemViewDelegateManager<T>
                 "No ItemViewDelegate added that matches position=" + position + " in data source");
     }
 
-    public void convert(RecycleViewHolder holder, T item, int position)
+    public void convert(Context context,RecycleViewHolder holder, T item, int position)
     {
         int delegatesCount = delegates.size();
         for (int i = 0; i < delegatesCount; i++)
@@ -90,7 +91,7 @@ public class ItemViewDelegateManager<T>
 
             if (delegate.isForViewType( item, position))
             {
-                delegate.convert(holder, item, position);
+                delegate.convert(context,holder, item, position);
                 return;
             }
         }

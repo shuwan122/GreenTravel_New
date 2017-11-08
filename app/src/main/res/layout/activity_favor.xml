@@ -33,7 +33,7 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/favor_spot"
+                android:id="@+id/favor_sta"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -41,7 +41,7 @@
                 android:button="@null"
                 android:checked="true"
                 android:gravity="center"
-                android:text="收藏的点"
+                android:text="收藏站点"
                 android:textColor="@drawable/favor_rg_text_color_select" />
 
             <View
@@ -51,35 +51,22 @@
                 android:background="@color/firstColor" />
 
             <RadioButton
-                android:id="@+id/favor_route"
+                android:id="@+id/favor_shop"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/favor_rg_shape_corner_right"
                 android:button="@null"
                 android:gravity="center"
-                android:text="收藏路线"
+                android:text="收藏商家"
                 android:textColor="@drawable/favor_rg_text_color_select" />
         </RadioGroup>
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/favor_recv"
+    <FrameLayout
+        android:id="@+id/favor_frag_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/favor_add"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_margin="15dp"
-        android:background="@color/white"
-        android:drawableLeft="@drawable/plus"
-        android:elevation="5dp"
-        android:gravity="center"
-        android:paddingLeft="150dp"
-        android:paddingRight="150dp"
-        android:text="新增"
-        android:textColor="@color/firstColor" />
+    </FrameLayout>
 </LinearLayout>
