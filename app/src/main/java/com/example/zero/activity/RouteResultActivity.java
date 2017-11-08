@@ -397,7 +397,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         startActivity(intent);
                     }
                 });
-                builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 

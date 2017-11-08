@@ -134,11 +134,11 @@ public class ShopOrderActivity extends AppCompatActivity {
         for (int i = 0; i < 2; i++) {
             ShopCartBean.CartlistBean sb = new ShopCartBean.CartlistBean();
             sb.setShopId(1);
-            sb.setPrice("1.0");
+            sb.setPrice("1300.0");
             sb.setDefaultPic("https://img14.360buyimg.com/n0/jfs/t880/160/840787015/84479/39a8654c/55506080N9f6ba211.jpg");
             sb.setProductName("森海塞尔小馒头");
             sb.setShopName("京东");
-            sb.setColor("蓝色");
+            sb.setColor("黑色");
             sb.setCount(2);
             mAllOrderList.add(sb);
         }
@@ -146,11 +146,11 @@ public class ShopOrderActivity extends AppCompatActivity {
         for (int i = 0; i < 3; i++) {
             ShopCartBean.CartlistBean sb = new ShopCartBean.CartlistBean();
             sb.setShopId(2);
-            sb.setPrice("1.0");
+            sb.setPrice("1500.0");
             sb.setDefaultPic("https://img.alicdn.com/imgextra/i4/2777470791/TB2gfgsXHFkpuFjy1XcXXclapXa_!!2777470791.png_60x60q90.jpg");
             sb.setProductName("Cherry MX8.0");
             sb.setShopName("淘宝");
-            sb.setColor("绿色");
+            sb.setColor("白色");
             sb.setCount(2);
             mAllOrderList.add(sb);
         }

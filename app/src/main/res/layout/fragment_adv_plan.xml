@@ -39,7 +39,7 @@
                 android:layout_width="40dp"
                 android:layout_height="115dp"
                 android:layout_gravity="right"
-                android:background="@color/GreenTheme">
+                android:background="@color/searchViewBackground">
 
                 <Button
                     android:id="@+id/adv_plan_btn_change"
@@ -92,7 +92,6 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:gravity="bottom"
-            android:layout_marginTop="15dp"
             android:layout_gravity="center|bottom">
             <Button
                 android:id="@+id/plan_search_commit"
@@ -100,7 +99,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="bottom|right"
-                android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:background="#1874CD"
