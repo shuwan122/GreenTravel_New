@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -30,14 +31,26 @@ import com.example.zero.adapter.SelectAdapter;
 import com.example.zero.adapter.TypeAdapter;
 import com.example.zero.entity.GoodsItem;
 import com.example.zero.greentravel_new.R;
+import com.example.zero.util.HttpUtil;
 import com.example.zero.view.DividerDecoration;
 import com.example.zero.view.TitleShopLayout;
 import com.flipboard.bottomsheet.BottomSheetLayout;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
+import okhttp3.Call;
+import okhttp3.Response;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+
+import static com.example.zero.fragment.RouteFragmentDouble.Origin.ADVICE;
 
 public class ShoppingCartActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -50,6 +63,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     private StickyListHeadersListView listView;
 
     private TitleShopLayout title;
+    private String shopId;
     private String shopImg;
     private String shopName;
 
@@ -66,6 +80,20 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     private NumberFormat nf;
     private Handler mHanlder;
 
+    //前后端接口
+    private int size = 100;
+    private String[] idList = new String[size];
+    private String[] goodsTypeList = new String[size];
+    private String[] nameList = new String[size];
+    private String[] posterList = new String[size];
+    private int[] priceList = new int[size];
+    private String[] descriptionList = new String[size];
+    private int[] numList = new int[size];
+    private String[] sellerIdList = new String[size];
+    private int[] buyNumList = new int[size];
+
+    private static final String TAG = "ShoppingCartActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,21 +101,92 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         nf = NumberFormat.getCurrencyInstance();
         nf.setMaximumFractionDigits(2);
         mHanlder = new Handler(getMainLooper());
-        dataList = GoodsItem.getGoodsList();
-        typeList = GoodsItem.getTypeList();
-        selectedList = new SparseArray<>();
-        groupSelect = new SparseIntArray();
 
         context = getBaseContext();
         Intent intent = getIntent();
+        shopId = intent.getStringExtra("shopId");
         shopName = intent.getStringExtra("shopName");
         shopImg = intent.getStringExtra("shopImg");
 
-        initView();
+
+        // TODO: 2017/11/10 商品初始化
+        final Bundle mBundle = new Bundle();
+        mBundle.putString("userId", "guest");
+        mBundle.putString("shopId", shopId);
+        HttpUtil.sendGoodsOkHttpRequest(mBundle, new okhttp3.Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseData = response.body().string();
+                parseJSONWithJSONObject(responseData);
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: ERROR!");
+                Toast.makeText(context, "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        title = (TitleShopLayout) findViewById(R.id.shop_title);
+        title.setText(shopName);
+        title.setImg(context, shopImg);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
+        }
+    }
+
+    private void parseJSONWithJSONObject(String jsonData) {
+        try {
+            int count = 0;
+            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONArray goods = jsonObject.getJSONArray("goodsInfo");
+
+            if (goods.length() > 0) {
+                for (int i = 0; i < goods.length(); i++) {
+                    idList[count] = goods.getJSONObject(i).getString("id");
+                    goodsTypeList[count] = goods.getJSONObject(i).getString("goods_type");
+                    nameList[count] = goods.getJSONObject(i).getString("goods_name");
+                    posterList[count] = goods.getJSONObject(i).getString("picture_url");
+                    priceList[count] = goods.getJSONObject(i).getInt("price");
+                    descriptionList[count] = goods.getJSONObject(i).getString("description");
+                    numList[count] = goods.getJSONObject(i).getInt("goods_number");
+                    sellerIdList[count] = goods.getJSONObject(i).getString("seller_id");
+                    buyNumList[count] = goods.getJSONObject(i).getInt("seller_id");
+                    count++;
+                }
+            }
+
+            Set<String> set = new HashSet<>();
+            for (int i = 0; i < count; i++) {
+                set.add(goodsTypeList[i]);
+            }
+            String[] typeResult = (String[]) set.toArray(new String[set.size()]);
+
+            ArrayList<GoodsItem> goodHandleList = new ArrayList<GoodsItem>();
+            ArrayList<GoodsItem> typeHandleList = new ArrayList<GoodsItem>();
+            GoodsItem item = null;
+
+            for (int i = 0; i < typeResult.length; i++) {
+                for (int j = 0; j < count; j++) {
+                    if (goodsTypeList[j].equals(typeResult[i])) {
+                        item = new GoodsItem(Integer.valueOf(idList[j]), priceList[j], nameList[j], i, typeResult[i], posterList[j]);
+                        goodHandleList.add(item);
+                    }
+                }
+                typeHandleList.add(item);
+            }
+
+            dataList = goodHandleList;
+            typeList = typeHandleList;
+            selectedList = new SparseArray<>();
+            groupSelect = new SparseIntArray();
+
+            initView();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -103,10 +202,6 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomSheetLayout);
 
         listView = (StickyListHeadersListView) findViewById(R.id.itemListView);
-
-        title = (TitleShopLayout) findViewById(R.id.shop_title);
-        title.setText(shopName);
-        title.setImg(context, shopImg);
 
         rvType.setLayoutManager(new LinearLayoutManager(this));
         typeAdapter = new TypeAdapter(this, typeList);
@@ -281,6 +376,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
         tvCount.setText(String.valueOf(count));
 
+        // TODO: 2017/11/10 最低起送价格
         if (cost > 99.99) {
             tvTips.setVisibility(View.GONE);
             tvSubmit.setVisibility(View.VISIBLE);

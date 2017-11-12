@@ -322,10 +322,13 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                     String time = jsonObject.getString("time_advice");
                     JSONObject sellers = jsonObject.getJSONObject("sellers");
                     JSONArray route = jsonObject.getJSONArray("route");
+                    JSONArray route_detail = jsonObject.getJSONArray("route_detail");
                     JSONArray busy = jsonObject.getJSONArray("busy");
 
                     ArrayList<String> stationList = new ArrayList<String>();
                     ArrayList<String> routeList = new ArrayList<String>();
+                    ArrayList<String> stationDetailList = new ArrayList<String>();
+                    ArrayList<String> routeDetailList = new ArrayList<String>();
 
                     mBundleHttp.putString("time", time);
 
@@ -338,6 +341,15 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                     }
                     mBundleHttp.putStringArrayList("stationList", stationList);
                     mBundleHttp.putStringArrayList("routeList", routeList);
+                    for (int i = 0; i < route_detail.length(); i++) {
+                        if (i % 2 == 0) {
+                            stationDetailList.add(route_detail.getString(i));
+                        } else {
+                            routeDetailList.add(route_detail.getString(i));
+                        }
+                    }
+                    mBundleHttp.putStringArrayList("stationDetailList", stationDetailList);
+                    mBundleHttp.putStringArrayList("routeDetailList", routeDetailList);
 
                     int size = 100;
                     double[] sellerLatList = new double[size];
