@@ -18,9 +18,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.baidu.mapapi.model.LatLng;
-import com.bumptech.glide.Glide;
 import com.donkingliang.labels.LabelsView;
 import com.example.zero.adapter.AdvDestinMultiAdapter;
 import com.example.zero.adapter.AdvDestinSearchAdapter;
@@ -72,6 +69,7 @@ public class StationDisplayActivity extends AppCompatActivity {
     private String[] tagList = new String[size];
     private String[] posterList = new String[size];
     private String[] shopNameList = new String[size];
+    private String[] phoneList = new String[size];
     private double[] starList = new double[size];
     private boolean[] hasCouponList = new boolean[size];
     private float[] disList = new float[size];
@@ -99,6 +97,10 @@ public class StationDisplayActivity extends AppCompatActivity {
         context = getBaseContext();
         Intent intent = getIntent();
         stationName = intent.getStringExtra("stationName");
+        adv_recv = (RecyclerView) this.findViewById(R.id.station_search_recv);
+        adv_recv.setLayoutManager(new LinearLayoutManager(context));
+        textView = (TextView) this.findViewById(R.id.station_name);
+        textView.setText("现在为" + stationName + "站");
 
         final Bundle mBundle = new Bundle();
         mBundle.putString("userId", "guest");
@@ -140,8 +142,17 @@ public class StationDisplayActivity extends AppCompatActivity {
                     starList[count] = shop.getJSONObject(i).getDouble("star_num");
                     hasCouponList[count] = shop.getJSONObject(i).getBoolean("doesHaveCoupon");
                     disList[count] = (float) shop.getJSONObject(i).getDouble("distanceToStation");
-                    priceList[count] = shop.getJSONObject(i).getInt("ave_price");
+                    if (!shop.getJSONObject(i).getString("ave_price").equals("null")) {
+                        priceList[count] = shop.getJSONObject(i).getInt("ave_price");
+                    } else {
+                        priceList[count] = 0;
+                    }
                     commentList[count] = shop.getJSONObject(i).getInt("comment_num");
+                    if (!shop.getJSONObject(i).getString("phone").equals("null")) {
+                        phoneList[count] = shop.getJSONObject(i).getString("phone");
+                    } else {
+                        phoneList[count] = "";
+                    }
 
                     ArrayList<String> labelList = new ArrayList<String>();
                     labelList.add(shop.getJSONObject(i).getString("shop_type"));
@@ -167,11 +178,6 @@ public class StationDisplayActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        textView = (TextView) this.findViewById(R.id.station_name);
-        textView.setText("现在为" + stationName + "站");
-        adv_recv = (RecyclerView) this.findViewById(R.id.station_search_recv);
-        adv_recv.setLayoutManager(new LinearLayoutManager(context));
-
         shopImg = (ImageView) this.findViewById(R.id.adv_destin_store_img);
 
         spinnerSet = (View) this.findViewById(R.id.station_spinner_set);
@@ -279,7 +285,7 @@ public class StationDisplayActivity extends AppCompatActivity {
     private void showData() {
         for (int i = 0; i < stationShopCount; i++) {
             AdvDestinSearchBean searchBean = new AdvDestinSearchBean();
-            searchBean.setText(false, tagList[i], shopNameList[i], stationName, "", posterList[i],
+            searchBean.setText(false, tagList[i], shopNameList[i], stationName, phoneList[i], posterList[i],
                     commentList[i], priceList[i], disList[i], (float) starList[i], label.get(String.valueOf(i)));
             showList.add(searchBean);
         }

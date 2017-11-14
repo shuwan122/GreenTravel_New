@@ -81,16 +81,16 @@
                 <action android:name="MSG_SERVICE" />
             </intent-filter>
         </service>
-
-         <service
-         android:name="com.baidu.location.f"
-         android:enabled="true"
-         android:process=":remote"/>
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
 
         <activity android:name="com.example.zero.activity.RouteDrawerActivity" />
         <activity android:name="com.example.zero.activity.StationDisplayActivity" />
         <activity android:name="com.example.zero.activity.ShopDetailActivity" />
-        <activity android:name="com.example.zero.activity.ShopOrderActivity"/>
+        <activity android:name="com.example.zero.activity.ShopOrderActivity" />
+        <activity android:name="com.example.zero.activity.NearShopCouponActivity"/>
     </application>
 
 </manifest>

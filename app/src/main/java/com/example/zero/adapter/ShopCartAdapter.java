@@ -40,7 +40,12 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
     @Override
     public void onBindViewHolder(final ShopCartAdapter.MyViewHolder holder, final int position) {
 
-        Glide.with(context).load(data.get(position).getDefaultPic()).into(holder.ivShopCartClothPic);
+        Glide.with(context)
+                .load(data.get(position).getDefaultPic())
+                .dontAnimate()
+                .placeholder(R.mipmap.ic_launcher)
+                .into(holder.ivShopCartClothPic);
+
         if (position > 0) {
             if (data.get(position).getShopId() == data.get(position - 1).getShopId()) {
                 holder.llShopCartHeader.setVisibility(View.GONE);
@@ -51,8 +56,16 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
             holder.llShopCartHeader.setVisibility(View.VISIBLE);
         }
 
-        holder.tvShopCartClothColor.setText("颜色：" + data.get(position).getColor());
-        holder.tvShopCartClothSize.setText("尺寸：" + data.get(position).getSize());
+        if (data.get(position).getColor().equals("NULL")) {
+            holder.tvShopCartClothColor.setText("");
+        } else {
+            holder.tvShopCartClothColor.setText("颜色：" + data.get(position).getColor());
+        }
+        if (data.get(position).getSize().equals("NULL")) {
+            holder.tvShopCartClothSize.setText("");
+        } else {
+            holder.tvShopCartClothSize.setText("尺寸：" + data.get(position).getSize());
+        }
         holder.tvShopCartClothName.setText(data.get(position).getProductName());
         holder.tvShopCartShopName.setText(data.get(position).getShopName());
         holder.tvShopCartClothPrice.setText("¥" + data.get(position).getPrice());

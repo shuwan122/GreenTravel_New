@@ -58,13 +58,13 @@ public class ShopCartBean {
 
     public static class CartlistBean {
         private int id;
-        private int shopId;
+        private String shopId;
         private String shopName;
-        private int productId;
+        private String productId;
         private String productName;
         private String color;
         private String size;
-        private String price;
+        private double price;
         private String defaultPic;
         private int count;
         private boolean isSelect = true;
@@ -111,11 +111,11 @@ public class ShopCartBean {
             this.id = id;
         }
 
-        public int getShopId() {
+        public String getShopId() {
             return shopId;
         }
 
-        public void setShopId(int shopId) {
+        public void setShopId(String shopId) {
             this.shopId = shopId;
         }
 
@@ -127,11 +127,11 @@ public class ShopCartBean {
             this.shopName = shopName;
         }
 
-        public int getProductId() {
+        public String  getProductId() {
             return productId;
         }
 
-        public void setProductId(int productId) {
+        public void setProductId(String productId) {
             this.productId = productId;
         }
 
@@ -159,11 +159,11 @@ public class ShopCartBean {
             this.size = size;
         }
 
-        public String getPrice() {
+        public double getPrice() {
             return price;
         }
 
-        public void setPrice(String price) {
+        public void setPrice(Double price) {
             this.price = price;
         }
 

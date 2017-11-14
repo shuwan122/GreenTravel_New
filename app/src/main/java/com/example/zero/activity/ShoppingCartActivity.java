@@ -21,6 +21,7 @@ import android.view.animation.AnimationSet;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -81,16 +82,20 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     private Handler mHanlder;
 
     //前后端接口
+    private ArrayList<String> selectIdList = new ArrayList<String>();
+
     private int size = 100;
     private String[] idList = new String[size];
     private String[] goodsTypeList = new String[size];
     private String[] nameList = new String[size];
     private String[] posterList = new String[size];
-    private int[] priceList = new int[size];
+    private double[] priceList = new double[size];
     private String[] descriptionList = new String[size];
     private int[] numList = new int[size];
     private String[] sellerIdList = new String[size];
     private int[] buyNumList = new int[size];
+
+    private Button mCoupon;
 
     private static final String TAG = "ShoppingCartActivity";
 
@@ -107,7 +112,8 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         shopId = intent.getStringExtra("shopId");
         shopName = intent.getStringExtra("shopName");
         shopImg = intent.getStringExtra("shopImg");
-
+        String bracket = shopName.substring(shopName.indexOf("（"), shopName.indexOf("）") + 1);
+        shopName = shopName.replace(bracket, "");
 
         // TODO: 2017/11/10 商品初始化
         final Bundle mBundle = new Bundle();
@@ -149,11 +155,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                     goodsTypeList[count] = goods.getJSONObject(i).getString("goods_type");
                     nameList[count] = goods.getJSONObject(i).getString("goods_name");
                     posterList[count] = goods.getJSONObject(i).getString("picture_url");
-                    priceList[count] = goods.getJSONObject(i).getInt("price");
+                    priceList[count] = goods.getJSONObject(i).getDouble("price");
                     descriptionList[count] = goods.getJSONObject(i).getString("description");
                     numList[count] = goods.getJSONObject(i).getInt("goods_number");
                     sellerIdList[count] = goods.getJSONObject(i).getString("seller_id");
-                    buyNumList[count] = goods.getJSONObject(i).getInt("seller_id");
+//                    buyNumList[count] = goods.getJSONObject(i).getInt("bought_num");
                     count++;
                 }
             }
@@ -228,6 +234,17 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
+        mCoupon = (Button) findViewById(R.id.shoppingcart_coupon);
+        mCoupon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle mBundle = new Bundle();
+                Intent intent = new Intent(context, NearShopCouponActivity.class);
+                mBundle.putString("shopId", shopId);
+                intent.putExtras(mBundle);
+                startActivity(intent);
+            }
+        });
     }
 
     public void playAnimation(int[] start_location) {
@@ -255,9 +272,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         return set;
     }
 
-    private void addViewToAnimLayout(final ViewGroup vg, final View view,
-                                     int[] location) {
-
+    private void addViewToAnimLayout(final ViewGroup vg, final View view, int[] location) {
         int x = location[0];
         int y = location[1];
         int[] loc = new int[2];
@@ -268,13 +283,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void setAnim(final View v, int[] start_location) {
-
         addViewToAnimLayout(anim_mask_layout, v, start_location);
         Animation set = createAnim(start_location[0], start_location[1]);
         set.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
@@ -289,7 +302,6 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
         v.startAnimation(set);
@@ -305,8 +317,32 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 clearCart();
                 break;
             case R.id.tvSubmit:
+                int size = selectedList.size();
+                String[] idList = new String[size];
+                String[] nameList = new String[size];
+                String[] posterList = new String[size];
+                double[] priceList = new double[size];
+                int[] numList = new int[size];
+
+                for (int i = 0; i < size; i++) {
+                    idList[i] = String.valueOf(selectedList.get(Integer.valueOf(selectIdList.get(i))).id);
+                    nameList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).name;
+                    posterList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).imgUrl;
+                    priceList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).price;
+                    numList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).count;
+                }
+
                 Bundle mBundle = new Bundle();
                 Intent intent = new Intent(context, ShopOrderActivity.class);
+                mBundle.putString("shopName", shopName);
+                mBundle.putString("shopId", shopId);
+                mBundle.putInt("size", size);
+                mBundle.putStringArray("idList", idList);
+                mBundle.putStringArray("nameList", nameList);
+                mBundle.putStringArray("posterList", posterList);
+                mBundle.putDoubleArray("priceList", priceList);
+                mBundle.putIntArray("numList", numList);
+
                 intent.putExtras(mBundle);
                 startActivity(intent);
                 Toast.makeText(context, "结算", Toast.LENGTH_SHORT).show();
@@ -329,6 +365,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         GoodsItem temp = selectedList.get(item.id);
         if (temp == null) {
             item.count = 1;
+            selectIdList.add(String.valueOf(item.id));
             selectedList.append(item.id, item);
         } else {
             temp.count++;

@@ -476,9 +476,9 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                 stedFlag = 0;
                             }
                             mSearch.transitSearch(transitRouteFast
-                                    .from(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i)))
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i) + "地铁站"))
                                     .city("广州")
-                                    .to(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i + 1))));
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i + 1) + "地铁站")));
                         }
                         addMarker();
 
