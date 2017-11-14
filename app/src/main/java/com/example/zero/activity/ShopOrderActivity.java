@@ -1,6 +1,5 @@
 package com.example.zero.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
@@ -16,14 +15,13 @@ import android.widget.TextView;
 import com.example.zero.adapter.ShopCartAdapter;
 import com.example.zero.bean.ShopCartBean;
 import com.example.zero.greentravel_new.R;
-import com.example.zero.view.TitleShopLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShopOrderActivity extends AppCompatActivity {
 
-    private TextView tvShopCartSubmit, tvShopCartSelect, tvShopCartTotalNum;
+    private TextView tvShopCartSubmit, tvShopCartSelect, tvShopCartTotalNum, tvShopCartHint;
     private View mEmtryView;
 
     private RecyclerView rlvShopCart, rlvHotProducts;
@@ -38,29 +36,28 @@ public class ShopOrderActivity extends AppCompatActivity {
     private float mTotalPrice1;
     private boolean mSelect;
 
-    private TitleShopLayout title;
-    private String shopImg;
+    //前后端接口
     private String shopName;
-
-    private Context context;
+    private String shopId;
+    private int count;
+    private int size = 100;
+    private String[] idList = new String[size];
+    private String[] nameList = new String[size];
+    private String[] posterList = new String[size];
+    private double[] priceList = new double[size];
+    private int[] numList = new int[size];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_order);
-
-        context = getBaseContext();
         Intent intent = getIntent();
-        shopName = intent.getStringExtra("shopName");
-        shopImg = intent.getStringExtra("shopImg");
-
-        title = (TitleShopLayout) findViewById(R.id.shop_order_title);
-        title.setText(shopName);
-        title.setImg(context, shopImg);
+        Bundle mBundle = intent.getExtras();
 
         tvShopCartSelect = (TextView) findViewById(R.id.tv_shopcart_addselect);
         tvShopCartTotalPrice = (TextView) findViewById(R.id.tv_shopcart_totalprice);
         tvShopCartTotalNum = (TextView) findViewById(R.id.tv_shopcart_totalnum);
+        tvShopCartHint = (TextView) findViewById(R.id.tv_shopcart_hint);
 
         rlHaveProduct = (RelativeLayout) findViewById(R.id.rl_shopcart_have);
         rlvShopCart = (RecyclerView) findViewById(R.id.rlv_shopcart);
@@ -76,7 +73,6 @@ public class ShopOrderActivity extends AppCompatActivity {
         rlvShopCart.setLayoutManager(new LinearLayoutManager(this));
         mShopCartAdapter = new ShopCartAdapter(this, mAllOrderList);
         rlvShopCart.setAdapter(mShopCartAdapter);
-
         //删除商品接口
         mShopCartAdapter.setOnDeleteClickListener(new ShopCartAdapter.OnDeleteClickListener() {
             @Override
@@ -84,7 +80,6 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mShopCartAdapter.notifyDataSetChanged();
             }
         });
-
         //修改数量接口
         mShopCartAdapter.setOnEditClickListener(new ShopCartAdapter.OnEditClickListener() {
             @Override
@@ -93,7 +88,6 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mPosition = position;
             }
         });
-
         //实时监控全选按钮
         mShopCartAdapter.setResfreshListener(new ShopCartAdapter.OnResfreshListener() {
             @Override
@@ -112,7 +106,7 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mGoPayList.clear();
                 for (int i = 0; i < mAllOrderList.size(); i++) {
                     if (mAllOrderList.get(i).getIsSelect()) {
-                        mTotalPrice += Float.parseFloat(mAllOrderList.get(i).getPrice()) * mAllOrderList.get(i).getCount();
+                        mTotalPrice += mAllOrderList.get(i).getPrice() * mAllOrderList.get(i).getCount();
                         mTotalNum += 1;
                         mGoPayList.add(mAllOrderList.get(i));
                     }
@@ -120,6 +114,20 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mTotalPrice1 = mTotalPrice;
                 tvShopCartTotalPrice.setText("总价：" + mTotalPrice);
                 tvShopCartTotalNum.setText("共" + mTotalNum + "件商品");
+            }
+
+            @Override
+            public void onEmpty() {
+                mSelect = false;
+                Drawable left = getResources().getDrawable(R.drawable.shopcart_unselected);
+                tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
+                float mTotalPrice = 0;
+                int mTotalNum = 0;
+                mGoPayList.clear();
+                mTotalPrice1 = mTotalPrice;
+                tvShopCartTotalPrice.setText("总价：" + mTotalPrice);
+                tvShopCartTotalNum.setText("共" + mTotalNum + "件商品");
+                tvShopCartHint.setVisibility(View.VISIBLE);
             }
         });
 
@@ -131,7 +139,6 @@ public class ShopOrderActivity extends AppCompatActivity {
                 if (mSelect) {
                     Drawable left = getResources().getDrawable(R.drawable.shopcart_selected);
                     tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
-                    tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_btn));
                     for (int i = 0; i < mAllOrderList.size(); i++) {
                         mAllOrderList.get(i).setSelect(true);
                         mAllOrderList.get(i).setShopSelect(true);
@@ -139,15 +146,24 @@ public class ShopOrderActivity extends AppCompatActivity {
                 } else {
                     Drawable left = getResources().getDrawable(R.drawable.shopcart_unselected);
                     tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
-                    tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_btn_concal));
                     for (int i = 0; i < mAllOrderList.size(); i++) {
                         mAllOrderList.get(i).setSelect(false);
                         mAllOrderList.get(i).setShopSelect(false);
                     }
                 }
                 mShopCartAdapter.notifyDataSetChanged();
+
             }
         });
+
+        shopName = mBundle.getString("shopName");
+        shopId = mBundle.getString("shopId");
+        count = mBundle.getInt("size");
+        idList = mBundle.getStringArray("idList");
+        nameList = mBundle.getStringArray("nameList");
+        posterList = mBundle.getStringArray("posterList");
+        priceList = mBundle.getDoubleArray("priceList");
+        numList = mBundle.getIntArray("numList");
 
         initData();
         mShopCartAdapter.notifyDataSetChanged();
@@ -159,39 +175,19 @@ public class ShopOrderActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < count; i++) {
             ShopCartBean.CartlistBean sb = new ShopCartBean.CartlistBean();
-            sb.setShopId(1);
-            sb.setPrice("1300.0");
-            sb.setDefaultPic("https://img14.360buyimg.com/n0/jfs/t880/160/840787015/84479/39a8654c/55506080N9f6ba211.jpg");
-            sb.setProductName("森海塞尔小馒头");
-            sb.setShopName("京东");
-            sb.setColor("黑色");
-            sb.setCount(2);
-            mAllOrderList.add(sb);
-        }
+            sb.setShopId(shopId);
+            sb.setShopName(shopName);
+            sb.setPrice(priceList[i]);
+            sb.setDefaultPic(posterList[i]);
+            sb.setProductName(nameList[i]);
+            sb.setProductId(idList[i]);
+            sb.setCount(numList[i]);
 
-        for (int i = 0; i < 3; i++) {
-            ShopCartBean.CartlistBean sb = new ShopCartBean.CartlistBean();
-            sb.setShopId(2);
-            sb.setPrice("1500.0");
-            sb.setDefaultPic("https://img.alicdn.com/imgextra/i4/2777470791/TB2gfgsXHFkpuFjy1XcXXclapXa_!!2777470791.png_60x60q90.jpg");
-            sb.setProductName("Cherry MX8.0");
-            sb.setShopName("淘宝");
-            sb.setColor("白色");
-            sb.setCount(2);
-            mAllOrderList.add(sb);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            ShopCartBean.CartlistBean sb = new ShopCartBean.CartlistBean();
-            sb.setShopId(2);
-            sb.setPrice("1500.0");
-            sb.setDefaultPic("https://img.alicdn.com/imgextra/i4/2777470791/TB2gfgsXHFkpuFjy1XcXXclapXa_!!2777470791.png_60x60q90.jpg");
-            sb.setProductName("Cherry MX8.0");
-            sb.setShopName("淘宝");
-            sb.setColor("白色");
-            sb.setCount(2);
+            // TODO: 2017/11/14 暂时未定义属性
+            sb.setColor("NULL");
+            sb.setSize("NULL");
             mAllOrderList.add(sb);
         }
         isSelectFirst(mAllOrderList);
@@ -208,5 +204,6 @@ public class ShopOrderActivity extends AppCompatActivity {
                 }
             }
         }
+
     }
 }

@@ -12,9 +12,13 @@
     <!--红色-->
     <color name="red">#FF0000</color>
     <color name="transparent_red">#BFFF0000</color>
+    <color name="price">#FF3300</color>
     <!--橙色-->
     <color name="orange">#CD853F</color>
+    <color name="light_orange">#FF8C00</color>
     <color name="deep_orange">#A0522D</color>
+    <!--灰色-->
+    <color name="gray">#EDEDED</color>
 
     <!--搜索框-->
     <color name="searchViewBackground">#87c38e</color>

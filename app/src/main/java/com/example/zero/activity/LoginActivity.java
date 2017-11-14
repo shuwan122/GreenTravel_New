@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                         String user_id = jsonObj.getString("user_id");
                         String token = jsonObj.getString("token");
                         String username = jsonObj.getString("username");
-                        String avator = jsonObj.getString("avator");
+                        String avator = jsonObj.getString("avator_url");
                         //TODO 载入头像 简化代码
                         Intent userInfo = new Intent();
                         userInfo.putExtra("username", username);

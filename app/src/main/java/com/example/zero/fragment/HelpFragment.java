@@ -1,6 +1,9 @@
 package com.example.zero.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.RequestManager;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +33,7 @@ public class HelpFragment extends Fragment {
     private View helpFrag;
     private Context context;
     private TextView text1, text2, text3, text4, text5, text6, text7;
+    private LinearLayout q1, q2, q3, q4, q5, q6, q7;
     private List<String> id = new ArrayList<>();
     private List<String> question = new ArrayList<>();
     private List<String> answer = new ArrayList<>();
@@ -47,6 +52,24 @@ public class HelpFragment extends Fragment {
 
             }
         });
+        q1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                answerDialog(answer.get(0));
+            }
+        });
+        q2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                answerDialog(answer.get(1));
+            }
+        });
+        q3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                answerDialog(answer.get(2));
+            }
+        });
         return helpFrag;
     }
 
@@ -58,7 +81,36 @@ public class HelpFragment extends Fragment {
         text5 = (TextView) helpFrag.findViewById(R.id.q5_text);
         text6 = (TextView) helpFrag.findViewById(R.id.q6_text);
         text7 = (TextView) helpFrag.findViewById(R.id.q7_text);
-        ask = (LinearLayout)helpFrag.findViewById(R.id.ask_question);
+        q1 = (LinearLayout) helpFrag.findViewById(R.id.q1);
+        q2 = (LinearLayout) helpFrag.findViewById(R.id.q2);
+        q3 = (LinearLayout) helpFrag.findViewById(R.id.q3);
+        q4 = (LinearLayout) helpFrag.findViewById(R.id.q4);
+        q5 = (LinearLayout) helpFrag.findViewById(R.id.q5);
+        q6 = (LinearLayout) helpFrag.findViewById(R.id.q6);
+        q7 = (LinearLayout) helpFrag.findViewById(R.id.q7);
+        ask = (LinearLayout) helpFrag.findViewById(R.id.ask_question);
+    }
+
+    public void answerDialog(String answer) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog alertDialog = builder.setTitle("绿出行提示").setMessage(answer)
+                .setNegativeButton("关闭", null)
+                .create();
+        alertDialog.show();
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(alertDialog);
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(Color.parseColor("#CD5C5C"));
+            alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.parseColor("#008B8B"));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     public void getHotQuestion() {
@@ -74,14 +126,14 @@ public class HelpFragment extends Fragment {
                     question.add(jo.getString("question"));
                     answer.add(jo.getString("answer"));
                 }
-                text1.setText(id.get(0)+". "+question.get(0));
-                text2.setText(id.get(1)+". "+question.get(1));
-                text3.setText(id.get(2)+". "+question.get(2));
+                text1.setText(id.get(0) + ". " + question.get(0));
+                text2.setText(id.get(1) + ". " + question.get(1));
+                text3.setText(id.get(2) + ". " + question.get(2));
             }
 
             @Override
             public void onReqFailed(String errorMsg) {
-                Log.e(TAG,errorMsg);
+                Log.e(TAG, errorMsg);
             }
         });
     }

@@ -172,7 +172,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="90dip"
             android:layout_marginRight="45dip"
-            android:background="@drawable/route_conpou_display"/>
+            android:background="@drawable/route_conpou_display"
+            android:visibility="gone"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"

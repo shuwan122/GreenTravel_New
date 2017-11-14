@@ -229,6 +229,22 @@ Android App GreenTravel
 	 	<th>个人中心——修改优惠券界面bug</th>
 	 	<th>完成推荐搜索接口的连接</th>
 	 </tr>
+	<tr>
+	 	<th>171113</th>
+	 	<th>新需求——站点周围商家前后端联调完成</th>
+	 	<th>订单——写订单确认界面布局文件</th>
+	 	<th>新需求——调试购物车页面</th>
+	</tr>
+	<tr>
+		<th>171114</th>
+	 	<th>新需求——商家商品及购物车联调完成</th>
+	 	<th>订单——继续完成订单确认页面布局文件</th>
+	 	<th>新需求——尝试解决确认订单页面bug</th>
+	 </tr>
+    <tr>
+		<th>171115</th>
+		<th colspan="3">第八次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -458,6 +474,22 @@ Android App GreenTravel
 	 	<th>个人中心——下载apk</th>
 	 	<th>新的下载文件接口没有返回文件流 部分情况卡住<br>百度接口测量不到经纬度</th>
 	 </tr>
+	<tr>
+	 	<th>171113</th>
+	 	<th>json字符串解析出现null</th>
+	 	<th>无</th>
+	 	<th>Bug：购物车清空时下方价格没有刷新，数据没有更新<br> 购物车页面前后传递数据多，需要优化</th>
+	</tr>
+	<tr>
+		<th>171114</th>
+	 	<th>无</th>
+	 	<th>scrollview嵌套recyclerview滚动冲突，解决起来比较麻烦，最后把所有需要滚动的控件做成不同item添加到recyclerview里面</th>
+	 	<th>多滚动条页面效果差</th>
+	 </tr>
+    <tr>
+		<th>171115</th>
+		<th colspan="3">暂时没有发现bug</th>
+	</tr>
 </table>
 
 ## 参考
@@ -687,4 +719,20 @@ Android App GreenTravel
 	 	<th>无</th>
 	 	<th>http://blog.csdn.net/u010940300/article/details/43488651<br>http://www.cnblogs.com/seely/p/5715512.html</th>
 	 </tr>
+	<tr>
+	 	<th>171113</th>
+	 	<th>http://m.blog.csdn.net/dj4384331/article/details/54918648</th>
+	 	<th>无</th>
+	 	<th>Serializable实现 http://blog.csdn.net/jiangyou4/article/details/40858315<br>Parcelable实现 https://www.cnblogs.com/yunfang/p/5431435.html</th>
+	</tr>
+	<tr>
+		<th>171114</th>
+	 	<th>http://caiwb1990.iteye.com/blog/1404201</th>
+	 	<th>无</th>
+	 	<th>无</th>
+	 </tr>
+    <tr>
+		<th>171115</th>
+		<th colspan="3">无</th>
+	</tr>
 </table>

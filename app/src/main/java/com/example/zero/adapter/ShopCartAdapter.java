@@ -1,6 +1,7 @@
 package com.example.zero.adapter;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,7 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
     private View headerView;
     private OnDeleteClickListener mOnDeleteClickListener;
     private OnEditClickListener mOnEditClickListener;
-    private OnResfreshListener mOnResfreshListener;
+    private OnResfreshListener mOnRefreshListener;
 
     public ShopCartAdapter(Context context, List<ShopCartBean.CartlistBean> data) {
         this.context = context;
@@ -40,7 +41,12 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
     @Override
     public void onBindViewHolder(final ShopCartAdapter.MyViewHolder holder, final int position) {
 
-        Glide.with(context).load(data.get(position).getDefaultPic()).into(holder.ivShopCartClothPic);
+        Glide.with(context)
+                .load(data.get(position).getDefaultPic())
+                .dontAnimate()
+                .placeholder(R.mipmap.ic_launcher)
+                .into(holder.ivShopCartClothPic);
+
         if (position > 0) {
             if (data.get(position).getShopId() == data.get(position - 1).getShopId()) {
                 holder.llShopCartHeader.setVisibility(View.GONE);
@@ -51,14 +57,22 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
             holder.llShopCartHeader.setVisibility(View.VISIBLE);
         }
 
-        holder.tvShopCartClothColor.setText("颜色：" + data.get(position).getColor());
-        holder.tvShopCartClothSize.setText("尺寸：" + data.get(position).getSize());
+        if (data.get(position).getColor().equals("NULL")) {
+            holder.tvShopCartClothColor.setText("");
+        } else {
+            holder.tvShopCartClothColor.setText("颜色：" + data.get(position).getColor());
+        }
+        if (data.get(position).getSize().equals("NULL")) {
+            holder.tvShopCartClothSize.setText("");
+        } else {
+            holder.tvShopCartClothSize.setText("尺寸：" + data.get(position).getSize());
+        }
         holder.tvShopCartClothName.setText(data.get(position).getProductName());
         holder.tvShopCartShopName.setText(data.get(position).getShopName());
         holder.tvShopCartClothPrice.setText("¥" + data.get(position).getPrice());
         holder.etShopCartClothNum.setText(data.get(position).getCount() + "");
 
-        if (mOnResfreshListener != null) {
+        if (mOnRefreshListener != null) {
             boolean isSelect = false;
             for (int i = 0; i < data.size(); i++) {
                 if (!data.get(i).getIsSelect()) {
@@ -68,7 +82,7 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
                     isSelect = true;
                 }
             }
-            mOnResfreshListener.onResfresh(isSelect);
+            mOnRefreshListener.onResfresh(isSelect);
         }
 
         holder.ivShopCartClothMinus.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +179,9 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
         data.remove(position);
         //重新排序，标记所有商品不同商铺第一个的商品位置
         ShopOrderActivity.isSelectFirst(data);
+        if(data.isEmpty()) {
+            mOnRefreshListener.onEmpty();
+        }
         notifyDataSetChanged();
     }
 
@@ -244,10 +261,11 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
 
     public interface OnResfreshListener {
         void onResfresh(boolean isSelect);
+        void onEmpty();
     }
 
     public void setResfreshListener(OnResfreshListener mOnResfreshListener) {
-        this.mOnResfreshListener = mOnResfreshListener;
+        this.mOnRefreshListener = mOnResfreshListener;
     }
 
 }

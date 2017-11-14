@@ -94,34 +94,14 @@ public class UserActivity extends Activity implements View.OnClickListener {
             user_phone.setText(s);
         }
 
-//        String avator = application.getAvator();
-//        if(avator!=null&&!avator.equals("")) {
-//            Glide.with(getContext())
-//                    .load("http://10.108.120.91:8080/users/XkF171031150359171103175428.jpg?type=1")
-//                    .dontAnimate()
-//                    .placeholder(R.drawable.personal_img)
-//                    .into(mImage);
-//        }
-//        final File extDir = getContext().getFilesDir();
-//        RequestManager.getInstance(getBaseContext()).downLoadFile("XkF171031150359171103175428.jpg", extDir.toString(), new ReqProgressCallBack<File>() {
-//
-//            @Override
-//            public void onReqSuccess(File result) {
-//                Bitmap bitmap= BitmapFactory.decodeFile(result.getAbsolutePath());
-//                mImage.setImageBitmap(bitmap);
-//                Log.d(TAG,result.getAbsolutePath());
-//            }
-//
-//            @Override
-//            public void onReqFailed(String errorMsg) {
-//
-//            }
-//
-//            @Override
-//            public void onProgress(long total, long current) {
-//
-//            }
-//        });
+        String avator = application.getAvator();
+        if(avator!=null&&!avator.equals("")) {
+            Glide.with(getContext())
+                    .load("http://10.108.120.91:8080/users/"+avator+"?type=0")
+                    .placeholder(R.drawable.personal_img)
+                    .into(mImage);
+        }
+
     }
 
     /**
@@ -328,7 +308,8 @@ public class UserActivity extends Activity implements View.OnClickListener {
                         //用startActivityForResult方法，待会儿重写onActivityResult()方法，拿到图片做裁剪操作
                         startActivityForResult(openAlbumIntent, CHOOSE_PICTURE);
                         break;
-                    case TAKE_PICTURE: // 拍照
+                    case TAKE_PICTURE:
+                        // 拍照
                         Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         tempUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "temp_image.jpg"));
                         // 将拍照所得的相片保存到SD卡根目录

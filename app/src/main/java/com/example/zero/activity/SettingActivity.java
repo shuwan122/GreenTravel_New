@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
@@ -54,7 +55,7 @@ public class SettingActivity extends AppCompatActivity {
     private Context mContext;
     private AlertDialog alertDialog = null;
     private AlertDialog.Builder builder = null;
-    private int serviceVersionCode; //服务器端apk版本号
+    private int serviceVersionCode = 0; //服务器端apk版本号
     private String description;   //新版本功能描述
     private String download_url;  //apk下载url
 
@@ -287,9 +288,12 @@ public class SettingActivity extends AppCompatActivity {
         return packInfo.versionName;
     }
 
+    /**
+     * 获取服务器端版本号
+     */
     public void getServiceVerCode() {
         HashMap<String, String> params = new HashMap<>();
-        RequestManager.getInstance(this).requestAsyn("get_latest _version", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
+        RequestManager.getInstance(this).requestAsyn("users/get_latest _version", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
             @Override
             public void onReqSuccess(String result) {
                 JSONObject jo = JSON.parseObject(result);
@@ -305,41 +309,46 @@ public class SettingActivity extends AppCompatActivity {
         });
     }
 
-    public void downloadNewVersion() {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("type", 1 + "");
-        params.put("file_path", download_url);
-        RequestManager.getInstance(this).requestAsyn("download_file", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
-            @Override
-            public void onReqSuccess(String result) {
-//TODO:下载新版本
-            }
-
-            @Override
-            public void onReqFailed(String errorMsg) {
-
-            }
-        });
-    }
-
     /**
      * 对比本程序的版本号和最新程序的版本号
      */
-    public void checkVersion() throws Exception {//按钮！
-        //如果检测本程序的版本号小于服务器的版本号，那么提示用户更新
-        if (getVersionCode() < serviceVersionCode) {
-            builder = new AlertDialog.Builder(mContext);
-            alertDialog = builder.setTitle("版本更新提示").setMessage("检查到有最新版本,是否更新?")
-                    .setNegativeButton("取消", null)
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            downloadNewVersion();
-                        }
-                    }).create();             //创建AlertDialog对象
-            alertDialog.show();              //弹出提示版本更新的对话框
+    public void checkVersion() throws Exception {
+        serviceVersionCode = 0;
+        getServiceVerCode();
+        if (serviceVersionCode == 0) {
+
         } else {
-            Toast.makeText(this, "当前应用已是最新版本", Toast.LENGTH_SHORT).show();
+            if (getVersionCode() < serviceVersionCode) {
+                builder = new AlertDialog.Builder(mContext);
+                alertDialog = builder.setTitle("版本更新提示").setMessage("检查到有最新版本,是否更新?\n" + description)
+                        .setNegativeButton("取消", null)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.e(TAG, getExternalFilesDir(null) + "");
+                                //TODO:测试url
+                                RequestManager.getInstance(SettingActivity.this).downLoadFile(download_url, "http://10.108.112.96:8080/users" + download_url + "?type=1", getExternalFilesDir(null), new RequestManager.ReqProgressCallBack<String>() {
+                                    @Override
+                                    public void onProgress(long total, long current) {
+
+                                    }
+
+                                    @Override
+                                    public void onReqSuccess(String result) {
+                                        Toast.makeText(SettingActivity.this, "下载成功", Toast.LENGTH_LONG).show();
+                                    }
+
+                                    @Override
+                                    public void onReqFailed(String errorMsg) {
+
+                                    }
+                                });
+                            }
+                        }).create();
+                alertDialog.show();
+            } else {
+                Toast.makeText(this, "当前应用已是最新版本", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

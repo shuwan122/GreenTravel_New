@@ -199,6 +199,15 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     private ArrayList<String> stationAfMeetList = new ArrayList<String>();
     private ArrayList<String> routeAfMeetList = new ArrayList<String>();
 
+    private ArrayList<String> stationDetailList1 = new ArrayList<String>();
+    private ArrayList<String> stationDetailList2 = new ArrayList<String>();
+    private ArrayList<String> stationDetailList3 = new ArrayList<String>();
+    private ArrayList<String> routeDetailList1 = new ArrayList<String>();
+    private ArrayList<String> routeDetailList2 = new ArrayList<String>();
+    private ArrayList<String> routeDetailList3 = new ArrayList<String>();
+    private ArrayList<String> stationAfMeetDetailList = new ArrayList<String>();
+    private ArrayList<String> routeAfMeetDetailList = new ArrayList<String>();
+
     private double[] firstSellerLatList;
     private double[] firstSellerLngList;
     private double[] secondSellerLatList;
@@ -226,6 +235,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
     private ArrayList<String> stationList = new ArrayList<String>();
     private ArrayList<String> routeList = new ArrayList<String>();
+    private ArrayList<String> stationDetailList = new ArrayList<String>();
+    private ArrayList<String> routeDetailList = new ArrayList<String>();
 
     private double[] sellerLatList;
     private double[] sellerLngList;
@@ -348,7 +359,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
                 builder.setIcon(R.drawable.android);
                 builder.setTitle("请选择查看站点");
-                String[] scene = (String[]) fastStationDetailList.toArray(new String[fastStationDetailList.size()]);
+                String[] scene = {"广州塔", "体育西路", "广州东站", "金洲"};
                 switch (cModel) {
                     case FAST:
                         scene = (String[]) fastStationDetailList.toArray(new String[fastStationDetailList.size()]);
@@ -360,6 +371,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         scene = (String[]) lesschangeStationDetailList.toArray(new String[lesschangeStationDetailList.size()]);
                         break;
                     case MULTI:
+                        //去重
                         Set<String> set = new HashSet<>();
                         for (int i = 0; i < multiStationList.length; i++) {
                             set.add(multiStationList[i]);
@@ -368,13 +380,14 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                         scene = (String[]) arrayResult;
                         break;
                     case ADVICE:
-                        scene = (String[]) stationList.toArray(new String[stationList.size()]);
+                        scene = (String[]) stationDetailList.toArray(new String[stationDetailList.size()]);
                         break;
                     default:
                         break;
                 }
 
                 final String[] finalScene = scene;
+                stationName = finalScene[0];
 
                 /**
                  * 设置一个单项选择下拉框
@@ -448,9 +461,11 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             fastBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    couponDisplayBtn.setVisibility(View.VISIBLE);
                     cModel = Route.RouteType.FAST;
                     mBaidumap.clear();
                     TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+                    transitRouteFast.mPolicy = TransitRoutePlanOption.TransitPolicy.EBUS_TRANSFER_FIRST;
                     if (fastStationList.size() > 1) {
                         for (int i = 0; i < fastStationList.size() - 1; i++) {
                             if (i == 0) {
@@ -461,9 +476,9 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                 stedFlag = 0;
                             }
                             mSearch.transitSearch(transitRouteFast
-                                    .from(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i)))
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i) + "地铁站"))
                                     .city("广州")
-                                    .to(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i + 1))));
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", fastStationList.get(i + 1) + "地铁站")));
                         }
                         addMarker();
 
@@ -478,10 +493,12 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             lessbusyBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    couponDisplayBtn.setVisibility(View.VISIBLE);
                     cModel = Route.RouteType.LESSBUSY;
                     mBaidumap.clear();
 
                     TransitRoutePlanOption transitRouteLessbusy = new TransitRoutePlanOption();
+                    transitRouteLessbusy.mPolicy = TransitRoutePlanOption.TransitPolicy.EBUS_TRANSFER_FIRST;
                     if (lessbusyStationList.size() > 1) {
                         for (int i = 0; i < lessbusyStationList.size() - 1; i++) {
                             if (i == 0) {
@@ -509,10 +526,12 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             lesschangeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    couponDisplayBtn.setVisibility(View.VISIBLE);
                     cModel = Route.RouteType.LESSCHANGE;
                     mBaidumap.clear();
 
                     TransitRoutePlanOption transitRouteLesschange = new TransitRoutePlanOption();
+                    transitRouteLesschange.mPolicy = TransitRoutePlanOption.TransitPolicy.EBUS_TRANSFER_FIRST;
                     if (lesschangeStationList.size() > 1) {
                         for (int i = 0; i < lesschangeStationList.size() - 1; i++) {
                             if (i == 0) {
@@ -546,6 +565,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             textAdvice.setVisibility(View.GONE);
             cModel = Route.RouteType.MULTI;
 
+            couponDisplayBtn.setVisibility(View.VISIBLE);
+
             stationList1 = mBundle.getStringArrayList("stationList1");
             stationList2 = mBundle.getStringArrayList("stationList2");
             stationList3 = mBundle.getStringArrayList("stationList3");
@@ -555,10 +576,19 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             stationAfMeetList = mBundle.getStringArrayList("stationAfMeetList");
             routeAfMeetList = mBundle.getStringArrayList("routeAfMeetList");
 
-            multiStationList = concatAll(stationList1.toArray(new String[stationList1.size()]),
-                    stationList2.toArray(new String[stationList2.size()]),
-                    stationList3.toArray(new String[stationList3.size()]),
-                    stationAfMeetList.toArray(new String[stationAfMeetList.size()]));
+            stationDetailList1 = mBundle.getStringArrayList("stationDetailList1");
+            stationDetailList2 = mBundle.getStringArrayList("stationDetailList2");
+            stationDetailList3 = mBundle.getStringArrayList("stationDetailList3");
+            routeDetailList1 = mBundle.getStringArrayList("routeDetailList1");
+            routeDetailList2 = mBundle.getStringArrayList("routeDetailList2");
+            routeDetailList3 = mBundle.getStringArrayList("routeDetailList3");
+            stationAfMeetDetailList = mBundle.getStringArrayList("stationAfMeetDetailList");
+            routeAfMeetDetailList = mBundle.getStringArrayList("routeAfMeetDetailList");
+
+            multiStationList = concatAll(stationDetailList1.toArray(new String[stationDetailList1.size()]),
+                    stationDetailList2.toArray(new String[stationDetailList2.size()]),
+                    stationDetailList3.toArray(new String[stationDetailList3.size()]),
+                    stationAfMeetDetailList.toArray(new String[stationAfMeetDetailList.size()]));
 
             firstSellerLatList = mBundle.getDoubleArray("firstSellerLatList");
             firstSellerLngList = mBundle.getDoubleArray("firstSellerLngList");
@@ -575,6 +605,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             afMeetCount = mBundle.getInt("afMeetCount");
 
             TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+            transitRouteFast.mPolicy = TransitRoutePlanOption.TransitPolicy.EBUS_TRANSFER_FIRST;
             if (stationList1.size() > 1) {
                 for (int i = 0; i < stationList1.size() - 1; i++) {
                     if (i == 0) {
@@ -644,10 +675,13 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
             textAdvice.setVisibility(View.VISIBLE);
             cModel = Route.RouteType.ADVICE;
 
+            couponDisplayBtn.setVisibility(View.VISIBLE);
+
             JUD = 1;
             textAdvice.setText("建议您出行的时间：" + mBundle.getString("time"));
 
             stationList = mBundle.getStringArrayList("stationList");
+            stationDetailList = mBundle.getStringArrayList("stationDetailList");
             sellerLatList = mBundle.getDoubleArray("sellerLatList");
             sellerLngList = mBundle.getDoubleArray("sellerLngList");
 
@@ -655,6 +689,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
             mBaidumap.clear();
             TransitRoutePlanOption transitRouteFast = new TransitRoutePlanOption();
+            transitRouteFast.mPolicy = TransitRoutePlanOption.TransitPolicy.EBUS_TRANSFER_FIRST;
             if (stationList.size() > 1) {
                 for (int i = 0; i < stationList.size() - 1; i++) {
                     if (i == 0) {

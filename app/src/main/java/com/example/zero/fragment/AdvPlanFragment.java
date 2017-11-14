@@ -27,6 +27,7 @@ import com.example.zero.adapter.RouteSearchAdapter;
 import com.example.zero.bean.RouteSearchBean;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.HttpUtil;
+import com.example.zero.util.MainApplication;
 import com.example.zero.util.RequestManager;
 import com.example.zero.view.SearchPopView;
 
@@ -119,6 +120,8 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
 
     private RouteFragmentDouble.Origin origin;
 
+    MainApplication application;
+
     final private String[] stationDe = {"广州塔", "广州火车站"};
 
     private Context context;
@@ -144,9 +147,9 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        initData();
-//        initViews();
         super.onActivityCreated(savedInstanceState);
+        application = (MainApplication) getActivity().getApplication();
+        initData();
     }
 
 
@@ -309,8 +312,13 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
      */
 
     private void initData() {
-        origin = DATA;
-        parseJSONWithJSONObject(null);
+        if (application.getStationList() == null) {
+            origin = DATA;
+            parseJSONWithJSONObject(null);
+        } else {
+            dbData = application.getStationList();
+            hintData = application.getBusyStationList();
+        }
     }
 
     private void parseJSONWithJSONObject(String jsonData) {
@@ -322,10 +330,13 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                     String time = jsonObject.getString("time_advice");
                     JSONObject sellers = jsonObject.getJSONObject("sellers");
                     JSONArray route = jsonObject.getJSONArray("route");
+                    JSONArray route_detail = jsonObject.getJSONArray("route_detail");
                     JSONArray busy = jsonObject.getJSONArray("busy");
 
                     ArrayList<String> stationList = new ArrayList<String>();
                     ArrayList<String> routeList = new ArrayList<String>();
+                    ArrayList<String> stationDetailList = new ArrayList<String>();
+                    ArrayList<String> routeDetailList = new ArrayList<String>();
 
                     mBundleHttp.putString("time", time);
 
@@ -338,6 +349,15 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                     }
                     mBundleHttp.putStringArrayList("stationList", stationList);
                     mBundleHttp.putStringArrayList("routeList", routeList);
+                    for (int i = 0; i < route_detail.length(); i++) {
+                        if (i % 2 == 0) {
+                            stationDetailList.add(route_detail.getString(i));
+                        } else {
+                            routeDetailList.add(route_detail.getString(i));
+                        }
+                    }
+                    mBundleHttp.putStringArrayList("stationDetailList", stationDetailList);
+                    mBundleHttp.putStringArrayList("routeDetailList", routeDetailList);
 
                     int size = 100;
                     double[] sellerLatList = new double[size];
@@ -374,7 +394,7 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
             case DATA:
                 HashMap<String, String> params = new HashMap<>();
                 params.put("userId", "guest");
-                RequestManager.getInstance(context).requestAsyn("http://10.108.120.154:8080/route/station",
+                RequestManager.getInstance(context).requestAsyn("http://10.108.112.96:8080/route/station",
                         RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
                             @Override
                             public void onReqSuccess(String result) {
@@ -388,6 +408,7 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                                     dbData.add(new RouteSearchBean(R.drawable.title_icon, station.getString(i),
                                             "周围简介\n热门吃、喝、玩、乐", ""));
                                 }
+                                application.setStationList(dbData);
                                 Log.d(TAG, "parseJSONWithJSONObject: " + dbData.size());
 
                                 setHintSize(busy.size());
@@ -395,6 +416,8 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                                 for (int i = 0; i < hintSize; i++) {
                                     hintData.add(busy.getString(i));
                                 }
+                                application.setBusyStationList(hintData);
+
                                 hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
                                 //初始化自动补全数据
                                 getAutoCompleteData(null);

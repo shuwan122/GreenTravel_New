@@ -90,22 +90,10 @@ public class SaleHotFragment extends Fragment {
                 MainApplication application = (MainApplication) getActivity().getApplication();
                 uid = application.getUser_id();
                 token = application.getToken();
-                if (uid == null && token == null) {
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//                    AlertDialog alertDialog = builder.setTitle("登录提醒").setMessage("您还未登录，是否先去登录?")
-//                            .setNegativeButton("取消", null)
-//                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    Intent intent = new Intent();
-//                                    intent.setClass(context, LoginActivity.class);
-//                                    startActivity(intent);
-//                                }
-//                            }).create();
-//                    alertDialog.show();
+                if (application.isOnline() == false) {
                     Toast.makeText(context, "请您先登录再进行操作", Toast.LENGTH_SHORT).show();
-                } else if (received_id.get(position).equals(RECEIVED)) {
-                    Toast.makeText(context, "该优惠券您已领取", Toast.LENGTH_SHORT).show();
+//                } else if (received_id.get(position).equals(RECEIVED)) {
+//                    Toast.makeText(context, "该优惠券您已领取", Toast.LENGTH_SHORT).show();
                 } else {
                     HashMap<String, String> params = new HashMap<>();
                     params.put("couponId", coupon_id.get(position));
@@ -223,18 +211,16 @@ public class SaleHotFragment extends Fragment {
                 }
             }
             HashMap<String, String> params = new HashMap<>();
-            params.put("longitude", "113.5333880000");
-            params.put("latitude", "22.7935870000");
-            params.put("userId", "123");
-            params.put("token", "123");
-            //Toast.makeText(context, "纬度" + latitude, Toast.LENGTH_SHORT).show();
-            //Toast.makeText(context, "经度" + longitude, Toast.LENGTH_SHORT).show();
-            RequestManager.getInstance(context).requestAsyn("users/me/coupons/near?", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
+//            params.put("longitude", longitude+"");
+//            params.put("latitude", latitude+"");
+//            Toast.makeText(context, "纬度" + latitude, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "经度" + longitude, Toast.LENGTH_SHORT).show();
+            params.put("longitude", "" + 113.5333880000);
+            params.put("latitude", "" + 22.7935870000);
+            RequestManager.getInstance(context).requestAsyn("users/me/coupons/near", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
 
                 @Override
                 public void onReqSuccess(String result) {
-                    //Toast.makeText(context, "请求成功", Toast.LENGTH_SHORT).show();
-                    //System.out.println(result);
                     coupon_id.clear();
                     dataList.clear();
                     dataList1.clear();

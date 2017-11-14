@@ -65,6 +65,7 @@ import com.example.zero.bean.SaleBean;
 import com.example.zero.entity.Route;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.HttpUtil;
+import com.example.zero.util.MainApplication;
 import com.example.zero.util.RequestManager;
 import com.example.zero.view.SearchPopView;
 import com.example.zero.view.SearchView;
@@ -259,6 +260,8 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
 
     boolean hasShownDialogue = false;
 
+    MainApplication application;
+
     private Context context;
 
     private int cModel = 1;
@@ -303,6 +306,7 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        application = (MainApplication) getActivity().getApplication();
         initData();
 //        initViews();
     }
@@ -944,7 +948,6 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                     JSONObject sellers = jsonObject.getJSONObject("sellers");
                     JSONArray routes = jsonObject.getJSONArray("routes");
                     JSONObject busy = jsonObject.getJSONObject("busy");
-
                     JSONArray routeBfMeet = routes.getJSONArray(0);
                     JSONArray routeAfMeet = routes.getJSONArray(1);
 
@@ -955,8 +958,17 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                     ArrayList<String> routeList2 = new ArrayList<String>();
                     ArrayList<String> routeList3 = new ArrayList<String>();
 
+                    ArrayList<String> stationDetailList1 = new ArrayList<String>();
+                    ArrayList<String> stationDetailList2 = new ArrayList<String>();
+                    ArrayList<String> stationDetailList3 = new ArrayList<String>();
+                    ArrayList<String> routeDetailList1 = new ArrayList<String>();
+                    ArrayList<String> routeDetailList2 = new ArrayList<String>();
+                    ArrayList<String> routeDetailList3 = new ArrayList<String>();
+
                     ArrayList<String> stationAfMeetList = new ArrayList<String>();
                     ArrayList<String> routeAfMeetList = new ArrayList<String>();
+                    ArrayList<String> stationAfMeetDetailList = new ArrayList<String>();
+                    ArrayList<String> routeAfMeetDetailList = new ArrayList<String>();
 
                     for (int i = 0; i < routeBfMeet.length(); i++) {
                         for (int j = 0; j < routeBfMeet.getJSONObject(i).getJSONArray("route").length(); j++) {
@@ -990,6 +1002,38 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                                 }
                             }
                         }
+
+                        for (int j = 0; j < routeBfMeet.getJSONObject(i).getJSONArray("route_detail").length(); j++) {
+                            if (j % 2 == 0) {
+                                switch (i) {
+                                    case 0:
+                                        stationDetailList1.add(routeBfMeet.getJSONObject(i).getJSONArray("route_detail").getString(j));
+                                        break;
+                                    case 1:
+                                        stationDetailList2.add(routeBfMeet.getJSONObject(i).getJSONArray("route_detail").getString(j));
+                                        break;
+                                    case 2:
+                                        stationDetailList3.add(routeBfMeet.getJSONObject(i).getJSONArray("route_detail").getString(j));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                switch (i) {
+                                    case 0:
+                                        routeDetailList1.add(routeBfMeet.getJSONObject(i).getJSONArray("route_detail").getString(j));
+                                        break;
+                                    case 1:
+                                        routeDetailList2.add(routeBfMeet.getJSONObject(i).getJSONArray("route_detail").getString(j));
+                                        break;
+                                    case 2:
+                                        routeDetailList3.add(routeBfMeet.getJSONObject(i).getJSONArray("route_detail").getString(j));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
                     }
 
                     if (!routeAfMeet.isNull(0)) {
@@ -1000,6 +1044,13 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                                 routeAfMeetList.add(routeAfMeet.getJSONObject(0).getJSONArray("route").getString(i));
                             }
                         }
+                        for (int i = 0; i < routeAfMeet.getJSONObject(0).getJSONArray("route_detail").length(); i++) {
+                            if (i % 2 == 0) {
+                                stationAfMeetDetailList.add(routeAfMeet.getJSONObject(0).getJSONArray("route_detail").getString(i));
+                            } else {
+                                routeAfMeetDetailList.add(routeAfMeet.getJSONObject(0).getJSONArray("route_detail").getString(i));
+                            }
+                        }
                     }
 
                     mBundleHttp.putStringArrayList("stationList1", stationList1);
@@ -1008,8 +1059,16 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                     mBundleHttp.putStringArrayList("routeList1", routeList1);
                     mBundleHttp.putStringArrayList("routeList2", routeList2);
                     mBundleHttp.putStringArrayList("routeList3", routeList3);
+                    mBundleHttp.putStringArrayList("stationDetailList1", stationDetailList1);
+                    mBundleHttp.putStringArrayList("stationDetailList2", stationDetailList2);
+                    mBundleHttp.putStringArrayList("stationDetailList3", stationDetailList3);
+                    mBundleHttp.putStringArrayList("routeDetailList1", routeDetailList1);
+                    mBundleHttp.putStringArrayList("routeDetailList2", routeDetailList2);
+                    mBundleHttp.putStringArrayList("routeDetailList3", routeDetailList3);
                     mBundleHttp.putStringArrayList("stationAfMeetList", stationAfMeetList);
                     mBundleHttp.putStringArrayList("routeAfMeetList", routeAfMeetList);
+                    mBundleHttp.putStringArrayList("stationAfMeetDetailList", stationAfMeetDetailList);
+                    mBundleHttp.putStringArrayList("routeAfMeetDetailList", routeAfMeetDetailList);
 
                     int size = 100;
                     double[] firstSellerLatList = new double[size];
@@ -1101,7 +1160,7 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
             case DATA:
                 HashMap<String, String> params = new HashMap<>();
                 params.put("userId", "guest");
-                RequestManager.getInstance(context).requestAsyn("http://10.108.120.154:8080/route/station",
+                RequestManager.getInstance(context).requestAsyn("http://10.108.112.96:8080/route/station",
                         RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
                             @Override
                             public void onReqSuccess(String result) {
@@ -1118,15 +1177,24 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                                     dbData0.add(new RouteSearchBean(R.drawable.title_icon, station.getString(i),
                                             "周围简介\n热门吃、喝、玩、乐", ""));
                                 }
+                                application.setStationList(dbData);
                                 Log.d(TAG, "parseJSONWithJSONObject: " + dbData.size());
 
                                 setHintSize(busy.size());
                                 hintData = new ArrayList<>(hintSize);
                                 hintData0 = new ArrayList<>(hintSize);
+                                hintData.add("广州东站");
+                                hintData.add("体育西路");
+                                hintData.add("金洲");
+                                hintData0.add("广州东站");
+                                hintData0.add("体育西路");
+                                hintData0.add("金洲");
                                 for (int i = 0; i < hintSize; i++) {
                                     hintData.add(busy.getString(i));
                                     hintData0.add(busy.getString(i));
                                 }
+                                application.setBusyStationList(hintData);
+
                                 hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
                                 hintAdapter0 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData0);
                                 //初始化自动补全数据
@@ -1185,8 +1253,15 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
      * 获取db数据
      */
     private void getData() {
-        origin = DATA;
-        parseJSONWithJSONObject(null);
+        if (application.getStationList() == null) {
+            origin = DATA;
+            parseJSONWithJSONObject(null);
+        } else {
+            dbData = application.getStationList();
+            dbData0 = application.getStationList();
+            hintData = application.getBusyStationList();
+            hintData0 = application.getBusyStationList();
+        }
     }
 
     /**

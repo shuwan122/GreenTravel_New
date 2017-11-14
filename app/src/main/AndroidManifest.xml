@@ -72,9 +72,11 @@
         <activity
             android:name="com.example.zero.activity.RegisterActivity"
             android:windowSoftInputMode="stateVisible" />
+
         <activity android:name="com.example.zero.activity.AdvSearchActivity" />
         <activity android:name="com.example.zero.activity.AdvMapResultActivity" />
         <activity android:name="com.example.zero.activity.ShoppingCartActivity" />
+        <activity android:name="com.example.zero.activity.OrderConfirmActivity" />
 
         <service android:name="com.example.zero.util.NotificationService">
             <intent-filter>
@@ -82,15 +84,16 @@
             </intent-filter>
         </service>
 
-        <!-- <service -->
-        <!-- android:name="com.baidu.location.f" -->
-        <!-- android:enabled="true" -->
-        <!-- android:process=":remote"></service> -->
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
 
         <activity android:name="com.example.zero.activity.RouteDrawerActivity" />
         <activity android:name="com.example.zero.activity.StationDisplayActivity" />
         <activity android:name="com.example.zero.activity.ShopDetailActivity" />
-        <activity android:name="com.example.zero.activity.ShopOrderActivity"/>
+        <activity android:name="com.example.zero.activity.ShopOrderActivity" />
+        <activity android:name="com.example.zero.activity.NearShopCouponActivity"/>
     </application>
 
 </manifest>

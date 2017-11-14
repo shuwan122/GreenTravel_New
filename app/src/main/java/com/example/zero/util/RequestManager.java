@@ -35,7 +35,7 @@ public class RequestManager {
     private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//这个需要和服务端保持一致
     //private static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");//这个需要和服务端保持一致
     private static final String TAG = RequestManager.class.getSimpleName();
-    private static final String BASE_URL = "http://10.108.120.91:8080";//请求接口根地址10.108.122.50:8080
+    private static final String BASE_URL = "http://10.108.112.96:8080";//请求接口根地址10.108.122.50:8080
     private static volatile RequestManager mInstance;//单例引用
     public static final int TYPE_GET = 0;//get请求
     public static final int TYPE_POST_JSON = 1;//post请求参数为json
@@ -450,8 +450,7 @@ public class RequestManager {
                 pos++;
             }
             String params = tempParams.toString();
-            RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, params);
-            String requestUrl = String.format("%s/%s?%s", BASE_URL, actionUrl, tempParams.toString());
+            String requestUrl = String.format("%s/%s?%s", BASE_URL, actionUrl, params);
             final Request request = addHeaders().url(requestUrl).delete().build();
             final Call call = mOkHttpClient.newCall(request);
             call.enqueue(new Callback() {
@@ -480,13 +479,14 @@ public class RequestManager {
     }
 
     /**
-     *上传文件
+     * 上传文件
+     *
      * @param actionUrl 接口地址
      * @param paramsMap 参数
-     * @param callBack 回调
+     * @param callBack  回调
      * @param <T>
      */
-    public <T>void upLoadFile(String actionUrl, HashMap<String, Object> paramsMap, final ReqCallBack<T> callBack) {
+    public <T> void upLoadFile(String actionUrl, HashMap<String, Object> paramsMap, final ReqCallBack<T> callBack) {
         try {
             //补全请求地址
             String requestUrl = String.format("%s/%s", BASE_URL, actionUrl);
@@ -523,7 +523,7 @@ public class RequestManager {
                         Log.e(TAG, "response ----->" + string);
                         successCallBack((T) string, callBack);
                     } else {
-                        Log.e(TAG,response.body().string());
+                        Log.e(TAG, response.body().string());
                         failedCallBack("上传失败", callBack);
                     }
                 }
@@ -535,47 +535,100 @@ public class RequestManager {
 
     /**
      * 下载文件
-     * @param fileUrl 文件url
+     *
+     * @param fileUrl     文件url
      * @param destFileDir 存储目标目录
      */
+//    public <T> void downLoaddFile(String fileUrl, final String destFileDir, final ReqProgressCallBack<T> callBack) {
+//        //final String fileName = MD5.encode(fileUrl);
+//        HashMap<String, String> paramsMap = new HashMap<>();
+//        paramsMap.put("type", "0");
+//        paramsMap.put("download_url", "XkF171031150359171106122043.jpg");
+//        StringBuilder tempParams = new StringBuilder();
+//        int pos = 0;
+//        for (String key : paramsMap.keySet()) {
+//            if (pos > 0) {
+//                tempParams.append("&");
+//            }
+//            try {
+//                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+//            pos++;
+//        }
+//        String params = tempParams.toString();
+//        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, params);
+//        String requestUrl = String.format("%s/%s", BASE_URL, "/users/download_file");
+//        final Request request = addHeaders().url(requestUrl).post(body).build();
+//        final String fileName = fileUrl;
+//        final File file = new File(destFileDir, fileName);
+////        if (file.exists()) {
+////            successCallBack((T) file, callBack);
+////            return;
+////        }
+////        final Request request = new Request.Builder().url(fileUrl).build();
+//
+//        final Call call = mOkHttpClient.newCall(request);
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                Log.e(TAG, e.toString());
+//                failedCallBack("下载失败", callBack);
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                InputStream is = null;
+//                byte[] buf = new byte[2048];
+//                int len = 0;
+//                FileOutputStream fos = null;
+//                try {
+//                    long total = response.body().contentLength();
+//                    Log.e(TAG, "total------>" + total);
+//                    long current = 0;
+//                    is = response.body().byteStream();
+//                    fos = new FileOutputStream(file);
+//                    while ((len = is.read(buf)) != -1) {
+//                        current += len;
+//                        fos.write(buf, 0, len);
+//                        Log.e(TAG, "current------>" + current);
+//                        progressCallBack(total, current, callBack);
+//                    }
+//                    fos.flush();
+//                    successCallBack((T) file, callBack);
+//                } catch (IOException e) {
+//                    Log.e(TAG, e.toString());
+//                    failedCallBack("下载失败", callBack);
+//                } finally {
+//                    try {
+//                        if (is != null) {
+//                            is.close();
+//                        }
+//                        if (fos != null) {
+//                            fos.close();
+//                        }
+//                    } catch (IOException e) {
+//                        Log.e(TAG, e.toString());
+//                    }
+//                }
+//            }
+//        });
+//    }
+
     /**
      * 下载文件
      * @param fileUrl 文件url
      * @param destFileDir 存储目标目录
      */
-    public <T> void downLoadFile(String fileUrl, final String destFileDir, final ReqProgressCallBack<T> callBack) {
-        //final String fileName = MD5.encode(fileUrl);
-        HashMap<String,String> paramsMap = new HashMap<>();
-        paramsMap.put("type","0");
-        paramsMap.put("download_url","XkF171031150359171106122043.jpg");
-        StringBuilder tempParams = new StringBuilder();
-        int pos = 0;
-        for (String key : paramsMap.keySet()) {
-            if (pos > 0) {
-                tempParams.append("&");
-            }
-            try {
-                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            pos++;
+    public <T> void downLoadFile(String fileName, String fileUrl, final File destFileDir, final ReqProgressCallBack<T> callBack) {
+        //final String fileName = "test.apk";//MD5.encode(fileUrl);
+        final File file = new File(destFileDir, fileName);
+        if (file.exists()) {
+            successCallBack((T) file, callBack);
+            return;
         }
-        String params = tempParams.toString();
-        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, params);
-        String requestUrl = String.format("%s/%s", BASE_URL,"/users/download_file");
-        final Request request = addHeaders().url(requestUrl).post(body).build();
-
-
-
-       final String fileName = fileUrl;
-       final File file = new File(destFileDir, fileName);
-//        if (file.exists()) {
-//            successCallBack((T) file, callBack);
-//            return;
-//        }
-//        final Request request = new Request.Builder().url(fileUrl).build();
-
+        final Request request = new Request.Builder().url(fileUrl).build();
         final Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -686,8 +739,16 @@ public class RequestManager {
         });
     }
 
+    public interface ReqProgressCallBack<T>  extends ReqCallBack<T>{
+        /**
+         * 响应进度更新
+         */
+        void onProgress(long total, long current);
+    }
+
     /**
      * 统一处理进度信息
+     *
      * @param total    总计大小
      * @param current  当前进度
      * @param callBack

@@ -23,6 +23,7 @@ import com.example.zero.activity.SettingActivity;
 import com.example.zero.activity.UserActivity;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.MainApplication;
+import com.example.zero.util.RequestManager;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 /**
@@ -74,7 +75,7 @@ public class PersonalInfoFragment extends Fragment {
                 if(mainApplication.isOnline()) {
                     Intent intent = new Intent();
                     intent.setClass(getContext(), UserActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent,START_USER_ACTIVITY);
                     Log.d(TAG,"online");
                 }
                 else {
@@ -132,7 +133,6 @@ public class PersonalInfoFragment extends Fragment {
             }
         });
         context = person_frag.getContext();
-
         return person_frag;
     }
 
@@ -153,23 +153,11 @@ public class PersonalInfoFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == -1) {
-            switch (requestCode) {
-                case START_LOGIN_ACTIVITY:
-                    OnRefreshOnlineState();
-                    break;
-                case START_REGISTER_ACTIVITY:
-                    OnRefreshOnlineState();
-                    break;
-                case START_USER_ACTIVITY:
-                    OnRefreshOnlineState();
-                    break;
-                default:OnRefreshOnlineState();
-            }
-        }
+        OnRefreshOnlineState();
     }
 
     public void OnRefreshOnlineState() {
+        Log.d(TAG,"onrefresh");
         MainApplication mainApplication = (MainApplication) getActivity().getApplication();
         if(mainApplication.isOnline()) {
             user_name.setVisibility(View.VISIBLE);
@@ -177,7 +165,10 @@ public class PersonalInfoFragment extends Fragment {
             register.setVisibility(View.GONE);
             user_name.setText(mainApplication.getUsername());
             String avator = mainApplication.getAvator();
+            Log.d(TAG,avator);
             if(avator!=null&&!avator.equals("")) {
+                avator = "http://10.108.120.91:8080/users/"+avator+"?type=0";
+                Log.d(TAG,avator);
                 Glide.with(getContext())
                         .load(avator)
                         .dontAnimate()
@@ -189,6 +180,7 @@ public class PersonalInfoFragment extends Fragment {
             user_name.setVisibility(View.GONE);
             login.setVisibility(View.VISIBLE);
             register.setVisibility(View.VISIBLE);
+            img.setImageResource(R.drawable.personal_img);
         }
     }
 

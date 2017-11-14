@@ -377,7 +377,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             MyLocationConfiguration config = new MyLocationConfiguration(mCurrentMode, true, mCurrentMarker);
             mBaiduMap.setMyLocationConfiguration(config);
         }
-        Log.d(TAG, "Sensor: " + sensorEvent);
         lastX = x;
     }
 
@@ -416,8 +415,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 builder.target(ll).zoom(18.0f);
                 mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
             }
-            Toast.makeText(MainActivity.this, location.getLocationDescribe(), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "onReceiveLocation: " + location.getLocType());
         }
     }
 
