@@ -1,9 +1,11 @@
 package com.example.zero.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +16,26 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.donkingliang.labels.LabelsView;
 
 import com.example.zero.activity.AdvSearchActivity;
+import com.example.zero.activity.RouteResultActivity;
 import com.example.zero.adapter.RouteSearchAdapter;
 import com.example.zero.bean.RouteSearchBean;
 import com.example.zero.greentravel_new.R;
+import com.example.zero.util.MainApplication;
+import com.example.zero.util.RequestManager;
 import com.example.zero.view.SearchPopView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import static com.example.zero.fragment.RouteFragmentDouble.Origin.DATA;
 
 /**
  * Created by shuwan122 on 2017/9/7.
@@ -84,6 +96,14 @@ public class AdvDestinFragment extends Fragment implements SearchPopView.SearchP
      */
     private static int hintSize = DEFAULT_HINT_SIZE;
 
+    MainApplication application;
+
+    private RouteFragmentDouble.Origin origin;
+
+    private Context context;
+
+    final private String[] stationDe = {"广州塔", "广州火车站"};
+
     private static final String TAG = "AdvDestinFragment";
 
     /**
@@ -99,14 +119,16 @@ public class AdvDestinFragment extends Fragment implements SearchPopView.SearchP
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_adv_destin, container, false);
+        View view = inflater.inflate(R.layout.fragment_adv_destin, container, false);
+        context = view.getContext();
+        return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        initData();
-        initViews();
         super.onActivityCreated(savedInstanceState);
+        application = (MainApplication) getActivity().getApplication();
+        initData();
     }
 
 
@@ -165,48 +187,81 @@ public class AdvDestinFragment extends Fragment implements SearchPopView.SearchP
      * 初始化数据
      */
     private void initData() {
-        getLabels();
-        //从数据库获取数据
-        getDbData();
-        //初始化热搜版数据
-        getHintData();
-        //初始化自动补全数据
-        getAutoCompleteData(null);
-        //初始化搜索结果数据
-        getResultData(null);
-    }
-
-    /**
-     * 获取db数据
-     */
-    private void getDbData() {
-        int size = 100;
-        dbData = new ArrayList<>(size);
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "北京南站地铁站",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "北京邮电大学西门",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        dbData.add(new RouteSearchBean(R.drawable.title_icon, "北京大学未名湖",
-                "周围简介\n热门吃、喝、玩、乐", 99 + ""));
-        for (int i = 0; i < size; i++) {
-            dbData.add(new RouteSearchBean(R.drawable.title_icon, "站点" + (i + 1),
-                    "周围简介\n热门吃、喝、玩、乐", i * 20 + 2 + ""));
+        if (application.getStationList() == null) {
+            origin = DATA;
+            parseJSONWithJSONObject(null);
+        } else {
+            dbData = application.getStationList();
+            hintData = application.getBusyStationList();
         }
     }
 
-    /**
-     * 获取热搜版data和adapter
-     */
-    private void getHintData() {
-        hintData = new ArrayList<>(hintSize);
-//        hintData.add("热门搜索站点");
-        hintData.add("北京南站地铁站");
-        hintData.add("北京邮电大学西门");
-        hintData.add("北京大学未名湖");
-        for (int i = 1; i <= hintSize; i++) {
-            hintData.add("站点" + i * 10);
+    private void parseJSONWithJSONObject(String jsonData) {
+        switch (origin) {
+            case DATA:
+                HashMap<String, String> params = new HashMap<>();
+                params.put("userId", "guest");
+                RequestManager.getInstance(context).requestAsyn("http://10.108.112.96:8080/route/station",
+                        RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                com.alibaba.fastjson.JSONObject jsonData = JSON.parseObject(result);
+
+                                com.alibaba.fastjson.JSONArray station = jsonData.getJSONArray("station");
+                                com.alibaba.fastjson.JSONArray busy = jsonData.getJSONArray("busy");
+
+                                dbData = new ArrayList<>(station.size());
+                                for (int i = 0; i < station.size(); i++) {
+                                    dbData.add(new RouteSearchBean(R.drawable.title_icon, station.getString(i),
+                                            "周围简介\n热门吃、喝、玩、乐", ""));
+                                }
+                                application.setStationList(dbData);
+                                Log.d(TAG, "parseJSONWithJSONObject: " + dbData.size());
+
+                                setHintSize(busy.size());
+                                hintData = new ArrayList<>(hintSize);
+                                for (int i = 0; i < hintSize; i++) {
+                                    hintData.add(busy.getString(i));
+                                }
+                                application.setBusyStationList(hintData);
+
+                                hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
+                                //初始化自动补全数据
+                                getAutoCompleteData(null);
+                                //初始化搜索结果数据
+                                getResultData(null);
+
+                                initViews();
+                                Log.d(TAG, "parseJSONWithJSONObject: " + hintData.size());
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                dbData = new ArrayList<>();
+                                for (int i = 0; i < stationDe.length; i++) {
+                                    dbData.add(new RouteSearchBean(R.drawable.title_icon, stationDe[i],
+                                            "周围简介\n热门吃、喝、玩、乐", ""));
+                                }
+                                Log.d(TAG, "parseJSONWithJSONObject: " + dbData.size());
+
+                                hintData = new ArrayList<>();
+                                hintData.add("广州塔");
+                                hintData.add("体育西路");
+                                hintData.add("广州火车站");
+                                hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
+                                //初始化自动补全数据
+                                getAutoCompleteData(null);
+                                //初始化搜索结果数据
+                                getResultData(null);
+                                initViews();
+                                Toast.makeText(getContext(), "站点List请求失败,使用默认列表页。", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                break;
+
+            default:
+                break;
         }
-        hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
     }
 
     /**
@@ -278,6 +333,7 @@ public class AdvDestinFragment extends Fragment implements SearchPopView.SearchP
         getResultData(text);
         lvResults.setVisibility(View.VISIBLE);
         //第一次获取结果 还未配置适配器
+        resultAdapter.getItem(0).setComments("起点");
         if (lvResults.getAdapter() == null) {
             //获取搜索数据 设置适配器
             lvResults.setAdapter(resultAdapter);

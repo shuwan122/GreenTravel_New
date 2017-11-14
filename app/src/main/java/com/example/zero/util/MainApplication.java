@@ -11,8 +11,11 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.zero.bean.RouteSearchBean;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainApplication extends Application {
     private boolean isOnline;
@@ -24,6 +27,10 @@ public class MainApplication extends Application {
     private boolean send_msg;
     private boolean apk;
     private boolean pic;
+
+    private List<RouteSearchBean> stationList = new ArrayList<>();
+    private List<String> busyStationList = new ArrayList<>();
+
     private String TAG = "MainApplication";
 
     public boolean isOnline() {
@@ -150,5 +157,30 @@ public class MainApplication extends Application {
         SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
         pic = sharedPreferences.getBoolean("pic_download", false);
         return pic;
+    }
+
+    public List<RouteSearchBean> getStationList() {
+        if (stationList.size() == 0) {
+            return null;
+        } else {
+            Log.d(TAG, "getStationList: " + stationList.size());
+            return stationList;
+        }
+    }
+
+    public void setStationList(List<RouteSearchBean> stationList) {
+        this.stationList = stationList;
+    }
+
+    public List<String> getBusyStationList() {
+        if (busyStationList.size() == 0) {
+            return null;
+        } else {
+            return busyStationList;
+        }
+    }
+
+    public void setBusyStationList(List<String> busyStationList) {
+        this.busyStationList = busyStationList;
     }
 }

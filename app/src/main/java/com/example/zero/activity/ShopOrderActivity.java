@@ -21,7 +21,7 @@ import java.util.List;
 
 public class ShopOrderActivity extends AppCompatActivity {
 
-    private TextView tvShopCartSubmit, tvShopCartSelect, tvShopCartTotalNum;
+    private TextView tvShopCartSubmit, tvShopCartSelect, tvShopCartTotalNum, tvShopCartHint;
     private View mEmtryView;
 
     private RecyclerView rlvShopCart, rlvHotProducts;
@@ -57,6 +57,7 @@ public class ShopOrderActivity extends AppCompatActivity {
         tvShopCartSelect = (TextView) findViewById(R.id.tv_shopcart_addselect);
         tvShopCartTotalPrice = (TextView) findViewById(R.id.tv_shopcart_totalprice);
         tvShopCartTotalNum = (TextView) findViewById(R.id.tv_shopcart_totalnum);
+        tvShopCartHint = (TextView) findViewById(R.id.tv_shopcart_hint);
 
         rlHaveProduct = (RelativeLayout) findViewById(R.id.rl_shopcart_have);
         rlvShopCart = (RecyclerView) findViewById(R.id.rlv_shopcart);
@@ -114,6 +115,20 @@ public class ShopOrderActivity extends AppCompatActivity {
                 tvShopCartTotalPrice.setText("总价：" + mTotalPrice);
                 tvShopCartTotalNum.setText("共" + mTotalNum + "件商品");
             }
+
+            @Override
+            public void onEmpty() {
+                mSelect = false;
+                Drawable left = getResources().getDrawable(R.drawable.shopcart_unselected);
+                tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
+                float mTotalPrice = 0;
+                int mTotalNum = 0;
+                mGoPayList.clear();
+                mTotalPrice1 = mTotalPrice;
+                tvShopCartTotalPrice.setText("总价：" + mTotalPrice);
+                tvShopCartTotalNum.setText("共" + mTotalNum + "件商品");
+                tvShopCartHint.setVisibility(View.VISIBLE);
+            }
         });
 
         //全选
@@ -169,7 +184,8 @@ public class ShopOrderActivity extends AppCompatActivity {
             sb.setProductName(nameList[i]);
             sb.setProductId(idList[i]);
             sb.setCount(numList[i]);
-// TODO: 2017/11/14 暂时未定义属性
+
+            // TODO: 2017/11/14 暂时未定义属性
             sb.setColor("NULL");
             sb.setSize("NULL");
             mAllOrderList.add(sb);

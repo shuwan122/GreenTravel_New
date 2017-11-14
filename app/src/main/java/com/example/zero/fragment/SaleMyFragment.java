@@ -50,9 +50,9 @@ public class SaleMyFragment extends Fragment {
         sale_my_frag = inflater.inflate(R.layout.fragment_sale_my, container, false);
         context = sale_my_frag.getContext();
         innitView();
-        getCouponData();
         adapter = new SaleMyCouponAdapter(context, dataList);
         my_recv.setAdapter(adapter);
+        getCouponData();
         adapter.setOnItemClickListener(new SaleMyCouponAdapter.onRecycleItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -64,12 +64,12 @@ public class SaleMyFragment extends Fragment {
                 MainApplication application = (MainApplication) getActivity().getApplication();
                 uid = application.getUser_id();
                 token = application.getToken();
-                if (uid == null && token == null) {
+                if (application.isOnline() == false) {
                     Toast.makeText(context, "请您先登录再进行操作", Toast.LENGTH_LONG).show();
                 } else {
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("token", uid);
-                    params.put("userId", token);
+                    params.put("userId", uid);
+                    params.put("token", token);
                     RequestManager.getInstance(context).requestAsyn("users/me/coupons/" + coupon_id.get(position), RequestManager.TYPE_DEL, params, new RequestManager.ReqCallBack<String>() {
 
                         @Override
@@ -97,24 +97,11 @@ public class SaleMyFragment extends Fragment {
         my_recv.setLayoutManager(new LinearLayoutManager(context));
     }
 
-    //TODO:fragment切换刷新
-//    @Override
-//    public void setUserVisibleHint(boolean isVisibleToUser) {
-//        super.setUserVisibleHint(isVisibleToUser);
-//        if (isVisibleToUser) {
-//            getCouponData();
-//            adapter.notifyDataSetChanged();
-//        } else {
-//            // 相当于Fragment的onPause
-//        }
-//    }
-
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             getCouponData();
-            adapter.notifyDataSetChanged();
         }
     }
 
@@ -125,29 +112,24 @@ public class SaleMyFragment extends Fragment {
         MainApplication application = (MainApplication) getActivity().getApplication();
         uid = application.getUser_id();
         token = application.getToken();
-        if (uid == null && token == null) {
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//                    AlertDialog alertDialog = builder.setTitle("登录提醒").setMessage("您还未登录，是否先去登录?")
-//                            .setNegativeButton("取消", null)
-//                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    Intent intent = new Intent();
-//                                    intent.setClass(context, LoginActivity.class);
-//                                    startActivity(intent);
-//                                }
-//                            }).create();
-//                    alertDialog.show();
+        if (application.isOnline() == false) {
             Toast.makeText(context, "请您先登录再进行操作", Toast.LENGTH_SHORT).show();
         } else {
+            dataList.clear();
+            coupon_id.clear();
+            coupon_name = "";
+            coupon_price = "";
+            coupon_content = "";
+            coupon_type = 0;
+            coupon_time = "";
+            coupon_img = "";
             HashMap<String, String> params = new HashMap<>();
             params.put("userId", uid);
             params.put("token", token);
-            RequestManager.getInstance(context).requestAsyn("users/me/coupons?", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
+            RequestManager.getInstance(context).requestAsyn("users/me/coupons", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
 
                 @Override
                 public void onReqSuccess(String result) {
-                    dataList.clear();
                     JSONArray array = JSONArray.parseArray(result);
                     for (int i = 0; i < array.size(); i++) {
                         String s = array.get(i).toString();
@@ -170,6 +152,7 @@ public class SaleMyFragment extends Fragment {
                         saleBean.setText(coupon_name, coupon_price, coupon_content, coupon_time + "到期", coupon_img);
                         dataList.add(saleBean);
                     }
+                    adapter.notifyDataSetChanged();
                 }
 
                 @Override

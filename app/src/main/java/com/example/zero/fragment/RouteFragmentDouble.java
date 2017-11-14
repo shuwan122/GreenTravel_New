@@ -65,6 +65,7 @@ import com.example.zero.bean.SaleBean;
 import com.example.zero.entity.Route;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.HttpUtil;
+import com.example.zero.util.MainApplication;
 import com.example.zero.util.RequestManager;
 import com.example.zero.view.SearchPopView;
 import com.example.zero.view.SearchView;
@@ -259,6 +260,8 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
 
     boolean hasShownDialogue = false;
 
+    MainApplication application;
+
     private Context context;
 
     private int cModel = 1;
@@ -303,6 +306,7 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        application = (MainApplication) getActivity().getApplication();
         initData();
 //        initViews();
     }
@@ -998,6 +1002,7 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                                 }
                             }
                         }
+
                         for (int j = 0; j < routeBfMeet.getJSONObject(i).getJSONArray("route_detail").length(); j++) {
                             if (j % 2 == 0) {
                                 switch (i) {
@@ -1172,6 +1177,7 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                                     dbData0.add(new RouteSearchBean(R.drawable.title_icon, station.getString(i),
                                             "周围简介\n热门吃、喝、玩、乐", ""));
                                 }
+                                application.setStationList(dbData);
                                 Log.d(TAG, "parseJSONWithJSONObject: " + dbData.size());
 
                                 setHintSize(busy.size());
@@ -1187,6 +1193,8 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                                     hintData.add(busy.getString(i));
                                     hintData0.add(busy.getString(i));
                                 }
+                                application.setBusyStationList(hintData);
+
                                 hintAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData);
                                 hintAdapter0 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, hintData0);
                                 //初始化自动补全数据
@@ -1245,8 +1253,15 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
      * 获取db数据
      */
     private void getData() {
-        origin = DATA;
-        parseJSONWithJSONObject(null);
+        if (application.getStationList() == null) {
+            origin = DATA;
+            parseJSONWithJSONObject(null);
+        } else {
+            dbData = application.getStationList();
+            dbData0 = application.getStationList();
+            hintData = application.getBusyStationList();
+            hintData0 = application.getBusyStationList();
+        }
     }
 
     /**

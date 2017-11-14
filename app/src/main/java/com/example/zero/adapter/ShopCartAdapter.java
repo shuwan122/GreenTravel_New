@@ -1,6 +1,7 @@
 package com.example.zero.adapter;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,7 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
     private View headerView;
     private OnDeleteClickListener mOnDeleteClickListener;
     private OnEditClickListener mOnEditClickListener;
-    private OnResfreshListener mOnResfreshListener;
+    private OnResfreshListener mOnRefreshListener;
 
     public ShopCartAdapter(Context context, List<ShopCartBean.CartlistBean> data) {
         this.context = context;
@@ -71,7 +72,7 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
         holder.tvShopCartClothPrice.setText("¥" + data.get(position).getPrice());
         holder.etShopCartClothNum.setText(data.get(position).getCount() + "");
 
-        if (mOnResfreshListener != null) {
+        if (mOnRefreshListener != null) {
             boolean isSelect = false;
             for (int i = 0; i < data.size(); i++) {
                 if (!data.get(i).getIsSelect()) {
@@ -81,7 +82,7 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
                     isSelect = true;
                 }
             }
-            mOnResfreshListener.onResfresh(isSelect);
+            mOnRefreshListener.onResfresh(isSelect);
         }
 
         holder.ivShopCartClothMinus.setOnClickListener(new View.OnClickListener() {
@@ -178,6 +179,9 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
         data.remove(position);
         //重新排序，标记所有商品不同商铺第一个的商品位置
         ShopOrderActivity.isSelectFirst(data);
+        if(data.isEmpty()) {
+            mOnRefreshListener.onEmpty();
+        }
         notifyDataSetChanged();
     }
 
@@ -257,10 +261,11 @@ public class ShopCartAdapter extends RecyclerView.Adapter<ShopCartAdapter.MyView
 
     public interface OnResfreshListener {
         void onResfresh(boolean isSelect);
+        void onEmpty();
     }
 
     public void setResfreshListener(OnResfreshListener mOnResfreshListener) {
-        this.mOnResfreshListener = mOnResfreshListener;
+        this.mOnRefreshListener = mOnResfreshListener;
     }
 
 }
