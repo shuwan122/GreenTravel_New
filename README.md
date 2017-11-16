@@ -239,6 +239,12 @@ Android App GreenTravel
 		<th>171115</th>
 		<th colspan="3">第八次程序合并</th>
 	</tr>
+	<tr>
+		<th>171116</th>
+		<th>添加Handler管理Http请求</th>
+		<th>添加地址管理界面，添加已使用的优惠券的样式，修改整体布局风格</th>
+		<th>我的订单页面</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -478,6 +484,13 @@ Android App GreenTravel
 		<th>171115</th>
 		<th colspan="3">暂时没有发现bug</th>
 	</tr>
+	<tr>
+		<th>171116</th>
+		<th>Android多线程问题</th>
+		<th>无</th>
+		<th>在设置不同订单状态下的操作按钮隐藏有bug，理论上隐藏的部分会显示出来<br>
+	 重复多余代码解决了，不明白原理</th>
+	</tr>
 </table>
 
 ## 参考
@@ -716,5 +729,11 @@ Android App GreenTravel
     <tr>
 		<th>171115</th>
 		<th colspan="3">无</th>
+	</tr>
+	<tr>
+		<th>171116</th>
+		<th>http://blog.csdn.net/iispring/article/details/47115879</th>
+		<th>无</th>
+		<th>无</th>
 	</tr>
 </table>
