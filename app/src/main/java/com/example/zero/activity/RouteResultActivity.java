@@ -253,13 +253,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
     boolean hasShownDialogue = false;
 
-    //图标
-    BitmapDescriptor stS = BitmapDescriptorFactory
-            .fromResource(R.drawable.icon_st);
-    BitmapDescriptor enS = BitmapDescriptorFactory
-            .fromResource(R.drawable.icon_en);
-    BitmapDescriptor pop = BitmapDescriptorFactory
-            .fromResource(R.drawable.icon_gcoding);
+    private android.support.v7.app.AlertDialog selectDialog;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -405,6 +399,7 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        selectDialog.dismiss();
                         Intent intent = new Intent(RouteResultActivity.this, StationDisplayActivity.class);
                         intent.putExtra("stationName", stationName);
                         startActivity(intent);
@@ -416,7 +411,8 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
                     }
                 });
-                builder.show();
+                selectDialog = builder.create();
+                selectDialog.show();
             }
         });
 
@@ -509,9 +505,9 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                 stedFlag = 0;
                             }
                             mSearch.transitSearch(transitRouteLessbusy
-                                    .from(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i)))
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i) + "地铁站"))
                                     .city("广州")
-                                    .to(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i + 1))));
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", lessbusyStationList.get(i + 1) + "地铁站")));
                         }
                         addMarker();
 
@@ -542,9 +538,9 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                                 stedFlag = 0;
                             }
                             mSearch.transitSearch(transitRouteLesschange
-                                    .from(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i)))
+                                    .from(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i) + "地铁站"))
                                     .city("广州")
-                                    .to(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i + 1))));
+                                    .to(PlanNode.withCityNameAndPlaceName("广州", lesschangeStationList.get(i + 1) + "地铁站")));
                         }
                         addMarker();
 
@@ -1137,6 +1133,14 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
     }
 
     private void addMarker() {
+        //图标
+        BitmapDescriptor stS = BitmapDescriptorFactory
+                .fromResource(R.drawable.icon_st);
+        BitmapDescriptor enS = BitmapDescriptorFactory
+                .fromResource(R.drawable.icon_en);
+        BitmapDescriptor pop = BitmapDescriptorFactory
+                .fromResource(R.drawable.icon_gcoding);
+
         List<OverlayOptions> options = new ArrayList<OverlayOptions>();
         switch (cModel) {
             case FAST:

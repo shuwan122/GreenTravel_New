@@ -23,7 +23,7 @@
                 android:id="@+id/rlv_shopcart"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"></android.support.v7.widget.RecyclerView>
+                android:layout_weight="1"/>
 
             <TextView
                 android:id="@+id/tv_shopcart_hint"
@@ -105,7 +105,7 @@
             android:id="@+id/emtryview"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_alignParentBottom="true"></View>
+            android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
 

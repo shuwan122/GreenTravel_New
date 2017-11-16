@@ -1,7 +1,10 @@
 package com.example.zero.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -61,6 +64,8 @@ public class StationDisplayActivity extends AppCompatActivity {
     private ListPopupWindow popupWindow2;
 
     //前后端接口
+    private AdvDestinSearchAdapter adapter1;
+
     private String stationName;
     private int size = 100;
     private String[] shopIdList = new String[size];
@@ -90,39 +95,82 @@ public class StationDisplayActivity extends AppCompatActivity {
 
     private static final String TAG = "StationDisplayActivity";
 
+    private ProgressDialog pd;
+
+    //定义Handler对象
+    private Handler httpHandler = new Handler(new Handler.Callback() {
+        @Override
+        //当有消息发送出来的时候就执行Handler的这个方法
+        public boolean handleMessage(Message msg) {
+            //只要执行到这里就关闭对话框
+            pd.dismiss();
+
+            initView();
+            initData();
+            showData();
+            return false;
+        }
+    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_station_display);
-        context = getBaseContext();
         Intent intent = getIntent();
         stationName = intent.getStringExtra("stationName");
+
+        setContentView(R.layout.activity_station_display);
+        context = getBaseContext();
+
         adv_recv = (RecyclerView) this.findViewById(R.id.station_search_recv);
         adv_recv.setLayoutManager(new LinearLayoutManager(context));
         textView = (TextView) this.findViewById(R.id.station_name);
         textView.setText("现在为" + stationName + "站");
 
-        final Bundle mBundle = new Bundle();
-        mBundle.putString("userId", "guest");
-        mBundle.putString("stationName", stationName);
-        // TODO: 2017/10/29  前后端联调
-        HttpUtil.sendStationDisplayOkHttpRequest(mBundle, new okhttp3.Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseData = response.body().string();
-                parseJSONWithJSONObject(responseData);
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure: ERROR!");
-                Toast.makeText(context, "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
-            }
-        });
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
+        }
+
+        httpThread();
+    }
+
+    private void httpThread() {
+        //构建一个下载进度条
+        pd = ProgressDialog.show(StationDisplayActivity.this, "加载数据", "数据加载中，请稍后......");
+
+        new Thread() {
+            @Override
+            public void run() {
+                //在新线程里执行长耗时方法
+                longTimeMethod();
+                //执行完毕后给handler发送一个空消息
+                httpHandler.sendEmptyMessage(0);
+            }
+        }.start();
+    }
+
+    //加载数据
+    private void longTimeMethod() {
+        try {
+            final Bundle mBundle = new Bundle();
+            mBundle.putString("userId", "guest");
+            mBundle.putString("stationName", stationName);
+            HttpUtil.sendStationDisplayOkHttpRequest(mBundle, new okhttp3.Callback() {
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String responseData = response.body().string();
+                    parseJSONWithJSONObject(responseData);
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d(TAG, "onFailure: ERROR!");
+                    Toast.makeText(context, "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
+                }
+            });
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -150,6 +198,10 @@ public class StationDisplayActivity extends AppCompatActivity {
                     commentList[count] = shop.getJSONObject(i).getInt("comment_num");
                     if (!shop.getJSONObject(i).getString("phone").equals("null")) {
                         phoneList[count] = shop.getJSONObject(i).getString("phone");
+                        if (phoneList[count].contains("+")) {
+                            int loc = phoneList[count].indexOf("+");
+                            phoneList[count] = phoneList[count].substring(0, loc);
+                        }
                     } else {
                         phoneList[count] = "";
                     }
@@ -165,10 +217,6 @@ public class StationDisplayActivity extends AppCompatActivity {
                 }
                 stationShopCount = count;
 //                getLatlng();
-
-                initView();
-                initData();
-                showData();
             } else {
                 Toast.makeText(context, "抱歉！此站点没有附近商家。", Toast.LENGTH_SHORT).show();
             }
@@ -283,6 +331,7 @@ public class StationDisplayActivity extends AppCompatActivity {
     }
 
     private void showData() {
+        showList.clear();
         for (int i = 0; i < stationShopCount; i++) {
             AdvDestinSearchBean searchBean = new AdvDestinSearchBean();
             searchBean.setText(false, tagList[i], shopNameList[i], stationName, phoneList[i], posterList[i],
@@ -290,7 +339,7 @@ public class StationDisplayActivity extends AppCompatActivity {
             showList.add(searchBean);
         }
 
-        final AdvDestinSearchAdapter adapter1 = new AdvDestinSearchAdapter(this, showList);
+        adapter1 = new AdvDestinSearchAdapter(this, showList);
         adv_recv.setAdapter(adapter1);
         adapter1.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override

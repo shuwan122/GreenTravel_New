@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baidu.mapapi.SDKInitializer;
 import com.example.zero.bean.RouteSearchBean;
 
 import java.util.ArrayList;
@@ -32,6 +33,12 @@ public class MainApplication extends Application {
     private List<String> busyStationList = new ArrayList<>();
 
     private String TAG = "MainApplication";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        SDKInitializer.initialize(this);
+    }
 
     public boolean isOnline() {
         return isOnline;

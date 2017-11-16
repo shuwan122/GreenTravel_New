@@ -1,9 +1,11 @@
 package com.example.zero.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -84,6 +86,9 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     //前后端接口
     private ArrayList<String> selectIdList = new ArrayList<String>();
 
+    private ArrayList<GoodsItem> goodHandleList;
+    private ArrayList<GoodsItem> typeHandleList;
+
     private int size = 100;
     private String[] idList = new String[size];
     private String[] goodsTypeList = new String[size];
@@ -95,43 +100,45 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     private String[] sellerIdList = new String[size];
     private int[] buyNumList = new int[size];
 
+    private DividerDecoration dividerDecoration;
+
     private Button mCoupon;
 
     private static final String TAG = "ShoppingCartActivity";
 
+    private ProgressDialog pd;
+
+    //定义Handler对象
+    private Handler httpHandler = new Handler(new Handler.Callback() {
+        @Override
+        //当有消息发送出来的时候就执行Handler的这个方法
+        public boolean handleMessage(Message msg) {
+            //只要执行到这里就关闭对话框
+            pd.dismiss();
+
+            initView();
+            return false;
+        }
+    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shopping_cart);
-        nf = NumberFormat.getCurrencyInstance();
-        nf.setMaximumFractionDigits(2);
-        mHanlder = new Handler(getMainLooper());
-
         context = getBaseContext();
+
         Intent intent = getIntent();
         shopId = intent.getStringExtra("shopId");
         shopName = intent.getStringExtra("shopName");
         shopImg = intent.getStringExtra("shopImg");
+
         String bracket = shopName.substring(shopName.indexOf("（"), shopName.indexOf("）") + 1);
         shopName = shopName.replace(bracket, "");
 
-        // TODO: 2017/11/10 商品初始化
-        final Bundle mBundle = new Bundle();
-        mBundle.putString("userId", "guest");
-        mBundle.putString("shopId", shopId);
-        HttpUtil.sendGoodsOkHttpRequest(mBundle, new okhttp3.Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseData = response.body().string();
-                parseJSONWithJSONObject(responseData);
-            }
+        nf = NumberFormat.getCurrencyInstance();
+        nf.setMaximumFractionDigits(2);
+        mHanlder = new Handler(getMainLooper());
 
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure: ERROR!");
-                Toast.makeText(context, "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
-            }
-        });
+        setContentView(R.layout.activity_shopping_cart);
 
         title = (TitleShopLayout) findViewById(R.id.shop_title);
         title.setText(shopName);
@@ -140,6 +147,48 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
+        }
+
+        httpThread();
+    }
+
+    private void httpThread() {
+        //构建一个下载进度条
+        pd = ProgressDialog.show(ShoppingCartActivity.this, "加载数据", "数据加载中，请稍后......");
+
+        new Thread() {
+            @Override
+            public void run() {
+                //在新线程里执行长耗时方法
+                longTimeMethod();
+                //执行完毕后给handler发送一个空消息
+                httpHandler.sendEmptyMessage(0);
+            }
+        }.start();
+    }
+
+    //加载数据
+    private void longTimeMethod() {
+        try {
+            final Bundle mBundle = new Bundle();
+            mBundle.putString("userId", "guest");
+            mBundle.putString("shopId", shopId);
+            HttpUtil.sendGoodsOkHttpRequest(mBundle, new okhttp3.Callback() {
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String responseData = response.body().string();
+                    parseJSONWithJSONObject(responseData);
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d(TAG, "onFailure: ERROR!");
+                    Toast.makeText(context, "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
+                }
+            });
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -170,8 +219,8 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             }
             String[] typeResult = (String[]) set.toArray(new String[set.size()]);
 
-            ArrayList<GoodsItem> goodHandleList = new ArrayList<GoodsItem>();
-            ArrayList<GoodsItem> typeHandleList = new ArrayList<GoodsItem>();
+            goodHandleList = new ArrayList<GoodsItem>();
+            typeHandleList = new ArrayList<GoodsItem>();
             GoodsItem item = null;
 
             for (int i = 0; i < typeResult.length; i++) {
@@ -188,9 +237,6 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             typeList = typeHandleList;
             selectedList = new SparseArray<>();
             groupSelect = new SparseIntArray();
-
-            initView();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -212,7 +258,8 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         rvType.setLayoutManager(new LinearLayoutManager(this));
         typeAdapter = new TypeAdapter(this, typeList);
         rvType.setAdapter(typeAdapter);
-        rvType.addItemDecoration(new DividerDecoration(this));
+        dividerDecoration = new DividerDecoration(this);
+        rvType.addItemDecoration(dividerDecoration);
 
         myAdapter = new GoodsAdapter(dataList, this);
         listView.setAdapter(myAdapter);
@@ -311,6 +358,11 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bottom:
+                if (mCoupon.getVisibility() == View.VISIBLE) {
+                    mCoupon.setVisibility(View.GONE);
+                } else {
+                    mCoupon.setVisibility(View.VISIBLE);
+                }
                 showBottomSheet();
                 break;
             case R.id.clear:
@@ -386,6 +438,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         GoodsItem temp = selectedList.get(item.id);
         if (temp != null) {
             if (temp.count < 2) {
+                selectIdList.remove(String.valueOf(item.id));
                 selectedList.remove(item.id);
             } else {
                 item.count--;
@@ -442,6 +495,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
     public void clearCart() {
         selectedList.clear();
         groupSelect.clear();
+        selectIdList.clear();
         update(true);
 
     }

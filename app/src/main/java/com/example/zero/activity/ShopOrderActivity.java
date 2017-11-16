@@ -73,13 +73,15 @@ public class ShopOrderActivity extends AppCompatActivity {
         rlvShopCart.setLayoutManager(new LinearLayoutManager(this));
         mShopCartAdapter = new ShopCartAdapter(this, mAllOrderList);
         rlvShopCart.setAdapter(mShopCartAdapter);
+
         //删除商品接口
-        mShopCartAdapter.setOnDeleteClickListener(new ShopCartAdapter.OnDeleteClickListener() {
+        mShopCartAdapter.setOnDeleteClickListener( new ShopCartAdapter.OnDeleteClickListener() {
             @Override
             public void onDeleteClick(View view, int position, int cartid) {
                 mShopCartAdapter.notifyDataSetChanged();
             }
         });
+
         //修改数量接口
         mShopCartAdapter.setOnEditClickListener(new ShopCartAdapter.OnEditClickListener() {
             @Override
@@ -88,6 +90,7 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mPosition = position;
             }
         });
+
         //实时监控全选按钮
         mShopCartAdapter.setResfreshListener(new ShopCartAdapter.OnResfreshListener() {
             @Override
@@ -96,6 +99,8 @@ public class ShopOrderActivity extends AppCompatActivity {
                 if (isSelect) {
                     Drawable left = getResources().getDrawable(R.drawable.shopcart_selected);
                     tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
+                    tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_btn));
+                    tvShopCartSubmit.setTextColor(getResources().getColor(R.color.white));
                 } else {
                     Drawable left = getResources().getDrawable(R.drawable.shopcart_unselected);
                     tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
@@ -121,6 +126,8 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mSelect = false;
                 Drawable left = getResources().getDrawable(R.drawable.shopcart_unselected);
                 tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
+                tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_concal_btn));
+                tvShopCartSubmit.setTextColor(getResources().getColor(R.color.red));
                 float mTotalPrice = 0;
                 int mTotalNum = 0;
                 mGoPayList.clear();
@@ -142,6 +149,8 @@ public class ShopOrderActivity extends AppCompatActivity {
                     for (int i = 0; i < mAllOrderList.size(); i++) {
                         mAllOrderList.get(i).setSelect(true);
                         mAllOrderList.get(i).setShopSelect(true);
+                        tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_btn));
+                        tvShopCartSubmit.setTextColor(getResources().getColor(R.color.white));
                     }
                 } else {
                     Drawable left = getResources().getDrawable(R.drawable.shopcart_unselected);
@@ -149,6 +158,8 @@ public class ShopOrderActivity extends AppCompatActivity {
                     for (int i = 0; i < mAllOrderList.size(); i++) {
                         mAllOrderList.get(i).setSelect(false);
                         mAllOrderList.get(i).setShopSelect(false);
+                        tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_concal_btn));
+                        tvShopCartSubmit.setTextColor(getResources().getColor(R.color.red));
                     }
                 }
                 mShopCartAdapter.notifyDataSetChanged();
@@ -197,7 +208,7 @@ public class ShopOrderActivity extends AppCompatActivity {
         if (list.size() > 0) {
             list.get(0).setIsFirst(1);
             for (int i = 1; i < list.size(); i++) {
-                if (list.get(i).getShopId() == list.get(i - 1).getShopId()) {
+                if (list.get(i).getShopId().equals(list.get(i - 1).getShopId())) {
                     list.get(i).setIsFirst(2);
                 } else {
                     list.get(i).setIsFirst(1);

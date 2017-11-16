@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         super.onCreate(savedInstanceState);
         //个性化地图
         setMapCustomFile(this, PATH);
-        SDKInitializer.initialize(getApplicationContext());
+        SDKInitializer.initialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
         initView();
         initBottomNavBar();
