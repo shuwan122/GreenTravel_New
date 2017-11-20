@@ -177,6 +177,29 @@
                         style="@style/arrow_right_gray"
                         android:layout_marginRight="5dp" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subway"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableLeft="@drawable/subway_line"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:text="地铁时刻表"
+                        android:textColor="@color/black" />
+
+                    <ImageView
+                        style="@style/arrow_right_gray"
+                        android:layout_marginRight="5dp" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout

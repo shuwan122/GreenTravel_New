@@ -35,6 +35,8 @@ public class TransitRouteOverlay extends OverlayManager {
 
     private int stedFlag = 0;
 
+    private Bundle rBundle;
+
     /**
      * 构造函数
      *
@@ -46,6 +48,7 @@ public class TransitRouteOverlay extends OverlayManager {
 
     @Override
     public final List<OverlayOptions> getOverlayOptions() {
+        rBundle = new Bundle();
 
         if (mRouteLine == null) {
             return null;
@@ -67,7 +70,11 @@ public class TransitRouteOverlay extends OverlayManager {
                 // 最后路段绘制出口点
                 if (mRouteLine.getAllStep().indexOf(step) == (mRouteLine.getAllStep().size() - 1)
                         && step.getExit() != null) {
+                    rBundle.clear();
+                    rBundle.putBoolean("isMarker", false);
                     overlayOptionses.add((new MarkerOptions())
+                            .extraInfo(rBundle)
+                            .title(step.getExit().getTitle())
                             .position(step.getExit().getLocation())
                             .anchor(0.5f, 0.5f).zIndex(10)
                             .icon(getIconForStep(step)));
@@ -76,16 +83,26 @@ public class TransitRouteOverlay extends OverlayManager {
         }
 
         if (mRouteLine.getStarting() != null) {
-                overlayOptionses.add((new MarkerOptions())
-                        .position(mRouteLine.getStarting().getLocation())
-                        .icon(getStartMarker() != null ? getStartMarker() :
-                                BitmapDescriptorFactory.fromResource(R.drawable.icon_station)).zIndex(10));
+            rBundle.clear();
+            rBundle.putBoolean("isMarker", true);
+
+            overlayOptionses.add((new MarkerOptions())
+                    .title(mRouteLine.getStarting().getTitle())
+                    .extraInfo(rBundle)
+                    .position(mRouteLine.getStarting().getLocation())
+                    .icon(getStartMarker() != null ? getStartMarker() :
+                            BitmapDescriptorFactory.fromResource(R.drawable.icon_station)).zIndex(10));
         }
         if (mRouteLine.getTerminal() != null) {
-                overlayOptionses.add((new MarkerOptions())
-                        .position(mRouteLine.getTerminal().getLocation())
-                        .icon(getTerminalMarker() != null ? getTerminalMarker() :
-                                BitmapDescriptorFactory.fromResource(R.drawable.icon_station)).zIndex(10));
+            rBundle.clear();
+            rBundle.putBoolean("isMarker", true);
+
+            overlayOptionses.add((new MarkerOptions())
+                    .title(mRouteLine.getTerminal().getTitle())
+                    .extraInfo(rBundle)
+                    .position(mRouteLine.getTerminal().getLocation())
+                    .icon(getTerminalMarker() != null ? getTerminalMarker() :
+                            BitmapDescriptorFactory.fromResource(R.drawable.icon_station)).zIndex(10));
         }
         // polyline
         if (mRouteLine.getAllStep() != null
@@ -111,7 +128,7 @@ public class TransitRouteOverlay extends OverlayManager {
         return overlayOptionses;
     }
 
-    public void setStedFlag(int i){
+    public void setStedFlag(int i) {
         stedFlag = i;
     }
 

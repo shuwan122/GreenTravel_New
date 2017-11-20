@@ -131,8 +131,10 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         shopName = intent.getStringExtra("shopName");
         shopImg = intent.getStringExtra("shopImg");
 
-        String bracket = shopName.substring(shopName.indexOf("（"), shopName.indexOf("）") + 1);
-        shopName = shopName.replace(bracket, "");
+        if(shopName.contains("（")){
+            String bracket = shopName.substring(shopName.indexOf("（"), shopName.indexOf("）") + 1);
+            shopName = shopName.replace(bracket, "");
+        }
 
         nf = NumberFormat.getCurrencyInstance();
         nf.setMaximumFractionDigits(2);

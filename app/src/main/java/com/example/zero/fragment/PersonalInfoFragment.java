@@ -20,6 +20,7 @@ import com.example.zero.activity.LoginActivity;
 import com.example.zero.activity.MsgActivity;
 import com.example.zero.activity.RegisterActivity;
 import com.example.zero.activity.SettingActivity;
+import com.example.zero.activity.SubwayScheduleActivity;
 import com.example.zero.activity.UserActivity;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.MainApplication;
@@ -44,6 +45,7 @@ public class PersonalInfoFragment extends Fragment {
     private LinearLayout favor;
     private LinearLayout friend;
     private LinearLayout help_feedback;
+    private LinearLayout subway;
 
     private static final int START_LOGIN_ACTIVITY = 1;
     private static final int START_REGISTER_ACTIVITY = 2;
@@ -132,6 +134,14 @@ public class PersonalInfoFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        subway.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), SubwayScheduleActivity.class);
+                startActivity(intent);
+            }
+        });
         context = person_frag.getContext();
         return person_frag;
     }
@@ -147,6 +157,7 @@ public class PersonalInfoFragment extends Fragment {
         favor = (LinearLayout) person_frag.findViewById(R.id.favor);
         friend = (LinearLayout) person_frag.findViewById(R.id.friends);
         help_feedback = (LinearLayout) person_frag.findViewById(R.id.help_feedback);
+        subway = (LinearLayout) person_frag.findViewById(R.id.subway);
     }
 
     @Override

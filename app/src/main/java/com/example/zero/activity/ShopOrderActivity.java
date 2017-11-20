@@ -167,6 +167,15 @@ public class ShopOrderActivity extends AppCompatActivity {
             }
         });
 
+        tvShopCartSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(ShopOrderActivity.this, OrderConfirmActivity.class);
+                startActivity(intent);
+            }
+        });
+
         shopName = mBundle.getString("shopName");
         shopId = mBundle.getString("shopId");
         count = mBundle.getInt("size");

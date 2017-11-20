@@ -72,7 +72,6 @@
         <activity
             android:name="com.example.zero.activity.RegisterActivity"
             android:windowSoftInputMode="stateVisible" />
-
         <activity android:name="com.example.zero.activity.AdvSearchActivity" />
         <activity android:name="com.example.zero.activity.AdvMapResultActivity" />
         <activity android:name="com.example.zero.activity.ShoppingCartActivity" />
@@ -83,7 +82,6 @@
                 <action android:name="MSG_SERVICE" />
             </intent-filter>
         </service>
-
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
@@ -93,7 +91,8 @@
         <activity android:name="com.example.zero.activity.StationDisplayActivity" />
         <activity android:name="com.example.zero.activity.ShopDetailActivity" />
         <activity android:name="com.example.zero.activity.ShopOrderActivity" />
-        <activity android:name="com.example.zero.activity.NearShopCouponActivity"/>
+        <activity android:name="com.example.zero.activity.NearShopCouponActivity" />
+        <activity android:name="com.example.zero.activity.SubwayScheduleActivity"></activity>
     </application>
 
 </manifest>

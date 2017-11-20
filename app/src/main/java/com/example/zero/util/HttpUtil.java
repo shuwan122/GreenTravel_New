@@ -110,4 +110,29 @@ public class HttpUtil {
                 .build();
         client.newCall(request).enqueue(callback);
     }
+
+    public static void sendScheduleOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("city", "广州")
+                .add("station", mBundle.getString("station"))
+                .build();
+        Request request = new Request.Builder()
+                .url("http://" + server + ":8080/route/station_timelist?city=广州&station=" + mBundle.getString("station"))
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
+
+    public static void sendScheduleFullOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("city", "广州")
+                .add("station", mBundle.getString("station"))
+                .build();
+        Request request = new Request.Builder()
+                .url("http://" + server + ":8080/route/station_timelist?city=广州&station=" + mBundle.getString("station") + "&type=1")
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
 }

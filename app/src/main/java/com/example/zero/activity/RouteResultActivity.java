@@ -10,12 +10,20 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -74,7 +82,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.example.zero.adapter.RouteLineAdapter;
+import com.example.zero.adapter.ScheduleAdapter;
+import com.example.zero.adapter.ScheduleDialogAdapter;
 import com.example.zero.bean.RouteSearchBean;
+import com.example.zero.bean.SaleBean;
+import com.example.zero.bean.ScheduleBean;
 import com.example.zero.entity.Route;
 import com.example.zero.fragment.OverlayManager;
 import com.example.zero.fragment.RouteFragmentDouble;
@@ -82,6 +94,7 @@ import com.example.zero.greentravel_new.R;
 import com.example.zero.util.BikingRouteOverlay;
 import com.example.zero.util.CouponOverlay;
 import com.example.zero.util.DrivingRouteOverlay;
+import com.example.zero.util.HttpUtil;
 import com.example.zero.util.MassTransitRouteOverlay;
 import com.example.zero.util.RequestManager;
 import com.example.zero.util.TransitRouteOverlay;
@@ -91,6 +104,7 @@ import com.alibaba.fastjson.*;
 
 import org.json.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -98,6 +112,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -255,6 +270,12 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
     private android.support.v7.app.AlertDialog selectDialog;
 
+    private RecyclerView schedule;
+
+    private List<ScheduleBean> scheduleData;
+
+    private ScheduleDialogAdapter scheduleDialogAdapter;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -341,6 +362,57 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
 
         // 地图点击事件处理
         mBaidumap.setOnMapClickListener(this);
+        mBaidumap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (marker.getExtraInfo().getBoolean("isMarker")) {
+                    // TODO: 2017/11/18 列车时刻表弹出窗口
+                    scheduleData = new ArrayList<ScheduleBean>();
+
+                    final Bundle mBundle = new Bundle();
+                    mBundle.putString("station", marker.getTitle());
+                    HttpUtil.sendScheduleOkHttpRequest(mBundle, new okhttp3.Callback() {
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String responseData = response.body().string();
+                            parseJSONWithJSONObject(responseData);
+
+                            scheduleDialogAdapter = new ScheduleDialogAdapter(context, scheduleData, R.layout.dialog_schedule);
+                            Looper.prepare();
+                            AlertDialog dialog = new AlertDialog.Builder(context)
+                                    .setTitle("列车时刻表")
+                                    .setView(R.layout.dialog_content_circle)
+                                    .setAdapter(scheduleDialogAdapter, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            Toast.makeText(context, scheduleData.get(i).getStation(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .create();
+
+                            Window window = dialog.getWindow();
+                            window.setGravity(Gravity.BOTTOM);  //此处可以设置dialog显示的位置
+                            window.setWindowAnimations(R.style.popWindow);  //添加动画
+                            dialog.show();
+
+                            WindowManager m = getWindowManager();
+                            Display d = m.getDefaultDisplay(); // 获取屏幕宽、高用
+                            WindowManager.LayoutParams p = window.getAttributes(); // 获取对话框当前的参数值
+                            p.width = d.getWidth(); // 宽度设置为屏幕宽
+                            window.setAttributes(p);
+                            Looper.loop();
+                        }
+
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.d(TAG, "onFailure: ERROR!");
+                            Toast.makeText(context, "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                return false;
+            }
+        });
         // 初始化搜索模块，注册事件监听
         mSearch = RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
@@ -708,6 +780,24 @@ public class RouteResultActivity extends AppCompatActivity implements BaiduMap.O
                 Toast.makeText(RouteResultActivity.this, "路线结果太少，请重新搜索。", Toast.LENGTH_SHORT).show();
             }
             nowSearchType = 2;
+        }
+    }
+
+    private void parseJSONWithJSONObject(String jsonData) {
+        try {
+            int showBound = 2;
+            JSONArray jsonArray = new JSONArray(jsonData);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONArray array = jsonArray.getJSONArray(i);
+                for (int j = 0; j < showBound; j++) {
+                    scheduleData.add(new ScheduleBean(array.getJSONObject(j).getString("station"),
+                            array.getJSONObject(j).getString("line"),
+                            array.getJSONObject(j).getString("final_st"),
+                            array.getJSONObject(j).getString("arr_time_str")));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
