@@ -74,6 +74,7 @@ public class ShopOrderActivity extends AppCompatActivity {
         rlvShopCart.setLayoutManager(new LinearLayoutManager(this));
         mShopCartAdapter = new ShopCartAdapter(this, mAllOrderList);
         rlvShopCart.setAdapter(mShopCartAdapter);
+
         //删除商品接口
         mShopCartAdapter.setOnDeleteClickListener(new ShopCartAdapter.OnDeleteClickListener() {
             @Override
@@ -81,6 +82,7 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mShopCartAdapter.notifyDataSetChanged();
             }
         });
+
         //修改数量接口
         mShopCartAdapter.setOnEditClickListener(new ShopCartAdapter.OnEditClickListener() {
             @Override
@@ -89,6 +91,7 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mPosition = position;
             }
         });
+
         //实时监控全选按钮
         mShopCartAdapter.setResfreshListener(new ShopCartAdapter.OnResfreshListener() {
             @Override
