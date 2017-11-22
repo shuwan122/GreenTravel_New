@@ -174,6 +174,7 @@ public class SubwayScheduleActivity extends AppCompatActivity {
                 popupWindow2.show();
             }
         });
+
         popupWindow2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             //TODO 排序更新
             @Override

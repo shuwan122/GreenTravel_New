@@ -2,11 +2,13 @@ package com.example.zero.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zero.greentravel_new.R;
@@ -21,7 +23,8 @@ import java.util.HashMap;
 
 public class ResetPwActivity extends AppCompatActivity {
     private ImageView backArrow;
-    private Button resetpw, confirm_button;
+    private TextView confirm_button;
+    private Button resetpw;
     private SimpleTextView phone, password, pw_confirm, confirm;
 
     private static final String TAG = "ResetPwActivity";
@@ -143,6 +146,10 @@ public class ResetPwActivity extends AppCompatActivity {
                 }
             }
         });
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
 
@@ -162,7 +169,7 @@ public class ResetPwActivity extends AppCompatActivity {
         pw_confirm.setHintText(" 请重复新密码");
         pw_confirm.setLeftImage(R.drawable.lock_fill);
         pw_confirm.setPw();
-        confirm_button = (Button) findViewById(R.id.resetpw_confirm_button);
+        confirm_button = (TextView) findViewById(R.id.resetpw_confirm_button);
         resetpw = (Button) findViewById(R.id.resetpw_button);
 
     }

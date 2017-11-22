@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zero.adapter.ShopCartAdapter;
 import com.example.zero.bean.ShopCartBean;
@@ -73,15 +74,13 @@ public class ShopOrderActivity extends AppCompatActivity {
         rlvShopCart.setLayoutManager(new LinearLayoutManager(this));
         mShopCartAdapter = new ShopCartAdapter(this, mAllOrderList);
         rlvShopCart.setAdapter(mShopCartAdapter);
-
         //删除商品接口
-        mShopCartAdapter.setOnDeleteClickListener( new ShopCartAdapter.OnDeleteClickListener() {
+        mShopCartAdapter.setOnDeleteClickListener(new ShopCartAdapter.OnDeleteClickListener() {
             @Override
             public void onDeleteClick(View view, int position, int cartid) {
                 mShopCartAdapter.notifyDataSetChanged();
             }
         });
-
         //修改数量接口
         mShopCartAdapter.setOnEditClickListener(new ShopCartAdapter.OnEditClickListener() {
             @Override
@@ -90,7 +89,6 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mPosition = position;
             }
         });
-
         //实时监控全选按钮
         mShopCartAdapter.setResfreshListener(new ShopCartAdapter.OnResfreshListener() {
             @Override
@@ -99,8 +97,6 @@ public class ShopOrderActivity extends AppCompatActivity {
                 if (isSelect) {
                     Drawable left = getResources().getDrawable(R.drawable.shopcart_selected);
                     tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
-                    tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_btn));
-                    tvShopCartSubmit.setTextColor(getResources().getColor(R.color.white));
                 } else {
                     Drawable left = getResources().getDrawable(R.drawable.shopcart_unselected);
                     tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
@@ -126,8 +122,6 @@ public class ShopOrderActivity extends AppCompatActivity {
                 mSelect = false;
                 Drawable left = getResources().getDrawable(R.drawable.shopcart_unselected);
                 tvShopCartSelect.setCompoundDrawablesWithIntrinsicBounds(left, null, null, null);
-                tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_concal_btn));
-                tvShopCartSubmit.setTextColor(getResources().getColor(R.color.red));
                 float mTotalPrice = 0;
                 int mTotalNum = 0;
                 mGoPayList.clear();
@@ -149,8 +143,6 @@ public class ShopOrderActivity extends AppCompatActivity {
                     for (int i = 0; i < mAllOrderList.size(); i++) {
                         mAllOrderList.get(i).setSelect(true);
                         mAllOrderList.get(i).setShopSelect(true);
-                        tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_btn));
-                        tvShopCartSubmit.setTextColor(getResources().getColor(R.color.white));
                     }
                 } else {
                     Drawable left = getResources().getDrawable(R.drawable.shopcart_unselected);
@@ -158,21 +150,10 @@ public class ShopOrderActivity extends AppCompatActivity {
                     for (int i = 0; i < mAllOrderList.size(); i++) {
                         mAllOrderList.get(i).setSelect(false);
                         mAllOrderList.get(i).setShopSelect(false);
-                        tvShopCartSubmit.setBackground(getResources().getDrawable(R.drawable.login_concal_btn));
-                        tvShopCartSubmit.setTextColor(getResources().getColor(R.color.red));
                     }
                 }
                 mShopCartAdapter.notifyDataSetChanged();
 
-            }
-        });
-
-        tvShopCartSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setClass(ShopOrderActivity.this, OrderConfirmActivity.class);
-                startActivity(intent);
             }
         });
 
@@ -187,6 +168,41 @@ public class ShopOrderActivity extends AppCompatActivity {
 
         initData();
         mShopCartAdapter.notifyDataSetChanged();
+
+        tvShopCartSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int size = mGoPayList.size();
+                String[] idList = new String[size];
+                String[] nameList = new String[size];
+                String[] posterList = new String[size];
+                double[] priceList = new double[size];
+                int[] numList = new int[size];
+
+                for (int i = 0; i < size; i++) {
+                    idList[i] = String.valueOf(mGoPayList.get(i).getId());
+                    nameList[i] = mGoPayList.get(i).getProductName();
+                    posterList[i] = mGoPayList.get(i).getDefaultPic();
+                    priceList[i] = mGoPayList.get(i).getPrice();
+                    numList[i] = mGoPayList.get(i).getCount();
+                }
+
+                Bundle mBundle = new Bundle();
+                Intent intent = new Intent(getBaseContext(), OrderConfirmActivity.class);
+                mBundle.putString("shopName", shopName);
+                mBundle.putString("shopId", shopId);
+                mBundle.putInt("size", size);
+                mBundle.putStringArray("idList", idList);
+                mBundle.putStringArray("nameList", nameList);
+                mBundle.putStringArray("posterList", posterList);
+                mBundle.putDoubleArray("priceList", priceList);
+                mBundle.putIntArray("numList", numList);
+
+                intent.putExtras(mBundle);
+                startActivity(intent);
+                Toast.makeText(getBaseContext(), "结算", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -217,7 +233,7 @@ public class ShopOrderActivity extends AppCompatActivity {
         if (list.size() > 0) {
             list.get(0).setIsFirst(1);
             for (int i = 1; i < list.size(); i++) {
-                if (list.get(i).getShopId().equals(list.get(i - 1).getShopId())) {
+                if (list.get(i).getShopId() == list.get(i - 1).getShopId()) {
                     list.get(i).setIsFirst(2);
                 } else {
                     list.get(i).setIsFirst(1);

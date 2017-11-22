@@ -76,6 +76,9 @@
         <activity android:name="com.example.zero.activity.AdvMapResultActivity" />
         <activity android:name="com.example.zero.activity.ShoppingCartActivity" />
         <activity android:name="com.example.zero.activity.OrderConfirmActivity" />
+        <activity android:name="com.example.zero.activity.AddressActivity" />
+        <activity android:name="com.example.zero.activity.AddressEditActivity" />
+        <activity android:name="com.example.zero.activity.UserOrderActivity" />
 
         <service android:name="com.example.zero.util.NotificationService">
             <intent-filter>
@@ -92,7 +95,7 @@
         <activity android:name="com.example.zero.activity.ShopDetailActivity" />
         <activity android:name="com.example.zero.activity.ShopOrderActivity" />
         <activity android:name="com.example.zero.activity.NearShopCouponActivity" />
-        <activity android:name="com.example.zero.activity.SubwayScheduleActivity"></activity>
+        <activity android:name="com.example.zero.activity.SubwayScheduleActivity" />
     </application>
 
 </manifest>

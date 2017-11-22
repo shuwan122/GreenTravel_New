@@ -1,5 +1,6 @@
 package com.example.zero.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -36,27 +37,29 @@ public class AdvFragment extends Fragment {
         rb2 = (RadioButton) view.findViewById(R.id.adv_rb_2);
         view1 = (View) view.findViewById(R.id.adv_color1);
         view2 = (View) view.findViewById(R.id.adv_color2);
+        rb1.setCompoundDrawablePadding(4);
+        rb2.setCompoundDrawablePadding(4);
         rGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.adv_rb_1:
                         controller.showFragment(0);
-                        rb1.setTextColor(android.graphics.Color.RED);
+                        rb1.setTextColor(getResources().getColor(R.color.GreenTheme10, null));
                         rb2.setTextColor(getResources().getColor(R.color.nav_gray, null));
-                        rb1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.destin_red32, 0, 0, 0);
-                        rb2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.plan_gray32, 0, 0, 0);
-                        view1.setBackgroundColor(getResources().getColor(R.color.red, null));
+                        rb1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.destination_green, 0, 0, 0);
+                        rb2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.plane_gray, 0, 0, 0);
+                        view1.setBackgroundColor(getResources().getColor(R.color.GreenTheme10, null));
                         view2.setBackgroundColor(getResources().getColor(R.color.nav_gray, null));
                         break;
                     case R.id.adv_rb_2:
                         controller.showFragment(1);
                         rb1.setTextColor(getResources().getColor(R.color.nav_gray, null));
-                        rb2.setTextColor(android.graphics.Color.RED);
-                        rb1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.destin_gray32, 0, 0, 0);
-                        rb2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.plan_red32, 0, 0, 0);
-                        view1.setBackgroundColor(getResources().getColor(R.color.nav_gray,null));
-                        view2.setBackgroundColor(getResources().getColor(R.color.red,null));
+                        rb2.setTextColor(getResources().getColor(R.color.GreenTheme10, null));
+                        rb1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.destination_gray, 0, 0, 0);
+                        rb2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.plane_green, 0, 0, 0);
+                        view1.setBackgroundColor(getResources().getColor(R.color.nav_gray, null));
+                        view2.setBackgroundColor(getResources().getColor(R.color.GreenTheme10, null));
                     default:
                         break;
                 }

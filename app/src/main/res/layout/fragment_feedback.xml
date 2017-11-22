@@ -134,6 +134,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="我要反馈"
-            android:textColor="@color/firstColor" />
+            android:textColor="@color/GreenTheme10" />
     </LinearLayout>
 </LinearLayout>

@@ -32,6 +32,7 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder {
     private SparseArray<View> mViews;
     private View mConvertView;
     private Context mContext;
+    private MultiItemTypeAdapter.OnInnerItemClickListener onInnerItemClickListener;
 
     public RecycleViewHolder(Context context, View itemView) {
         super(itemView);
@@ -71,6 +72,13 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder {
         return mConvertView;
     }
 
+    public void setOnInnerItemClickListener(MultiItemTypeAdapter.OnInnerItemClickListener onInnerItemClickListener) {
+        this.onInnerItemClickListener = onInnerItemClickListener;
+    }
+
+    public MultiItemTypeAdapter.OnInnerItemClickListener getOnInnerItemClickListener() {
+        return onInnerItemClickListener;
+    }
 
     /****以下为辅助方法*****/
 

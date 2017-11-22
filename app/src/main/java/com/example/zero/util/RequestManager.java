@@ -5,13 +5,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSONException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +32,7 @@ public class RequestManager {
     private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//这个需要和服务端保持一致
     //private static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");//这个需要和服务端保持一致
     private static final String TAG = RequestManager.class.getSimpleName();
-    private static final String BASE_URL = "http://10.108.112.96:8080";//请求接口根地址10.108.122.50:8080
+    private static final String BASE_URL = "http://10.108.120.154:8080";//请求接口根地址10.108.122.50:8080
     private static volatile RequestManager mInstance;//单例引用
     public static final int TYPE_GET = 0;//get请求
     public static final int TYPE_POST_JSON = 1;//post请求参数为json
@@ -618,7 +615,8 @@ public class RequestManager {
 
     /**
      * 下载文件
-     * @param fileUrl 文件url
+     *
+     * @param fileUrl     文件url
      * @param destFileDir 存储目标目录
      */
     public <T> void downLoadFile(String fileName, String fileUrl, final File destFileDir, final ReqProgressCallBack<T> callBack) {
@@ -739,7 +737,7 @@ public class RequestManager {
         });
     }
 
-    public interface ReqProgressCallBack<T>  extends ReqCallBack<T>{
+    public interface ReqProgressCallBack<T> extends ReqCallBack<T> {
         /**
          * 响应进度更新
          */

@@ -14,22 +14,16 @@
 
         <ImageView
             android:id="@+id/msg_back_arrow"
-            style="@style/arrow_back_blue"
-            android:layout_margin="10dp" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-            android:background="@color/divideLine" />
+            android:src="@drawable/arrow_back_black" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
-            android:text="我的消息"
+            android:text="  我的消息"
             android:textColor="@color/black" />
     </LinearLayout>
 

@@ -16,7 +16,7 @@ import com.example.zero.util.RecycleViewHolder;
 public class OrderAdressDelegate implements ItemViewDelegate<OrderBean> {
     @Override
     public int getItemViewLayoutId() {
-        return R.layout.item_my_address;
+        return R.layout.item_order_address;
     }
 
     @Override

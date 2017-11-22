@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:gravity="center"
+        android:textColor="@color/black"
         android:text="热门问题" />
 
     <LinearLayout
@@ -194,6 +195,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="我要提问"
-            android:textColor="@color/firstColor" />
+            android:textColor="@color/GreenTheme10" />
     </LinearLayout>
 </LinearLayout>

@@ -314,7 +314,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             case 0:
                 fragmentController.showFragment(0);
                 getSupportActionBar().setTitle("路线");
-//                titleLayout.setVisibility(View.GONE);
                 titleRouteLayout.setVisibility(View.VISIBLE);
                 mMapView.setVisibility(View.VISIBLE);
                 btnLocation.setVisibility(View.VISIBLE);
@@ -323,7 +322,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             case 1:
                 fragmentController.showFragment(1);
                 getSupportActionBar().setTitle("建议");
-//                titleLayout.setVisibility(View.GONE);
                 titleRouteLayout.setVisibility(View.GONE);
                 mMapView.setVisibility(View.GONE);
                 btnLocation.setVisibility(View.GONE);
@@ -332,7 +330,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             case 2:
                 fragmentController.showFragment(2);
                 getSupportActionBar().setTitle("促销");
-//                titleLayout.setVisibility(View.GONE);
                 titleRouteLayout.setVisibility(View.GONE);
                 mMapView.setVisibility(View.GONE);
                 btnLocation.setVisibility(View.GONE);
@@ -341,11 +338,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             case 3:
                 fragmentController.showFragment(3);
                 getSupportActionBar().setTitle("个人");
-//                titleLayout.setVisibility(View.GONE);
-                titleRouteLayout.setVisibility(View.GONE);
                 mMapView.setVisibility(View.GONE);
                 btnLocation.setVisibility(View.GONE);
+                titleRouteLayout.setVisibility(View.GONE);
                 break;
+
             default:
                 break;
         }

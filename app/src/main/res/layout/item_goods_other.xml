@@ -27,7 +27,6 @@
                 android:id="@+id/order_shop_discount_content"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
                 android:gravity="center_vertical"
                 android:text="省10元:拍下仅付489"
                 android:textColor="@color/black" />
@@ -50,14 +49,13 @@
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="配送方式"
+                android:text="取货方式"
                 android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/order_goods_deliver_content"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
                 android:gravity="center_vertical"
                 android:text="门店自提"
                 android:textColor="@color/black" />

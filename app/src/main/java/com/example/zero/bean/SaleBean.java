@@ -1,5 +1,8 @@
 package com.example.zero.bean;
 
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
 /**
  * Created by jojo on 2017/9/11.
  */
@@ -10,6 +13,8 @@ public class SaleBean {
     private String content;
     private String time;
     private String img;
+    private String isUsed;
+    private TextView textView;
 
     public void setText(String name, String price, String content, String time, String imgId) {
         this.name = name;
@@ -17,6 +22,26 @@ public class SaleBean {
         this.content = content;
         this.time = time;
         this.img = imgId;
+    }
+
+    public void setTextView(TextView textView) {
+        this.textView = textView;
+    }
+
+    public void setUseFlag(String isUsed){
+        this.isUsed = isUsed;
+    }
+
+    public boolean isUsed() {
+        if (isUsed.equals("yes")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public TextView getTextView(){
+        return textView;
     }
 
     public String getName() {

@@ -24,8 +24,7 @@
             android:drawableLeft="@drawable/food"
             android:drawablePadding="10dp"
             android:text="餐饮"
-            android:textColor="@drawable/sale_hot_rg_color_select"
-            android:textSize="16sp" />
+            android:textColor="@drawable/sale_hot_rg_color_select" />
 
         <RadioButton
             android:id="@+id/sale_hot_entertainment"
@@ -36,8 +35,7 @@
             android:drawableLeft="@drawable/entertainment"
             android:drawablePadding="10dp"
             android:text="娱乐"
-            android:textColor="@drawable/sale_hot_rg_color_select"
-            android:textSize="16sp" />
+            android:textColor="@drawable/sale_hot_rg_color_select" />
 
         <RadioButton
             android:id="@+id/sale_hot_shopping"
@@ -48,8 +46,7 @@
             android:drawableLeft="@drawable/shopping"
             android:drawablePadding="10dp"
             android:text="购物"
-            android:textColor="@drawable/sale_hot_rg_color_select"
-            android:textSize="16sp" />
+            android:textColor="@drawable/sale_hot_rg_color_select" />
 
         <RadioButton
             android:id="@+id/sale_hot_travel"
@@ -60,8 +57,7 @@
             android:drawableLeft="@drawable/travel"
             android:drawablePadding="10dp"
             android:text="旅游"
-            android:textColor="@drawable/sale_hot_rg_color_select"
-            android:textSize="16sp" />
+            android:textColor="@drawable/sale_hot_rg_color_select" />
 
     </RadioGroup>
 
@@ -73,7 +69,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/sale_hot_recv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
 

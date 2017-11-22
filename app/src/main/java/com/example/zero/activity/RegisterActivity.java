@@ -2,12 +2,14 @@ package com.example.zero.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -26,7 +28,8 @@ import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
     private ImageView backArrow;
-    private Button register, confirm_button;
+    private TextView confirm_button;
+    private Button register;
     private SimpleTextView phone, password, pw_confirm, confirm;
 
     private static final String TAG = "RegisterActivity";
@@ -153,6 +156,10 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
     public void innitView() {
@@ -171,7 +178,7 @@ public class RegisterActivity extends AppCompatActivity {
         pw_confirm.setHintText(" 确认密码");
         pw_confirm.setLeftImage(R.drawable.lock_fill);
         pw_confirm.setPw();
-        confirm_button = (Button) findViewById(R.id.register_confirm_button);
+        confirm_button = (TextView) findViewById(R.id.register_confirm_button);
         register = (Button) findViewById(R.id.register_button);
 
     }

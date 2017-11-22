@@ -6,7 +6,7 @@
     <!--按钮描边颜色和宽度-->
     <stroke
         android:width="1dp"
-        android:color="#BFFF0000" />
+        android:color="@color/transparent_red" />
     <!-- 设置按钮的四个角为弧形 -->
     <!-- android:radius 弧形的半径 -->
     <corners android:radius="15dip" />

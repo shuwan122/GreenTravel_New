@@ -8,91 +8,97 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/nav_head"
+        android:background="@color/GreenTheme"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/login_back_arrow"
-            style="@style/arrow_back_white"
-            android:layout_margin="10dp" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-            android:background="@color/divideLine" />
+            android:src="@drawable/arrow_back_white" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
-            android:text="登录"
+            android:text="  登录"
             android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@color/white"
-        android:divider="@drawable/divide_line"
-        android:orientation="vertical"
-        android:showDividers="middle">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <com.example.zero.view.SimpleTextView
-            android:id="@+id/login_phone"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp" />
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            android:divider="@drawable/divide_line"
+            android:orientation="vertical"
+            android:showDividers="middle">
 
-        <com.example.zero.view.SimpleTextView
-            android:id="@+id/login_password"
+            <com.example.zero.view.SimpleTextView
+                android:id="@+id/login_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+
+            <com.example.zero.view.SimpleTextView
+                android:id="@+id/login_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/login_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/login_button"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_margin="15dp"
-        android:background="@color/firstColor"
-        android:elevation="3dp"
-        android:text="登录"
-        android:textColor="@color/white" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/login_register"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="1"
-            android:text="注册"
-            android:textColor="@color/nav_head" />
-
-        <TextView
-            android:id="@+id/login_reset"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:layout_marginRight="20dp"
-            android:text="忘记密码？"
-            android:textColor="@color/nav_head"/>
+            android:layout_marginTop="15dp"
+            android:background="@color/GreenTheme"
+            android:elevation="3dp"
+            android:text="登录"
+            android:textColor="@color/white" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/login_register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+
+                android:text="注册"
+                android:textColor="@color/nav_head" />
+
+            <TextView
+                android:id="@+id/login_reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+
+                android:text="忘记密码？"
+                android:textColor="@color/nav_head" />
+        </RelativeLayout>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="190dp"
         android:orientation="horizontal">
 
         <View
@@ -119,14 +125,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/tao" />
+            android:src="@drawable/taobao" />
 
         <ImageView
             android:layout_width="wrap_content"
