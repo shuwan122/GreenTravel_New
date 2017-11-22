@@ -258,6 +258,10 @@ Android App GreenTravel
 	 	<th>我的订单页面 弹出二维码取货<br>
 	修改Adapter添加能在Activity内设置响应事件的接口</th>
 	 </tr>
+    <tr>
+		<th>171121</th>
+		<th colspan="3">第九次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -515,6 +519,10 @@ Android App GreenTravel
 	 	<th>自定义Dialog</th>
 	 	<th>无</th>
 	 	<th>扫一扫和生成二维码引用包不同</th>
+	</tr>
+    <tr>
+		<th>171121</th>
+		<th colspan="3">暂时没有发现bug</th>
 	</tr>
 </table>
 
@@ -778,5 +786,9 @@ Android App GreenTravel
 	 	<th>http://blog.csdn.net/zhangyalong_android/article/details/52585823</th>
 	 	<th>无</th>
 	 	<th>http://blog.csdn.net/zhaihaohao1/article/details/51992343</th>
+	</tr>
+    <tr>
+		<th>171121</th>
+		<th colspan="3">无</th>
 	</tr>
 </table>
