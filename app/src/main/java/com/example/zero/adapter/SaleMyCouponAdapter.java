@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -48,6 +49,11 @@ public class SaleMyCouponAdapter extends RecyclerView.Adapter<SaleMyCouponAdapte
         holder.price.setText(dataList.get(position).getPrice());
         holder.content.setText(dataList.get(position).getContent());
         holder.time.setText(dataList.get(position).getTime());
+        if (dataList.get(position).isUsed() == true) {
+            holder.coupon.addView(dataList.get(position).getTextView());
+            holder.coupon.setClickable(false);
+            holder.btn.setClickable(false);
+        }
         Glide.with(context).load(dataList.get(position).getImage()).placeholder(R.drawable.loading).into(holder.img);
     }
 
@@ -63,7 +69,7 @@ public class SaleMyCouponAdapter extends RecyclerView.Adapter<SaleMyCouponAdapte
         private TextView content;
         private TextView time;
         private ImageView img;
-        private LinearLayout coupon;
+        private FrameLayout coupon;
         private Button btn;
 
         public SaleViewHolder(View itemView, onRecycleItemClickListener listener) {
@@ -73,7 +79,7 @@ public class SaleMyCouponAdapter extends RecyclerView.Adapter<SaleMyCouponAdapte
             content = (TextView) itemView.findViewById(R.id.sale_my_content);
             time = (TextView) itemView.findViewById(R.id.sale_my_time);
             img = (ImageView) itemView.findViewById(R.id.sale_my_img);
-            coupon = (LinearLayout) itemView.findViewById(R.id.sale_my_coupon);
+            coupon = (FrameLayout) itemView.findViewById(R.id.sale_my_coupon);
             btn = (Button) itemView.findViewById(R.id.sale_my_btn);
             mListener = listener;
             coupon.setOnClickListener(this);

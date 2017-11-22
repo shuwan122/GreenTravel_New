@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zero.adapter.ShopCartAdapter;
 import com.example.zero.bean.ShopCartBean;
@@ -167,6 +168,41 @@ public class ShopOrderActivity extends AppCompatActivity {
 
         initData();
         mShopCartAdapter.notifyDataSetChanged();
+
+        tvShopCartSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int size = mGoPayList.size();
+                String[] idList = new String[size];
+                String[] nameList = new String[size];
+                String[] posterList = new String[size];
+                double[] priceList = new double[size];
+                int[] numList = new int[size];
+
+                for (int i = 0; i < size; i++) {
+                    idList[i] = String.valueOf(mGoPayList.get(i).getId());
+                    nameList[i] = mGoPayList.get(i).getProductName();
+                    posterList[i] = mGoPayList.get(i).getDefaultPic();
+                    priceList[i] = mGoPayList.get(i).getPrice();
+                    numList[i] = mGoPayList.get(i).getCount();
+                }
+
+                Bundle mBundle = new Bundle();
+                Intent intent = new Intent(getBaseContext(), OrderConfirmActivity.class);
+                mBundle.putString("shopName", shopName);
+                mBundle.putString("shopId", shopId);
+                mBundle.putInt("size", size);
+                mBundle.putStringArray("idList", idList);
+                mBundle.putStringArray("nameList", nameList);
+                mBundle.putStringArray("posterList", posterList);
+                mBundle.putDoubleArray("priceList", priceList);
+                mBundle.putIntArray("numList", numList);
+
+                intent.putExtras(mBundle);
+                startActivity(intent);
+                Toast.makeText(getBaseContext(), "结算", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

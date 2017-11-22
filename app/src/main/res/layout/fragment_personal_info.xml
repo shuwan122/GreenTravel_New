@@ -10,14 +10,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/nav_head"
+        android:background="@color/GreenTheme"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="15dp"
             android:layout_weight="1"
             android:text="我的"
             android:textColor="@color/white" />
@@ -27,37 +27,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="15dp"
             android:clickable="true"
             android:drawableLeft="@drawable/settings"
             android:textColor="@color/white" />
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/personal_info_scroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
-            <!--头像、用户名栏-->
+
             <LinearLayout
                 android:id="@+id/user_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/nav_head"
+                android:background="@color/GreenTheme"
                 android:orientation="horizontal">
 
                 <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/user_img"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="10dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:padding="10dp"
                     android:src="@drawable/personal_img"
-                    app:riv_border_color="@color/colorPrimary"
+                    app:riv_border_color="@color/GreenTheme4"
                     app:riv_border_width="1dp"
                     app:riv_oval="true" />
 
@@ -96,24 +97,116 @@
                 <ImageView
                     android:id="@+id/user_arrow"
                     style="@style/arrow_right_white"
-                    android:layout_marginRight="20dp" />
+                    android:layout_marginRight="15dp" />
             </LinearLayout>
 
-            <!--消息等子栏目-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/user_order"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="我的订单"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="查看更多订单" />
+
+                    <ImageView
+                        style="@style/arrow_right_gray" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/divideLine" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp">
+
+                    <TextView
+                        android:id="@+id/user_order0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:drawableTop="@drawable/wallet_fill"
+                        android:gravity="center"
+                        android:text="待付款"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/user_order1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:drawableTop="@drawable/package_fill"
+                        android:gravity="center"
+                        android:text="待发货"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/user_order2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:drawableTop="@drawable/get_package"
+                        android:gravity="center"
+                        android:text="待取货"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/user_order3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:drawableTop="@drawable/evaluate_fill"
+                        android:gravity="center"
+                        android:text="待评价"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/user_order4"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:drawableTop="@drawable/cus_service"
+                        android:gravity="center"
+                        android:text="退款/售后"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:background="@color/white"
                 android:divider="@drawable/divide_line"
+                android:paddingTop="10dp"
                 android:orientation="vertical"
                 android:showDividers="middle">
 
                 <LinearLayout
                     android:id="@+id/msg"
+                    android:background="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
                     android:orientation="horizontal"
                     android:padding="15dp">
 
@@ -121,15 +214,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:drawableLeft="@drawable/notice_fill"
+                        android:drawableLeft="@drawable/notice_cute"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:text="我的消息"
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray"
-                        android:layout_marginRight="5dp" />
+                        style="@style/arrow_right_gray" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -144,15 +236,36 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:drawableLeft="@drawable/favor"
+                        android:drawableLeft="@drawable/favor_cute"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:text="我的收藏"
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray"
-                        android:layout_marginRight="5dp" />
+                        style="@style/arrow_right_gray" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableLeft="@drawable/location_cute"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:text="收货地址"
+                        android:textColor="@color/black" />
+
+                    <ImageView
+                        style="@style/arrow_right_gray" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -167,23 +280,44 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:drawableLeft="@drawable/friend"
+                        android:drawableLeft="@drawable/friend_cute"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:text="常用联系人"
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray"
-                        android:layout_marginRight="5dp" />
+                        style="@style/arrow_right_gray" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subway"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableLeft="@drawable/subway_line2"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:text="地铁时刻表"
+                        android:textColor="@color/black" />
+
+                    <ImageView
+                        style="@style/arrow_right_gray" />
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:background="@color/white"
+                android:paddingTop="10dp"
+                android:paddingBottom="65dp"
                 android:divider="@drawable/divide_line"
                 android:orientation="vertical"
                 android:showDividers="middle">
@@ -199,15 +333,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:drawableLeft="@drawable/scan"
+                        android:drawableLeft="@drawable/scan_cute"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:text="扫一扫"
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray"
-                        android:layout_marginRight="5dp" />
+                        style="@style/arrow_right_gray" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -223,15 +356,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:drawableLeft="@drawable/edit"
+                        android:drawableLeft="@drawable/feedback_cute"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:text="帮助与反馈"
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray"
-                        android:layout_marginRight="5dp" />
+                        style="@style/arrow_right_gray" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

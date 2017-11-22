@@ -64,12 +64,12 @@ public class HelpFragment extends Fragment {
                 answerDialog(answer.get(1));
             }
         });
-        q3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                answerDialog(answer.get(2));
-            }
-        });
+//        q3.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                answerDialog(answer.get(2));
+//            }
+//        });
         return helpFrag;
     }
 
@@ -128,7 +128,7 @@ public class HelpFragment extends Fragment {
                 }
                 text1.setText(id.get(0) + ". " + question.get(0));
                 text2.setText(id.get(1) + ". " + question.get(1));
-                text3.setText(id.get(2) + ". " + question.get(2));
+                //text3.setText(id.get(2) + ". " + question.get(2));
             }
 
             @Override

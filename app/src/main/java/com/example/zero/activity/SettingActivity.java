@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.alibaba.fastjson.JSON;
+import com.bumptech.glide.Glide;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.CacheDataManager;
 
@@ -38,7 +40,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.zero.util.MainApplication;
 import com.example.zero.util.RequestManager;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by jojo on 2017/9/25.
@@ -55,6 +59,7 @@ public class SettingActivity extends AppCompatActivity {
     private Context mContext;
     private AlertDialog alertDialog = null;
     private AlertDialog.Builder builder = null;
+    private int versionCode;
     private int serviceVersionCode = 0; //服务器端apk版本号
     private String description;   //新版本功能描述
     private String download_url;  //apk下载url
@@ -173,6 +178,7 @@ public class SettingActivity extends AppCompatActivity {
         });
         try {
             current_ver.setText("当前版本：" + getVersionName());
+            getVersionCode();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -207,6 +213,10 @@ public class SettingActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
     public void innitView() {
@@ -267,13 +277,30 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     /**
+     * 判断wifi是否打开
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isWifiConnected(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiNetworkInfo.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 获取当前程序的版本号
      */
     private int getVersionCode() throws Exception {
         //获取packagemanager的实例
+        versionCode = 0;
         PackageManager packageManager = getPackageManager();
         //getPackageName()是你当前类的包名，0代表是获取版本信息
         PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+        versionCode = packInfo.versionCode;
         return packInfo.versionCode;
     }
 
@@ -291,80 +318,52 @@ public class SettingActivity extends AppCompatActivity {
     /**
      * 获取服务器端版本号
      */
-    public void getServiceVerCode() {
+    public void checkVersion() {
         HashMap<String, String> params = new HashMap<>();
-        RequestManager.getInstance(this).requestAsyn("users/get_latest _version", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
+        RequestManager.getInstance(this).requestAsyn("users/get_latest_version", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
             @Override
             public void onReqSuccess(String result) {
                 JSONObject jo = JSON.parseObject(result);
                 serviceVersionCode = jo.getInteger("version");
                 description = jo.getString("desc");
                 download_url = jo.getString("download_url");
+                if (versionCode < serviceVersionCode) {
+                    builder = new AlertDialog.Builder(mContext);
+                    alertDialog = builder.setTitle("版本更新提示").setMessage("检查到有最新版本,是否更新?\n" + "新版本功能描述：\n"+description)
+                            .setNegativeButton("取消", null)
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.e(TAG, getFilesDir() + "");
+                                    RequestManager.getInstance(SettingActivity.this).downLoadFile(download_url, "http://10.108.120.91:8080/users/" + download_url + "?type=1", getFilesDir(), new RequestManager.ReqProgressCallBack<File>() {
+                                        @Override
+                                        public void onProgress(long total, long current) {
+                                            Log.e("progress", current + "/" + total + "");
+                                        }
+
+                                        @Override
+                                        public void onReqSuccess(File result) {
+                                            Toast.makeText(SettingActivity.this, "下载成功", Toast.LENGTH_LONG).show();
+                                        }
+
+                                        @Override
+                                        public void onReqFailed(String errorMsg) {
+                                            Toast.makeText(SettingActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            }).create();
+                    alertDialog.show();
+                } else {
+                    Toast.makeText(SettingActivity.this, "当前应用已是最新版本", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onReqFailed(String errorMsg) {
-
+                Log.e(TAG, errorMsg);
             }
         });
-    }
-
-    /**
-     * 对比本程序的版本号和最新程序的版本号
-     */
-    public void checkVersion() throws Exception {
-        serviceVersionCode = 0;
-        getServiceVerCode();
-        if (serviceVersionCode == 0) {
-
-        } else {
-            if (getVersionCode() < serviceVersionCode) {
-                builder = new AlertDialog.Builder(mContext);
-                alertDialog = builder.setTitle("版本更新提示").setMessage("检查到有最新版本,是否更新?\n" + description)
-                        .setNegativeButton("取消", null)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Log.e(TAG, getExternalFilesDir(null) + "");
-                                //TODO:测试url
-                                RequestManager.getInstance(SettingActivity.this).downLoadFile(download_url, "http://10.108.112.96:8080/users" + download_url + "?type=1", getExternalFilesDir(null), new RequestManager.ReqProgressCallBack<String>() {
-                                    @Override
-                                    public void onProgress(long total, long current) {
-
-                                    }
-
-                                    @Override
-                                    public void onReqSuccess(String result) {
-                                        Toast.makeText(SettingActivity.this, "下载成功", Toast.LENGTH_LONG).show();
-                                    }
-
-                                    @Override
-                                    public void onReqFailed(String errorMsg) {
-
-                                    }
-                                });
-                            }
-                        }).create();
-                alertDialog.show();
-            } else {
-                Toast.makeText(this, "当前应用已是最新版本", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    /**
-     * 判断wifi是否打开
-     *
-     * @param context
-     * @return
-     */
-    public static boolean isWifiConnected(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (wifiNetworkInfo.isConnected()) {
-            return true;
-        }
-        return false;
     }
 
     /**

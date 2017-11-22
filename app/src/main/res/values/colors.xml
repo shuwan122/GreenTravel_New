@@ -13,6 +13,7 @@
     <color name="red">#FF0000</color>
     <color name="transparent_red">#BFFF0000</color>
     <color name="price">#FF3300</color>
+    <color name="deep_red">#A33E39</color>
     <!--橙色-->
     <color name="orange">#CD853F</color>
     <color name="light_orange">#FF8C00</color>
@@ -31,6 +32,12 @@
     <color name="GreenTheme2">#ade1b3</color>
     <color name="GreenTheme3">#709275</color>
     <color name="GreenTheme4">#2c7f36</color>
+    <color name="GreenTheme5">#00FFCC</color>
+    <color name="GreenTheme6">#33FF99</color>
+    <color name="GreenTheme7">#33CC99</color>
+    <color name="GreenTheme8">#66CC66</color>
+    <color name="GreenTheme9">#99FFCC</color>
+    <color name="GreenTheme10">#3CB371</color>
 
     <!--nav颜色-->
     <color name="firstColor">#00BCD4</color>

@@ -15,10 +15,10 @@ import okhttp3.RequestBody;
 
 public class HttpUtil {
 
-    private static String CJF = "10.108.112.154";
+    private static String CJF = "10.108.120.154";
     private static String ZMQ = "10.108.112.96";
 
-    private static String server = ZMQ;
+    private static String server = CJF;
 
     public static void sendSingleOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
@@ -107,6 +107,31 @@ public class HttpUtil {
                 .build();
         Request request = new Request.Builder()
                 .url("http://" + server + ":8080/shops/" + mBundle.getString("shopId"))
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
+    public static void sendScheduleOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("city", "广州")
+                .add("station", mBundle.getString("station"))
+                .build();
+        Request request = new Request.Builder()
+                .url("http://" + server + ":8080/route/station_timelist?city=广州&station=" + mBundle.getString("station"))
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
+
+    public static void sendScheduleFullOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("city", "广州")
+                .add("station", mBundle.getString("station"))
+                .build();
+        Request request = new Request.Builder()
+                .url("http://" + server + ":8080/route/station_timelist?city=广州&station=" + mBundle.getString("station") + "&type=1")
                 .build();
         client.newCall(request).enqueue(callback);
     }

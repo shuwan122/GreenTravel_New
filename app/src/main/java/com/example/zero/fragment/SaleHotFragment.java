@@ -244,11 +244,11 @@ public class SaleHotFragment extends Fragment {
                             coupon_content = "全场商品" + coupon_price + "优惠";
                         }
                         String[] string = jo.getString("expire_at").split(" ");
-                        coupon_time = string[0];
+                        coupon_time = string[0] + "到期";
                         coupon_img = jo.getString("image_url");
                         shop_type = jo.getString("shop_tag");
                         SaleBean saleBean = new SaleBean();
-                        saleBean.setText(coupon_name, coupon_price, coupon_content, coupon_time + "到期", coupon_img);
+                        saleBean.setText(coupon_name, coupon_price, coupon_content, coupon_time, coupon_img);
                         switch (shop_type) {
                             case "餐饮":
                                 dataList1.add(saleBean);

@@ -245,6 +245,29 @@ Android App GreenTravel
 		<th>171115</th>
 		<th colspan="3">第八次程序合并</th>
 	</tr>
+	<tr>
+		<th>171116</th>
+		<th>添加Handler管理Http请求</th>
+		<th>添加地址管理界面，添加已使用的优惠券的样式，修改整体布局风格</th>
+		<th>我的订单页面</th>
+	</tr>
+	<tr>
+		<th>171117</th>
+	 	<th>整理前一版bug，准备整体修复</th>
+	 	<th>地址管理界面前后端联调</th>
+	 	<th>我的订单页面</th>
+	 </tr>
+	<tr>
+		<th>171120</th>
+	 	<th>添加时刻表查询功能</th>
+	 	<th>订单界面前后端联调</th>
+	 	<th>我的订单页面 弹出二维码取货<br>
+	修改Adapter添加能在Activity内设置响应事件的接口</th>
+	 </tr>
+    <tr>
+		<th>171121</th>
+		<th colspan="3">第九次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -490,6 +513,29 @@ Android App GreenTravel
 		<th>171115</th>
 		<th colspan="3">暂时没有发现bug</th>
 	</tr>
+	<tr>
+		<th>171116</th>
+		<th>Android多线程问题</th>
+		<th>无</th>
+		<th>在设置不同订单状态下的操作按钮隐藏有bug，理论上隐藏的部分会显示出来<br>
+	 重复多余代码解决了，不明白原理</th>
+	</tr>
+	<tr>
+	 	<th>171117</th>
+	 	<th>Activity管理</th>
+	 	<th>无</th>
+	 	<th>在设置不同订单状态下的操作按钮响应不能打开新activity</th>
+	</tr>
+	<tr>
+	 	<th>171120</th>
+	 	<th>自定义Dialog</th>
+	 	<th>无</th>
+	 	<th>扫一扫和生成二维码引用包不同</th>
+	</tr>
+    <tr>
+		<th>171121</th>
+		<th colspan="3">暂时没有发现bug</th>
+	</tr>
 </table>
 
 ## 参考
@@ -733,6 +779,34 @@ Android App GreenTravel
 	 </tr>
     <tr>
 		<th>171115</th>
+		<th colspan="3">无</th>
+	</tr>
+	<tr>
+		<th>171116</th>
+		<th>http://blog.csdn.net/iispring/article/details/47115879</th>
+		<th>无</th>
+		<th>无</th>
+	</tr>
+	<tr>
+		<th>工作人员</th>
+		<th>单傲</th>
+		<th>吴姿颖</th>
+		<th>舒星源</th>
+	</tr>
+	<tr>
+	 	<th>171117</th>
+	 	<th>http://blog.csdn.net/djx123456/article/details/6325983</th>
+	 	<th>无</th>
+	 	<th>二维码https://www.cnblogs.com/r-decade/p/5819916.html</th>
+	</tr>
+	<tr>
+	 	<th>171120</th>
+	 	<th>http://blog.csdn.net/zhangyalong_android/article/details/52585823</th>
+	 	<th>无</th>
+	 	<th>http://blog.csdn.net/zhaihaohao1/article/details/51992343</th>
+	</tr>
+    <tr>
+		<th>171121</th>
 		<th colspan="3">无</th>
 	</tr>
 </table>

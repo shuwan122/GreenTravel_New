@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context="com.example.zero.fragment.SaleFragment">
 
@@ -20,8 +21,7 @@
             android:checked="true"
             android:gravity="center"
             android:text="热门优惠券"
-            android:textColor="@drawable/sale_hot_rg_color_select"
-            android:textSize="18sp" />
+            android:textColor="@drawable/sale_hot_rg_color_select" />
 
         <RadioButton
             android:id="@+id/sale_my"
@@ -31,8 +31,7 @@
             android:button="@null"
             android:gravity="center"
             android:text="我的优惠券"
-            android:textColor="@drawable/sale_hot_rg_color_select"
-            android:textSize="18sp" />
+            android:textColor="@drawable/sale_hot_rg_color_select" />
 
     </RadioGroup>
 
@@ -46,7 +45,7 @@
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:layout_weight="1"
-            android:background="@color/red" />
+            android:background="@color/GreenTheme" />
 
         <View
             android:id="@+id/sale_my_line"

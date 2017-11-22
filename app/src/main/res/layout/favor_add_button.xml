@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="10dp" />
 
-    <ImageButton
+    <Button
         android:id="@+id/favor_add"
         android:layout_width="match_parent"
         android:layout_height="35dp"
@@ -16,7 +16,8 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:background="@color/white"
+        android:text="添加收藏"
+        android:textColor="@color/GreenTheme10"
         android:elevation="3dp"
-        android:gravity="center"
-        android:src="@drawable/plus" />
+        android:gravity="center" />
 </LinearLayout>

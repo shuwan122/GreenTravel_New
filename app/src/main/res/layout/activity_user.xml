@@ -11,27 +11,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/nav_head"
+        android:background="@color/GreenTheme"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/user_back_arrow"
-            style="@style/arrow_back_white"
-            android:layout_margin="10dp" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-            android:background="@color/divideLine" />
+            android:src="@drawable/arrow_back_white" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
-            android:text="个人信息"
+            android:text="  个人信息"
             android:textColor="@color/white" />
     </LinearLayout>
 
@@ -74,7 +68,7 @@
                 android:layout_gravity="center"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/personal_img"
-                app:riv_border_color="@color/colorPrimary"
+                app:riv_border_color="@color/GreenTheme4"
                 app:riv_border_width="1dp"
                 app:riv_oval="true" />
         </LinearLayout>
@@ -104,7 +98,6 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:paddingLeft="20dp"
                 android:paddingRight="20dp" />
         </LinearLayout>
 
@@ -133,7 +126,6 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:paddingLeft="20dp"
                 android:paddingRight="20dp" />
         </LinearLayout>
 
@@ -155,7 +147,6 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:paddingLeft="20dp"
                 android:paddingRight="20dp" />
         </LinearLayout>
     </LinearLayout>
@@ -194,7 +185,6 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:paddingLeft="20dp"
                 android:paddingRight="20dp" />
         </LinearLayout>
 
@@ -216,7 +206,6 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:paddingLeft="20dp"
                 android:paddingRight="20dp" />
         </LinearLayout>
     </LinearLayout>
@@ -229,5 +218,5 @@
         android:background="@color/white"
         android:elevation="3dp"
         android:text="退出登录"
-        android:textColor="@color/firstColor" />
+        android:textColor="@color/GreenTheme4" />
 </LinearLayout>

@@ -13,29 +13,23 @@
 
         <ImageView
             android:id="@+id/setting_back_arrow"
-            style="@style/arrow_back_blue"
-            android:layout_margin="10dp" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-            android:background="@color/divideLine" />
+            android:src="@drawable/arrow_back_black" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
-            android:text="设置"
+            android:text="  设置"
             android:textColor="@color/black" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:background="@color/white"
         android:divider="@drawable/divide_line"
         android:orientation="vertical"
@@ -64,7 +58,7 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="15dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -84,7 +78,7 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="15dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -111,14 +105,14 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="15dp" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:background="@color/white"
         android:divider="@drawable/divide_line"
         android:orientation="vertical"
@@ -141,8 +135,9 @@
 
             <ToggleButton
                 android:id="@+id/msg_toggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="15dp"
                 android:background="@drawable/toggle_button_select"
                 android:text=""
                 android:textOff=""
@@ -166,8 +161,9 @@
 
             <ToggleButton
                 android:id="@+id/apk_toggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="15dp"
                 android:background="@drawable/toggle_button_select"
                 android:text=""
                 android:textOff=""
@@ -191,8 +187,9 @@
 
             <ToggleButton
                 android:id="@+id/pic_toggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="15dp"
                 android:background="@drawable/toggle_button_select"
                 android:checked="false"
                 android:text=""
@@ -217,14 +214,14 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="15dp" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:background="@color/white"
         android:divider="@drawable/divide_line"
         android:orientation="vertical"
@@ -247,7 +244,7 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="15dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -274,7 +271,7 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="15dp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -286,5 +283,5 @@
         android:background="@color/white"
         android:elevation="3dp"
         android:textAllCaps="false"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@color/GreenTheme4" />
 </LinearLayout>

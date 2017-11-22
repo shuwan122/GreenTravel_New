@@ -2,22 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/other_favor"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:paddingLeft="10dp"
-        android:background="@color/background"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
         android:gravity="center_vertical"
+        android:paddingLeft="10dp"
         android:text="其他收藏" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/divideLine" />
 
     <LinearLayout
         android:id="@+id/favor_item_head"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <ImageView

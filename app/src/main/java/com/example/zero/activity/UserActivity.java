@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -211,7 +212,7 @@ public class UserActivity extends Activity implements View.OnClickListener {
         final View view = inflater.inflate(R.layout.dialog_change_phone, null);
         final SimpleTextView newPhone = view.findViewById(R.id.dialog_phone_new);
         final SimpleTextView confirm = view.findViewById(R.id.dialog_phone_pre_confirm);
-        final Button sendConfirm = view.findViewById(R.id.dialog_phone_pre_button);
+        final TextView sendConfirm = view.findViewById(R.id.dialog_phone_pre_button);
         newPhone.setHintText("新手机号");
         confirm.setHintText("新手机的验证码");
         newPhone.setLeftImage(R.drawable.user_fill);

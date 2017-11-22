@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<RecycleViewHol
 
     protected ItemViewDelegateManager mItemViewDelegateManager;
     protected OnItemClickListener mOnItemClickListener;
+    protected OnInnerItemClickListener mOnInnerItemClickListener;
 
 
     public MultiItemTypeAdapter(Context context, List<T> datas) {
@@ -57,6 +59,15 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<RecycleViewHol
 
     protected void setListener(final ViewGroup parent, final RecycleViewHolder viewHolder, int viewType) {
         if (!isEnabled(viewType)) return;
+        if(mOnInnerItemClickListener==null) {
+            mOnInnerItemClickListener = new OnInnerItemClickListener() {
+                @Override
+                public void onInnerItemClick(View view, RecyclerView.ViewHolder holder, int position) {
+
+                }
+            };
+        }
+        viewHolder.setOnInnerItemClickListener(mOnInnerItemClickListener);
         viewHolder.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +88,7 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<RecycleViewHol
                 return false;
             }
         });
+
     }
 
     @Override
@@ -117,5 +129,13 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<RecycleViewHol
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.mOnItemClickListener = onItemClickListener;
+    }
+
+    public interface OnInnerItemClickListener {
+        void onInnerItemClick(View view, RecyclerView.ViewHolder holder, int position);
+    }
+
+    public void setOnInnerItemClickListener(OnInnerItemClickListener onInnerItemClickListener) {
+        this.mOnInnerItemClickListener = onInnerItemClickListener;
     }
 }

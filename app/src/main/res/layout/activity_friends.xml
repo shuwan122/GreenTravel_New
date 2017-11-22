@@ -13,22 +13,16 @@
 
         <ImageView
             android:id="@+id/friends_back_arrow"
-            style="@style/arrow_back_blue"
-            android:layout_margin="10dp" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-            android:background="@color/divideLine" />
+            android:src="@drawable/arrow_back_black" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
-            android:text="常用联系人"
+            android:text="  常用联系人"
             android:textColor="@color/black" />
     </LinearLayout>
 
@@ -41,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/white"
-        android:drawableLeft="@drawable/add_user"
+        android:drawableLeft="@drawable/friend_add_fill"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"

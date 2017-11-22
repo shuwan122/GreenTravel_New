@@ -2,6 +2,7 @@ package com.example.zero.activity;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,6 +47,10 @@ public class FavorActivity extends AppCompatActivity {
                 }
             }
         });
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
     public void innitView() {

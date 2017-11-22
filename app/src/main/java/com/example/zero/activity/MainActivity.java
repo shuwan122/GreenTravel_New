@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         super.onCreate(savedInstanceState);
         //个性化地图
         setMapCustomFile(this, PATH);
-        SDKInitializer.initialize(getApplicationContext());
+        SDKInitializer.initialize(this.getApplicationContext());
         setContentView(R.layout.activity_main);
         initView();
         initBottomNavBar();
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         bottom_nav_content = (LinearLayout) findViewById(R.id.bottom_nav_content);
         bottom_navigation_bar_container = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar_container);
 
-        titleLayout = (TitleLayout) findViewById(R.id.main_title);
+//        titleLayout = (TitleLayout) findViewById(R.id.main_title);
         titleRouteLayout = (TitleRouteLayout) findViewById(R.id.route_title);
 
         btnLocation = (Button) findViewById(R.id.btn_map_main_location);
@@ -314,7 +314,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             case 0:
                 fragmentController.showFragment(0);
                 getSupportActionBar().setTitle("路线");
-                titleLayout.setVisibility(View.GONE);
                 titleRouteLayout.setVisibility(View.VISIBLE);
                 mMapView.setVisibility(View.VISIBLE);
                 btnLocation.setVisibility(View.VISIBLE);
@@ -323,7 +322,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             case 1:
                 fragmentController.showFragment(1);
                 getSupportActionBar().setTitle("建议");
-                titleLayout.setVisibility(View.VISIBLE);
                 titleRouteLayout.setVisibility(View.GONE);
                 mMapView.setVisibility(View.GONE);
                 btnLocation.setVisibility(View.GONE);
@@ -332,7 +330,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             case 2:
                 fragmentController.showFragment(2);
                 getSupportActionBar().setTitle("促销");
-                titleLayout.setVisibility(View.VISIBLE);
                 titleRouteLayout.setVisibility(View.GONE);
                 mMapView.setVisibility(View.GONE);
                 btnLocation.setVisibility(View.GONE);
@@ -343,7 +340,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 getSupportActionBar().setTitle("个人");
                 mMapView.setVisibility(View.GONE);
                 btnLocation.setVisibility(View.GONE);
+                titleRouteLayout.setVisibility(View.GONE);
                 break;
+
             default:
                 break;
         }

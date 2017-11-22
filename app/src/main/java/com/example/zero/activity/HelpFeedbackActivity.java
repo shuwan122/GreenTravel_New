@@ -1,6 +1,7 @@
 package com.example.zero.activity;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,22 +42,26 @@ public class HelpFeedbackActivity extends AppCompatActivity {
                 switch (checkedId) {
                     case R.id.help:
                         controller.showFragment(0);
-                        help.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark, null));
+                        help.setBackgroundColor(getResources().getColor(R.color.GreenTheme10, null));
                         feedback.setBackgroundColor(getResources().getColor(R.color.white, null));
                         break;
                     case R.id.feedback:
                         controller.showFragment(1);
-                        feedback.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark, null));
+                        feedback.setBackgroundColor(getResources().getColor(R.color.GreenTheme10, null));
                         help.setBackgroundColor(getResources().getColor(R.color.white, null));
                     default:
                         break;
                 }
             }
         });
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
     public void innitView() {
-        backArrow = (ImageView) findViewById(R.id.help_feedback_back_arrow);
+        backArrow = (ImageView) findViewById(R.id.hf_back_arrow);
         radioGroup = (RadioGroup) findViewById(R.id.help_feedback_rg);
         help = (View) findViewById(R.id.help_line);
         feedback = (View) findViewById(R.id.feedback_line);

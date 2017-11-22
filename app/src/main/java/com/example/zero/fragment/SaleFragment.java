@@ -34,12 +34,12 @@ public class SaleFragment extends Fragment {
                 switch (checkedId) {
                     case R.id.sale_hot:
                         controller.showFragment(0);
-                        hot.setBackgroundColor(getResources().getColor(R.color.red, null));
+                        hot.setBackgroundColor(getResources().getColor(R.color.GreenTheme, null));
                         my.setBackgroundColor(getResources().getColor(R.color.white, null));
                         break;
                     case R.id.sale_my:
                         controller.showFragment(1);
-                        my.setBackgroundColor(getResources().getColor(R.color.red, null));
+                        my.setBackgroundColor(getResources().getColor(R.color.GreenTheme, null));
                         hot.setBackgroundColor(getResources().getColor(R.color.white, null));
                     default:
                         break;

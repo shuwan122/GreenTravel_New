@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:divider="@drawable/divide_line"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="共"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/user_order_final_count"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="1"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="件商品 合计:   ¥ "
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/user_order_final_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="15dp"
+            android:gravity="center_vertical"
+            android:text="489.00"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/user_order_pre"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="right|center_vertical">
+
+        <TextView
+            android:id="@+id/user_order_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/user_order_button_gray"
+            android:padding="5dp"
+            android:text="取消订单" />
+
+        <TextView
+            android:id="@+id/user_order_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/user_order_button_green"
+            android:padding="5dp"
+            android:text="现在付款"
+            android:textColor="@color/GreenTheme4" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/user_order_mid"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="right|center_vertical">
+
+        <TextView
+            android:id="@+id/user_order_prolong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/user_order_button_gray"
+            android:padding="5dp"
+            android:text="延长收货" />
+
+        <TextView
+            android:id="@+id/user_order_receive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/user_order_button_green"
+            android:padding="5dp"
+            android:text="现在取货"
+            android:textColor="@color/GreenTheme4" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/user_order_after"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="right|center_vertical">
+
+        <TextView
+            android:id="@+id/user_order_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/user_order_button_gray"
+            android:padding="5dp"
+            android:text="售后服务" />
+
+        <TextView
+            android:id="@+id/user_order_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/user_order_button_green"
+            android:padding="5dp"
+            android:text="添加评价"
+            android:textColor="@color/GreenTheme4" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/background" />
+
+</LinearLayout>

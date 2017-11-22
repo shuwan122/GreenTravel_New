@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
+        android:layout_marginTop="45dp"
         android:content="@+id/drawer_content1"
         android:handle="@+id/drawer_handle1"
         android:layout_marginBottom="56dp">
@@ -112,6 +113,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
+        android:layout_marginTop="45dp"
         android:content="@+id/drawer_content2"
         android:handle="@+id/drawer_handle2"
         android:layout_marginBottom="56dp"

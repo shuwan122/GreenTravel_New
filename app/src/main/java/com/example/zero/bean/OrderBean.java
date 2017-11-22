@@ -10,7 +10,7 @@ public class OrderBean {
     private int icon;
     private String goods_count1, goods_count2;
     private String goods_price1, goods_price2;
-    private String cus_name, cus_phone, csu_addr;
+    private String cus_name, cus_phone, cus_addr;
     private String item;
     private String order_msg;
     private String discount, deliver, cus_msg;
@@ -69,7 +69,7 @@ public class OrderBean {
     }
 
     public void setCusAddr(String addr) {
-        this.csu_addr = addr;
+        this.cus_addr = addr;
     }
 
     public void setOrderMsg(String msg) {
@@ -113,7 +113,7 @@ public class OrderBean {
     }
 
     public String getCusAddr() {
-        return csu_addr;
+        return cus_addr;
     }
 
     public String getShopName() {

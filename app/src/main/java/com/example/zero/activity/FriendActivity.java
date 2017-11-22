@@ -1,6 +1,7 @@
 package com.example.zero.activity;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,7 +44,10 @@ public class FriendActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
     public void innitView() {
@@ -57,7 +61,7 @@ public class FriendActivity extends AppCompatActivity {
 
     private void showFriendData() {
         FriendItemBean friendItemBean = new FriendItemBean();
-        friendItemBean.setText("jojo", "手机号：14235467636", R.drawable.kfc);
+        friendItemBean.setText("jojo", "手机号：14235467636", R.drawable.haidilao);
         for (int i = 0; i < 20; i++) {
             dataList.add(friendItemBean);
         }

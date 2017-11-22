@@ -13,22 +13,16 @@
 
         <ImageView
             android:id="@+id/about_back_arrow"
-            style="@style/arrow_back_blue"
-            android:layout_margin="10dp" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-            android:background="@color/divideLine" />
+            android:src="@drawable/arrow_back_black" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
-            android:text="关于GreenTravel"
+            android:text="  关于GreenTravel"
             android:textColor="@color/black" />
     </LinearLayout>
 
@@ -37,14 +31,17 @@
         android:layout_height="150dp"
         android:orientation="vertical">
 
-        <ImageView
+        <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/user_img"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
-            android:background="@drawable/personal_img_shape_corner"
-            android:src="@drawable/haidilao" />
+            android:src="@drawable/personal_img"
+            app:riv_border_color="@color/GreenTheme4"
+            app:riv_border_width="1dp"
+            app:riv_oval="true" />
 
         <TextView
             android:layout_width="match_parent"
@@ -87,7 +84,7 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="15dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -107,7 +104,7 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="15dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -127,22 +124,23 @@
 
             <ImageView
                 style="@style/arrow_right_gray"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="15dp" />
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
+        android:layout_height="match_parent"
         android:divider="@drawable/divide_line"
         android:orientation="vertical"
         android:showDividers="middle">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_horizontal"
+            android:paddingBottom="20dp"
             android:text="GreenTravel 版权所有\nCopyright © 2017 xxx.\nAll Rights Reserved." />
-    </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>
