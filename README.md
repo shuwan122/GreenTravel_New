@@ -280,6 +280,12 @@ Android App GreenTravel
 		<th>popwindow弹窗完善</th>
 		<th>确认订单和我的订单连接（没调完）</th>
 	</tr>
+	<tr>
+		<th>171127</th>
+	 	<th>站点周围商家搜索前后端联调</th>
+	 	<th>增加下拉刷新和上拉加载功能，修改部分逻辑上的bug</th>
+	 	<th>商户扫一扫</th>
+	 </tr>
 </table>
 
 ## 遇到bug或难点
@@ -559,6 +565,12 @@ Android App GreenTravel
 		<th>json接口出现null值出现异常</th>
 		<th>popwindow控件dismiss之前需要显示单选按钮选中情况，但是消失太快而看不到，且点击按钮之后没有正确更新数据</th>
 		<th>返回信息订单总金额不正确</th>
+	</tr>
+	<tr>
+	 	<th>171127</th>
+	 	<th>无</th>
+	 	<th>无</th>
+	 	<th>输入框软键盘回车键会清空输入框</th>
 	</tr>
 </table>
 
@@ -844,5 +856,11 @@ Android App GreenTravel
 		<th>无</th>
 		<th>无</th>
 		<th>无</th>
+	</tr>
+	<tr>
+	 	<th>171127</th>
+	 	<th>无</th>
+	 	<th>http://blog.csdn.net/leoleohan/article/details/50989549<br>http://blog.csdn.net/anyfive/article/details/53020321</th>
+	 	<th>http://blog.csdn.net/Iceshow0428/article/details/24428417</th>
 	</tr>
 </table>
