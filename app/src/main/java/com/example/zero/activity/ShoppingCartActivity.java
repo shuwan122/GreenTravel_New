@@ -23,7 +23,7 @@ import android.view.animation.AnimationSet;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,6 +35,7 @@ import com.example.zero.adapter.TypeAdapter;
 import com.example.zero.entity.GoodsItem;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.HttpUtil;
+import com.example.zero.util.MainApplication;
 import com.example.zero.view.DividerDecoration;
 import com.example.zero.view.TitleShopLayout;
 import com.flipboard.bottomsheet.BottomSheetLayout;
@@ -45,15 +46,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Response;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
-
-import static com.example.zero.fragment.RouteFragmentDouble.Origin.ADVICE;
 
 public class ShoppingCartActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -102,7 +100,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
 
     private DividerDecoration dividerDecoration;
 
-    private Button mCoupon;
+    private ImageButton mCoupon;
 
     private static final String TAG = "ShoppingCartActivity";
 
@@ -131,7 +129,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
         shopName = intent.getStringExtra("shopName");
         shopImg = intent.getStringExtra("shopImg");
 
-        if(shopName.contains("（")){
+        if (shopName.contains("（")) {
             String bracket = shopName.substring(shopName.indexOf("（"), shopName.indexOf("）") + 1);
             shopName = shopName.replace(bracket, "");
         }
@@ -206,6 +204,9 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                     goodsTypeList[count] = goods.getJSONObject(i).getString("goods_type");
                     nameList[count] = goods.getJSONObject(i).getString("goods_name");
                     posterList[count] = goods.getJSONObject(i).getString("picture_url");
+                    if (!posterList[count].contains("http")) {
+                        posterList[count] = "http://10.108.112.96:8080/" + posterList[count];
+                    }
                     priceList[count] = goods.getJSONObject(i).getDouble("price");
                     descriptionList[count] = goods.getJSONObject(i).getString("description");
                     numList[count] = goods.getJSONObject(i).getInt("goods_number");
@@ -283,7 +284,7 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-        mCoupon = (Button) findViewById(R.id.shoppingcart_coupon);
+        mCoupon = (ImageButton) findViewById(R.id.shoppingcart_coupon);
         mCoupon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -371,35 +372,40 @@ public class ShoppingCartActivity extends AppCompatActivity implements View.OnCl
                 clearCart();
                 break;
             case R.id.tvSubmit:
-                int size = selectedList.size();
-                String[] idList = new String[size];
-                String[] nameList = new String[size];
-                String[] posterList = new String[size];
-                double[] priceList = new double[size];
-                int[] numList = new int[size];
+                MainApplication application = (MainApplication) getApplication();
+                if (application.isOnline()) {
+                    int size = selectedList.size();
+                    String[] idList = new String[size];
+                    String[] nameList = new String[size];
+                    String[] posterList = new String[size];
+                    double[] priceList = new double[size];
+                    int[] numList = new int[size];
 
-                for (int i = 0; i < size; i++) {
-                    idList[i] = String.valueOf(selectedList.get(Integer.valueOf(selectIdList.get(i))).id);
-                    nameList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).name;
-                    posterList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).imgUrl;
-                    priceList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).price;
-                    numList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).count;
+                    for (int i = 0; i < size; i++) {
+                        idList[i] = String.valueOf(selectedList.get(Integer.valueOf(selectIdList.get(i))).id);
+                        nameList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).name;
+                        posterList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).imgUrl;
+                        priceList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).price;
+                        numList[i] = selectedList.get(Integer.valueOf(selectIdList.get(i))).count;
+                    }
+
+                    Bundle mBundle = new Bundle();
+                    Intent intent = new Intent(context, ShopOrderActivity.class);
+                    mBundle.putString("shopName", shopName);
+                    mBundle.putString("shopId", shopId);
+                    mBundle.putInt("size", size);
+                    mBundle.putStringArray("idList", idList);
+                    mBundle.putStringArray("nameList", nameList);
+                    mBundle.putStringArray("posterList", posterList);
+                    mBundle.putDoubleArray("priceList", priceList);
+                    mBundle.putIntArray("numList", numList);
+
+                    intent.putExtras(mBundle);
+                    startActivity(intent);
+                    Toast.makeText(context, "结算", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "请先登录后在进行操作！", Toast.LENGTH_SHORT).show();
                 }
-
-                Bundle mBundle = new Bundle();
-                Intent intent = new Intent(context, ShopOrderActivity.class);
-                mBundle.putString("shopName", shopName);
-                mBundle.putString("shopId", shopId);
-                mBundle.putInt("size", size);
-                mBundle.putStringArray("idList", idList);
-                mBundle.putStringArray("nameList", nameList);
-                mBundle.putStringArray("posterList", posterList);
-                mBundle.putDoubleArray("priceList", priceList);
-                mBundle.putIntArray("numList", numList);
-
-                intent.putExtras(mBundle);
-                startActivity(intent);
-                Toast.makeText(context, "结算", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

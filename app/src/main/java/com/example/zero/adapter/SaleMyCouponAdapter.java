@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.zero.bean.SaleBean;
 import com.example.zero.greentravel_new.R;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,11 +46,13 @@ public class SaleMyCouponAdapter extends RecyclerView.Adapter<SaleMyCouponAdapte
 
     @Override
     public void onBindViewHolder(SaleMyCouponAdapter.SaleViewHolder holder, int position) {
+        holder.coupon.removeView(dataList.get(position).getTextView());
         holder.name.setText(dataList.get(position).getName());
         holder.price.setText(dataList.get(position).getPrice());
         holder.content.setText(dataList.get(position).getContent());
         holder.time.setText(dataList.get(position).getTime());
-        if (dataList.get(position).isUsed() == true) {
+        if (dataList.get(position).getUseFlag() == true) {
+            holder.btn.setText("已使用");
             holder.coupon.addView(dataList.get(position).getTextView());
             holder.coupon.setClickable(false);
             holder.btn.setClickable(false);

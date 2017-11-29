@@ -16,6 +16,12 @@
         <item name="android:src">@drawable/arrow_right_white</item>
     </style>
 
+    <style name="arrow_right_black">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:src">@drawable/arrow_right_black</item>
+    </style>
+
     <style name="arrow_right_gray">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>

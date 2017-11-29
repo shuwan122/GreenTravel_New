@@ -9,8 +9,10 @@
         android:layout_height="match_parent"
         android:background="@color/gray"
         android:orientation="horizontal"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="5dp">
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
         <ImageView
             android:id="@+id/user_order_goods_pic"

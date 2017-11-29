@@ -1,11 +1,13 @@
 package com.example.zero.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.zero.greentravel_new.R;
 import com.google.zxing.BarcodeFormat;
@@ -24,21 +26,23 @@ import java.util.Map;
 public class QRcodeActivity extends Activity {
 
     private Button btn;
-    private ImageView iv, back;
+    private TextView back;
+    private ImageView iv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
+        Intent intent = getIntent();
         iv = (ImageView) findViewById(R.id.qrcode_iv);
-        back = (ImageView) findViewById(R.id.qrcode_back);
+        back = (TextView) findViewById(R.id.qrcode_back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-        generate(iv);
+        generate(intent.getStringExtra("content"),  iv);
     }
 
     private Bitmap generateBitmap(String content, int width, int height) {
@@ -64,8 +68,8 @@ public class QRcodeActivity extends Activity {
         return null;
     }
 
-    public void generate(View view) {
-        Bitmap qrBitmap = generateBitmap("http://www.csdn.net", 400, 400);
+    public void generate(String content,View view) {
+        Bitmap qrBitmap = generateBitmap(content, 400, 400);
         iv.setImageBitmap(qrBitmap);
     }
 }

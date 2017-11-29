@@ -30,7 +30,7 @@
                 android:textColor="@color/black" />
 
             <ImageView
-                style="@style/arrow_right_gray"
+                style="@style/arrow_right_black"
                 android:layout_marginRight="20dp" />
         </LinearLayout>
 
@@ -50,7 +50,7 @@
                 android:textColor="@color/black" />
 
             <ImageView
-                style="@style/arrow_right_gray"
+                style="@style/arrow_right_black"
                 android:layout_marginRight="20dp" />
         </LinearLayout>
 
@@ -70,7 +70,7 @@
                 android:textColor="@color/black" />
 
             <ImageView
-                style="@style/arrow_right_gray"
+                style="@style/arrow_right_black"
                 android:layout_marginRight="20dp" />
         </LinearLayout>
 
@@ -90,7 +90,7 @@
                 android:textColor="@color/black" />
 
             <ImageView
-                style="@style/arrow_right_gray"
+                style="@style/arrow_right_black"
                 android:layout_marginRight="20dp" />
         </LinearLayout>
 
@@ -110,7 +110,7 @@
                 android:textColor="@color/black" />
 
             <ImageView
-                style="@style/arrow_right_gray"
+                style="@style/arrow_right_black"
                 android:layout_marginRight="20dp" />
         </LinearLayout>
     </LinearLayout>

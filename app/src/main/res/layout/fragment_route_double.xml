@@ -9,10 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
+        android:layout_marginBottom="56dp"
         android:layout_marginTop="45dp"
         android:content="@+id/drawer_content1"
-        android:handle="@+id/drawer_handle1"
-        android:layout_marginBottom="56dp">
+        android:handle="@+id/drawer_handle1">
 
         <Button
             android:id="@+id/drawer_handle1"
@@ -68,7 +68,6 @@
                     </LinearLayout>
                 </FrameLayout>
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -91,18 +90,13 @@
                 <Button
                     android:id="@+id/route_btn_single_search2"
                     style="@style/Widget.AppCompat.Button.Colored"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_gravity="bottom|right"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:background="#1874CD"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="bottom|center"
+                    android:layout_marginTop="150dp"
+                    android:background="@drawable/route_double_btn_shape_corner"
                     android:text="@string/route_search_btn"
                     android:textColor="@color/white"
-                    android:textSize="24sp"
                     android:visibility="gone" />
             </LinearLayout>
         </FrameLayout>
@@ -113,10 +107,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
+        android:layout_marginBottom="56dp"
         android:layout_marginTop="45dp"
         android:content="@+id/drawer_content2"
         android:handle="@+id/drawer_handle2"
-        android:layout_marginBottom="56dp"
         android:visibility="gone">
 
         <Button
@@ -124,7 +118,7 @@
             android:layout_width="40dip"
             android:layout_height="40dip"
             android:background="@drawable/drawer_up"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <FrameLayout
             android:id="@+id/drawer_content2"

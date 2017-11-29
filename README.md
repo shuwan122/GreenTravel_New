@@ -268,6 +268,28 @@ Android App GreenTravel
 		<th>171121</th>
 		<th colspan="3">第九次程序合并</th>
 	</tr>
+	<tr>
+		<th>171122</th>
+		<th>测试数据库新数据</th>
+		<th>收货地址管理前后台接口联调完成</th>
+		<th>二维码取货完善</th>
+	</tr>
+	<tr>
+		<th>171123</th>
+		<th>修正json解析bug</th>
+		<th>popwindow弹窗完善</th>
+		<th>确认订单和我的订单连接（没调完）</th>
+	</tr>
+	<tr>
+		<th>171127</th>
+	 	<th>站点周围商家搜索前后端联调</th>
+	 	<th>增加下拉刷新和上拉加载功能，修改部分逻辑上的bug</th>
+	 	<th>商户扫一扫</th>
+	 </tr>
+    <tr>
+		<th>171129</th>
+		<th colspan="3">第十次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -534,6 +556,28 @@ Android App GreenTravel
 	</tr>
     <tr>
 		<th>171121</th>
+		<th colspan="3">暂时没有发现bug</th>
+	</tr>
+	<tr>
+		<th>171122</th>
+		<th>无</th>
+		<th>删除地址时会删除不对应id的地址，原因是存储地址信息时没有每次都重新new一个map，而是单纯地clear，所以出错</th>
+		<th>无</th>
+	</tr>
+	<tr>
+		<th>171123</th>
+		<th>json接口出现null值出现异常</th>
+		<th>popwindow控件dismiss之前需要显示单选按钮选中情况，但是消失太快而看不到，且点击按钮之后没有正确更新数据</th>
+		<th>返回信息订单总金额不正确</th>
+	</tr>
+	<tr>
+	 	<th>171127</th>
+	 	<th>无</th>
+	 	<th>无</th>
+	 	<th>输入框软键盘回车键会清空输入框</th>
+	</tr>
+    <tr>
+		<th>171129</th>
 		<th colspan="3">暂时没有发现bug</th>
 	</tr>
 </table>
@@ -807,6 +851,28 @@ Android App GreenTravel
 	</tr>
     <tr>
 		<th>171121</th>
+		<th colspan="3">无</th>
+	</tr>
+	<tr>
+		<th>171122</th>
+		<th>无</th>
+		<th>无</th>
+		<th>无</th>
+	</tr>
+	<tr>
+		<th>171123</th>
+		<th>无</th>
+		<th>无</th>
+		<th>无</th>
+	</tr>
+	<tr>
+	 	<th>171127</th>
+	 	<th>无</th>
+	 	<th>http://blog.csdn.net/leoleohan/article/details/50989549<br>http://blog.csdn.net/anyfive/article/details/53020321</th>
+	 	<th>http://blog.csdn.net/Iceshow0428/article/details/24428417</th>
+	</tr>
+    <tr>
+		<th>171129</th>
 		<th colspan="3">无</th>
 	</tr>
 </table>

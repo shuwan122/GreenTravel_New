@@ -19,7 +19,6 @@
             android:layout_weight="1"
             android:drawableLeft="@drawable/user_fill"
             android:maxLines="1"
-            android:selectAllOnFocus="true"
             android:textColorHint="@color/nav_gray"
             android:textCursorDrawable="@null">
 

@@ -17,7 +17,7 @@
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
         android:text="目的地"
-        android:textColor="@color/GreenTheme"
+        android:textColor="@color/GreenTheme10"
         android:textSize="15sp" />
 
     <View

@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +26,8 @@ import java.util.HashMap;
  */
 
 public class RegisterActivity extends AppCompatActivity {
-    private ImageView backArrow;
+
+    private TextView backArrow;
     private TextView confirm_button;
     private Button register;
     private SimpleTextView phone, password, pw_confirm, confirm;
@@ -54,6 +54,8 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(RegisterActivity.this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
                     }
                     phone.notFocused();
+                } else {
+                    phone.isFocus();
                 }
             }
         });
@@ -62,6 +64,8 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFocusChange(View view, boolean b) {
                 if (!b) {
                     confirm.notFocused();
+                } else {
+                    confirm.isFocus();
                 }
             }
         });
@@ -73,6 +77,8 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(RegisterActivity.this, "密码不能少于6个字符。", Toast.LENGTH_SHORT).show();
                     }
                     password.notFocused();
+                } else {
+                    password.isFocus();
                 }
             }
         });
@@ -84,6 +90,8 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(RegisterActivity.this, "两次输入密码不一致", Toast.LENGTH_SHORT).show();
                     }
                     pw_confirm.notFocused();
+                } else {
+                    pw_confirm.isFocus();
                 }
             }
         });
@@ -93,19 +101,19 @@ public class RegisterActivity extends AppCompatActivity {
                 String text = phone.getText().toString().trim();
                 if (isMobile(text)) {
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("type","0");
-                    params.put("phone",phone.getText());
+                    params.put("type", "0");
+                    params.put("phone", phone.getText());
                     RequestManager.getInstance(getBaseContext()).requestAsyn("/users/send_verification_code", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
                         @Override
                         public void onReqSuccess(String result) {
-                            Log.d(TAG,result);
+                            Log.d(TAG, result);
                             Toast.makeText(RegisterActivity.this, "已发送短信", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onReqFailed(String errorMsg) {
                             Toast.makeText(getBaseContext(), "发送失败", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG,errorMsg);
+                            Log.d(TAG, errorMsg);
                         }
                     });
                 } else {
@@ -120,26 +128,24 @@ public class RegisterActivity extends AppCompatActivity {
                 String text = phone.getText().trim();
                 if (password.getText().toString().trim().length() < 6) {
                     Toast.makeText(RegisterActivity.this, "密码不能少于6个字符。", Toast.LENGTH_SHORT).show();
-                }
-                else if(!password.getText().trim().equals(pw_confirm.getText().trim())) {
+                } else if (!password.getText().trim().equals(pw_confirm.getText().trim())) {
                     Toast.makeText(RegisterActivity.this, "两次输入密码不一致", Toast.LENGTH_SHORT).show();
-                }
-                else if (isMobile(text)) {
+                } else if (isMobile(text)) {
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("phone",phone.getText().trim());
-                    params.put("psw",password.getText().trim());
-                    params.put("verification_code",confirm.getText().trim());
+                    params.put("phone", phone.getText().trim());
+                    params.put("psw", password.getText().trim());
+                    params.put("verification_code", confirm.getText().trim());
                     RequestManager.getInstance(getBaseContext()).requestAsyn("/users/user_register", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
                         @Override
                         public void onReqSuccess(String result) {
-                            Log.d(TAG,result);
+                            Log.d(TAG, result);
                             JSONObject jsonObj = JSON.parseObject(result);
                             String user_id = jsonObj.getString("user_id");
                             String token = jsonObj.getString("token");
                             String username = jsonObj.getString("username");
                             Intent userInfo = new Intent();
                             userInfo.putExtra("username", username);
-                            userInfo.putExtra("avator","");
+                            userInfo.putExtra("avator", "");
                             setResult(RESULT_OK, userInfo);
                             Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                             finish();
@@ -148,7 +154,7 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onReqFailed(String errorMsg) {
                             Toast.makeText(getBaseContext(), "注册失败", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG,errorMsg);
+                            Log.d(TAG, errorMsg);
                         }
                     });
                 } else {
@@ -163,7 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void innitView() {
-        backArrow = (ImageView) findViewById(R.id.register_back_arrow);
+        backArrow = (TextView) findViewById(R.id.register_back_arrow);
         phone = (SimpleTextView) findViewById(R.id.register_phone);
         phone.setHintText(" 请输入手机号码/邮箱");
         phone.setLeftImage(R.drawable.user_fill);

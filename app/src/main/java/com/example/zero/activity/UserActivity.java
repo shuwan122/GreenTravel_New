@@ -5,12 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,10 +24,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.MainApplication;
-import com.example.zero.util.ReqProgressCallBack;
 import com.example.zero.util.RequestManager;
 import com.example.zero.view.SimpleTextView;
-
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -46,7 +42,8 @@ import static com.baidu.mapapi.BMapManager.getContext;
 //TODO 用户数据修改写回
 
 public class UserActivity extends Activity implements View.OnClickListener {
-    private ImageView backArrow;
+
+    private TextView backArrow;
     private LinearLayout user_img;
     private ImageView mImage;
     private View changeName;
@@ -66,9 +63,6 @@ public class UserActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
         innitView();
-        /**
-         *  监听器
-         */
         signOut.setOnClickListener(this);
         backArrow.setOnClickListener(this);
         user_img.setOnClickListener(this);
@@ -79,7 +73,7 @@ public class UserActivity extends Activity implements View.OnClickListener {
 
     public void innitView() {
         user_name = (TextView) findViewById(R.id.user_name_gray);
-        backArrow = (ImageView) findViewById(R.id.user_back_arrow);
+        backArrow = (TextView) findViewById(R.id.user_back_arrow);
         user_img = (LinearLayout) findViewById(R.id.user_img_change);
         mImage = (ImageView) findViewById(R.id.user_img_show);
         changeName = (View) findViewById(R.id.user_name_change);
@@ -317,6 +311,8 @@ public class UserActivity extends Activity implements View.OnClickListener {
                         openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
                         startActivityForResult(openCameraIntent, TAKE_PICTURE);
                         break;
+                    default:
+                        break;
                 }
             }
         });
@@ -338,6 +334,8 @@ public class UserActivity extends Activity implements View.OnClickListener {
                     if (data != null) {
                         setImageToView(data); // 让刚才选择裁剪得到的图片显示在界面上,并上传服务器（还未写）
                     }
+                    break;
+                default:
                     break;
             }
         }

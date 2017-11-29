@@ -10,20 +10,14 @@
         android:layout_height="40dp"
         android:background="@color/white">
 
-        <ImageView
+        <TextView
             android:id="@+id/address_edit_back"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/arrow_back_black" />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/address_edit_back"
+            android:layout_alignParentLeft="true"
+            android:drawableLeft="@drawable/arrow_back_black"
             android:gravity="center_vertical"
-            android:text="  修改地址"
+            android:text="  编辑地址"
             android:textColor="@color/black" />
 
         <TextView
@@ -45,6 +39,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:divider="@drawable/divide_line"
         android:orientation="vertical"
@@ -69,6 +64,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
+                android:maxLines="1"
+                android:textCursorDrawable="@null"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -91,80 +88,82 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
+                android:maxLines="1"
+                android:textCursorDrawable="@null"
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/white"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp">
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:background="@color/white"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:paddingLeft="10dp">-->
 
-            <TextView
-                android:layout_width="70dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="所在地区"
-                android:textColor="@color/black" />
+        <!--<TextView-->
+        <!--android:layout_width="70dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:text="所在地区"-->
+        <!--android:textColor="@color/black" />-->
 
-            <EditText
-                android:id="@+id/address_edit_area"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:hint="精确到某省某市某区/县"
-                android:textSize="14sp" />
-        </LinearLayout>
+        <!--<EditText-->
+        <!--android:id="@+id/address_edit_area"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@null"-->
+        <!--android:hint="精确到某省某市某区/县"-->
+        <!--android:textSize="14sp" />-->
+        <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/white"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp">
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:background="@color/white"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:paddingLeft="10dp">-->
 
-            <TextView
-                android:layout_width="70dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="街道"
-                android:textColor="@color/black" />
+        <!--<TextView-->
+        <!--android:layout_width="70dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:text="街道"-->
+        <!--android:textColor="@color/black" />-->
 
-            <EditText
-                android:id="@+id/address_edit_street"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:hint="具体街道"
-                android:textSize="14sp" />
-        </LinearLayout>
+        <!--<EditText-->
+        <!--android:id="@+id/address_edit_street"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@null"-->
+        <!--android:hint="具体街道"-->
+        <!--android:textSize="14sp" />-->
+        <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@color/white"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp">
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="80dp"-->
+        <!--android:background="@color/white"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:paddingLeft="10dp">-->
 
-            <EditText
-                android:id="@+id/address_edit_detailed"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:gravity="top"
-                android:hint="详细地址"
-                android:paddingTop="3dp"
-                android:textSize="14sp" />
-        </LinearLayout>
+        <!--<EditText-->
+        <!--android:id="@+id/address_edit_detailed"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@null"-->
+        <!--android:gravity="top"-->
+        <!--android:hint="详细地址"-->
+        <!--android:paddingTop="3dp"-->
+        <!--android:textSize="14sp" />-->
+        <!--</LinearLayout>-->
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/address_edit_delete"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/white"
-        android:gravity="center"
-        android:text="删除地址"
-        android:textColor="@color/GreenTheme10" />
+    <!--<TextView-->
+    <!--android:id="@+id/address_edit_delete"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="40dp"-->
+    <!--android:background="@color/white"-->
+    <!--android:gravity="center"-->
+    <!--android:text="删除地址"-->
+    <!--android:textColor="@color/GreenTheme10" />-->
 </LinearLayout>

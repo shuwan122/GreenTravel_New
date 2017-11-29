@@ -25,9 +25,11 @@
         <CheckBox
             android:id="@+id/order_anonymity"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:checked="false" />
+            android:button="@drawable/checkbox_select"
+            android:checked="false"
+            android:gravity="center" />
     </LinearLayout>
 
     <TextView

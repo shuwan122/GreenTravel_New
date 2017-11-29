@@ -9,12 +9,13 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="5dp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/kfc" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="5dp">
 
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:isIndicator="true"
             android:numStars="5"
-            android:progressTint="@color/red"
+            android:progressTint="@color/light_orange"
             android:rating="3.5"
             android:stepSize="0.5" />
 
@@ -46,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="￥ 100"
-                android:textColor="#FF3300"
+                android:textColor="@color/GreenTheme12"
                 android:textSize="16sp" />
 
             <LinearLayout

@@ -6,7 +6,9 @@ package com.example.zero.bean;
 
 public class AddressBean {
 
-    private String name, phone, address;
+    private String name, phone, address, default_addr;
+    private boolean select;
+    private boolean change;
 
     public void setName(String name) {
         this.name = name;
@@ -20,6 +22,18 @@ public class AddressBean {
         this.address = address;
     }
 
+    public void setDefaultAddr(String default_addr) {
+        this.default_addr = default_addr;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
+    }
+
+    public void setChange(boolean change) {
+        this.change = change;
+    }
+
     public String getName() {
         return name;
     }
@@ -30,5 +44,17 @@ public class AddressBean {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getDefaultAddr() {
+        return default_addr;
+    }
+
+    public boolean isSelected() {
+        return select;
+    }
+
+    public boolean isChanged() {
+        return change;
     }
 }

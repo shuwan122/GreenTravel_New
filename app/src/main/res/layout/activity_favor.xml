@@ -57,6 +57,11 @@
         </LinearLayout>
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/divideLine" />
+
     <FrameLayout
         android:id="@+id/favor_frag_content"
         android:layout_width="match_parent"

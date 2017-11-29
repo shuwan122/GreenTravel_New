@@ -3,13 +3,11 @@ package com.example.zero.view;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,7 +19,7 @@ import com.example.zero.greentravel_new.R;
  * Created by kazu_0122 on 2017/10/16.
  */
 
-public class SimpleTextView  extends LinearLayout implements View.OnClickListener {
+public class SimpleTextView extends LinearLayout implements View.OnClickListener {
 
     /**
      * 输入框
@@ -53,7 +51,7 @@ public class SimpleTextView  extends LinearLayout implements View.OnClickListene
     }
 
     public void setLeftImage(int id) {
-        etInput.setCompoundDrawablesWithIntrinsicBounds(id,0,0,0);
+        etInput.setCompoundDrawablesWithIntrinsicBounds(id, 0, 0, 0);
     }
 
     public void setPw() {
@@ -68,6 +66,7 @@ public class SimpleTextView  extends LinearLayout implements View.OnClickListene
     public void notFocused() {
         ivDelete.setVisibility(GONE);
     }
+
     /**
      * 初始化View
      */
@@ -75,8 +74,25 @@ public class SimpleTextView  extends LinearLayout implements View.OnClickListene
         etInput = (EditText) findViewById(R.id.textview_edit);
         ivDelete = (ImageView) findViewById(R.id.textview_cancel);
         ivDelete.setOnClickListener(this);
+        etInput.requestFocus();
         etInput.addTextChangedListener(new EditChangedListener());
         etInput.setOnClickListener(this);
+        etInput.setOnKeyListener(new OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if (i == KeyEvent.KEYCODE_ENTER) {
+
+                    InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    if (imm.isActive()) {
+
+                        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -89,7 +105,6 @@ public class SimpleTextView  extends LinearLayout implements View.OnClickListene
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
     }
-
 
     /**
      * 重写text change类
@@ -145,8 +160,7 @@ public class SimpleTextView  extends LinearLayout implements View.OnClickListene
      * @return
      */
     public boolean isFocus() {
+        ivDelete.setVisibility(VISIBLE);
         return etInput.hasFocus();
     }
-
-
 }

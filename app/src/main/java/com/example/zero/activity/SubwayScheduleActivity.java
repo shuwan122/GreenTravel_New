@@ -1,11 +1,8 @@
 package com.example.zero.activity;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,21 +11,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.zero.adapter.AdvDestinMultiAdapter;
-import com.example.zero.adapter.SaleHotCouponAdapter;
 import com.example.zero.adapter.ScheduleAdapter;
-import com.example.zero.bean.AdvDestinMultiBean;
 import com.example.zero.bean.ScheduleBean;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.HttpUtil;
@@ -45,7 +35,7 @@ import okhttp3.Response;
 
 public class SubwayScheduleActivity extends AppCompatActivity {
     private Context context;
-
+    private TextView back;
     private View spinnerSet;
     private TextView spinner1;
     private TextView spinner2;
@@ -95,6 +85,13 @@ public class SubwayScheduleActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        back = (TextView) findViewById(R.id.subway_schedule_back_arrow);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         recyclerView = (RecyclerView) this.findViewById(R.id.station_schedule_recy);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         scheduleData = new ArrayList<ScheduleBean>();

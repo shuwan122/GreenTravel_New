@@ -129,7 +129,7 @@
                         android:text="查看更多订单" />
 
                     <ImageView
-                        style="@style/arrow_right_gray" />
+                        style="@style/arrow_right_black" />
                 </LinearLayout>
 
                 <View
@@ -221,7 +221,7 @@
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray" />
+                        style="@style/arrow_right_black" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -243,7 +243,7 @@
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray" />
+                        style="@style/arrow_right_black" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -265,7 +265,7 @@
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray" />
+                        style="@style/arrow_right_black" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -287,7 +287,7 @@
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray" />
+                        style="@style/arrow_right_black" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -309,7 +309,7 @@
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray" />
+                        style="@style/arrow_right_black" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -340,7 +340,7 @@
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray" />
+                        style="@style/arrow_right_black" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -363,7 +363,7 @@
                         android:textColor="@color/black" />
 
                     <ImageView
-                        style="@style/arrow_right_gray" />
+                        style="@style/arrow_right_black" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

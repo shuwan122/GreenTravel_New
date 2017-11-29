@@ -26,62 +26,66 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="16sp"
                 android:text="肯德基"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            <RatingBar
-                android:id="@+id/adv_destin_store_rate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/ratingBar"
-                android:numStars="5"
-                android:rating="4.3"
-                android:isIndicator="true"
-                android:stepSize="0.1"/>
+                <RatingBar
+                    android:id="@+id/adv_destin_store_rate"
+                    style="@style/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:rating="4.3"
+                    android:stepSize="0.1" />
+
                 <TextView
                     android:id="@+id/adv_destin_store_comments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
-                    android:text="1000条评论"/>
+                    android:text="1000条评论" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
-                    android:text="人均"/>
+                    android:text="人均" />
+
                 <TextView
                     android:id="@+id/adv_destin_store_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="￥50"
-                    android:textColor="@color/transparent_red"/>
-        </LinearLayout>
+                    android:textColor="@color/transparent_red" />
+            </LinearLayout>
 
 
             <TextView
                 android:id="@+id/adv_destin_store_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:text="快餐 129米" />
+                android:text="快餐 129米"
+                android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/adv_destin_store_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:text="快餐 129米" />
+                android:text="快餐 129米"
+                android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/adv_destin_store_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:text="" />
+                android:text=""
+                android:textSize="14sp" />
 
             <com.donkingliang.labels.LabelsView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/adv_destin_store_labels"
@@ -101,8 +105,6 @@
                 app:wordMargin="4dp" />
 
         </LinearLayout>
-
-
 
 
     </LinearLayout>

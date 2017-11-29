@@ -7,26 +7,32 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.example.zero.adapter.UserOrderAdapter;
 import com.example.zero.bean.UserOrderBean;
 import com.example.zero.greentravel_new.R;
+import com.example.zero.util.MainApplication;
 import com.example.zero.util.MultiItemTypeAdapter;
+import com.example.zero.util.RequestManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
 
 /**
  * Created by kazu_0122 on 2017/11/15.
  */
 
 public class UserOrderActivity extends Activity {
+
     private List<UserOrderBean> dataList = new ArrayList<>();
     private RecyclerView recyclerView;
-    private ImageView backArrow;
+    private TextView backArrow;
     private int type;
     private static final String TAG = "UserOrderActivity";
 
@@ -34,14 +40,13 @@ public class UserOrderActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_order);
-        type = getIntent().getIntExtra("type",-1);
+        type = getIntent().getIntExtra("type", -1);
         recyclerView = (RecyclerView) findViewById(R.id.user_order_recy);
         initData(type);
         UserOrderAdapter adapter = new UserOrderAdapter(UserOrderActivity.this, dataList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-        Log.d(TAG, dataList.size() + "");
-        backArrow = (ImageView) findViewById(R.id.user_order_back);
+        backArrow = (TextView) findViewById(R.id.user_order_back);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,26 +56,63 @@ public class UserOrderActivity extends Activity {
         adapter.setOnInnerItemClickListener(new MultiItemTypeAdapter.OnInnerItemClickListener() {
             @Override
             public void onInnerItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                switch (view.getId()){
-                    case R.id.user_order_cancel:
-                        Toast.makeText(getBaseContext(),"cancel",Toast.LENGTH_SHORT).show();
+                switch (view.getId()) {
+                    case R.id.user_order_cancel: {
+                        MainApplication mainApplication = (MainApplication) getApplication();
+                        final String userId = "A7F171027153611";
+                        final String token = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJncmVlbl90cmF2ZWwiLCJpYXQiOjE1MTEzNDE1MjQsInN1YiI6IntcImF2YXRvcl91cmxcIjpcIkE3RjE3MTAyNzE1MzYxMTE3MTAzMDIyMjg1NS5wbmdcIixcImNyZWF0ZV90aW1lXCI6XCIyMDE3LTEwLTI3IDE1OjM2OjU3LjBcIixcImVtYWlsX3ZlcmlmeVwiOjAsXCJwaG9uZVwiOlwiMTg4MTEzMTk2OTNcIixcInBob25lX21zZ19zZW5kX3RpbWVcIjpcIjIwMTctMTEtMDEgMTA6MTE6NDMuMFwiLFwicGhvbmVfdmVyaWZ5XCI6MSxcInBob25lX3ZlcmlmeV9jb2RlXCI6NTU4MSxcInRva2VuX2tleVwiOlwiR3dkWTRuNDRab2ZSNjZzOVQ2RlJBaWlRYWJHSTFSXCIsXCJ1c2VyX2lkXCI6XCJBN0YxNzEwMjcxNTM2MTFcIixcInVzZXJuYW1lXCI6XCJ5eXV1YWFcIixcInVzZXJwc3dcIjpcIjEyM2J1cHRcIn0iLCJleHAiOjE1MTI1NTExMjR9.9lhIQn4VDOG95ZhpmWsPsbZiLGKCfYlkv2uaQIdhLCE";
+
+//        final String userId = mainApplication.getUser_id();
+//        final String token = mainApplication.getToken();
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("user_id", userId);
+                        params.put("token", token);
+                        params.put("order_no", dataList.get(position).getOrderId());
+                        RequestManager.getInstance(getBaseContext()).requestAsyn("/order/usercancel", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                Toast.makeText(getBaseContext(), "canceled", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(getBaseContext(), "cancel failed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         break;
+                    }
                     case R.id.user_order_pay:
-                        Toast.makeText(getBaseContext(),"pay",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "pay", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.user_order_prolong:
-                        Toast.makeText(getBaseContext(),"prolong",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "prolong", Toast.LENGTH_SHORT).show();
                         break;
-                    case R.id.user_order_receive:
-                        Intent intent = new Intent();
-                        intent.setClass(UserOrderActivity.this,QRcodeActivity.class);
-                        startActivity(intent);
+                    case R.id.user_order_receive: {
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("order_no", dataList.get(position).getOrderId());
+                        RequestManager.getInstance(getBaseContext()).requestAsyn("/order/gen_QRcode_content", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+                            @Override
+                            public void onReqSuccess(String result) {
+                                JSONObject object = JSON.parseObject(result);
+                                Intent intent = new Intent();
+                                intent.setClass(UserOrderActivity.this, QRcodeActivity.class);
+                                intent.putExtra("content", object.getString("qr_content"));
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onReqFailed(String errorMsg) {
+                                Toast.makeText(getBaseContext(), "failed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                         break;
+                    }
                     case R.id.user_order_comment:
-                        Toast.makeText(getBaseContext(),"comment",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "comment", Toast.LENGTH_SHORT).show();
                         break;
                     default:
-                        Toast.makeText(getBaseContext(),"default",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "default", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -78,77 +120,87 @@ public class UserOrderActivity extends Activity {
     }
 
     public void initData(int type) {
-        if(type==-1) {
-            for (int i = 0; i < 6; i++) {
-                UserOrderBean bean1 = new UserOrderBean();
-                bean1.setItem(UserOrderBean.SHOP);
-                bean1.setShopName("苏宁易购官方旗舰店");
-                bean1.setState(i);
-                bean1.setIcon(R.drawable.t_mall);
-                bean1.setItem(UserOrderBean.SHOP);
-                UserOrderBean bean2 = new UserOrderBean();
-                bean2.setGoodsName("vivo X20全面屏手机4G全网通vivox20手机");
-                bean2.setGoodsType("机身颜色:玫瑰金，套餐类型:官方标配，存储容量:128G，版本类型:中国大陆");
-                bean2.setGoodsPrice(3398);
-                bean2.setGoodsCount(1);
-                bean2.setGoodsPic("http://image.baidu.com/search/detail?z=0&word=%E9%98%BF%E5%88%98&hs=0&pn=5&spn=0&di=0&pi=42852102935&tn=baiduimagedetail&is=0%2C0&ie=utf-8&oe=utf-8&cs=1671441058%2C2818642621&os=&simid=&adpicid=0&lpn=0&fm=&sme=&cg=&bdtype=-1&oriquery=&objurl=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F1b4c510fd9f9d72a776a0ad7dd2a2834359bbbe9.jpg&fromurl=&gsm=0&catename=pcindexhot");
-                bean2.setItem(UserOrderBean.GOODS);
-                UserOrderBean bean3 = new UserOrderBean();
-                bean3.setGoodsCount(1);
-                bean3.setGoodsPrice(3398);
-                bean3.setState(i);
-                bean3.setItem(UserOrderBean.ACTION);
-                dataList.add(bean1);
-                dataList.add(bean2);
-                dataList.add(bean3);
-            }
-        }
-        else if(type<3){
-            UserOrderBean bean1 = new UserOrderBean();
-            bean1.setItem(UserOrderBean.SHOP);
-            bean1.setShopName("苏宁易购官方旗舰店");
-            bean1.setState(type);
-            bean1.setIcon(R.drawable.t_mall);
-            bean1.setItem(UserOrderBean.SHOP);
-            UserOrderBean bean2 = new UserOrderBean();
-            bean2.setGoodsName("vivo X20全面屏手机4G全网通vivox20手机");
-            bean2.setGoodsType("机身颜色:玫瑰金，套餐类型:官方标配，存储容量:128G，版本类型:中国大陆");
-            bean2.setGoodsPrice(3398);
-            bean2.setGoodsCount(1);
-            bean2.setGoodsPic("http://image.baidu.com/search/detail?z=0&word=%E9%98%BF%E5%88%98&hs=0&pn=5&spn=0&di=0&pi=42852102935&tn=baiduimagedetail&is=0%2C0&ie=utf-8&oe=utf-8&cs=1671441058%2C2818642621&os=&simid=&adpicid=0&lpn=0&fm=&sme=&cg=&bdtype=-1&oriquery=&objurl=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F1b4c510fd9f9d72a776a0ad7dd2a2834359bbbe9.jpg&fromurl=&gsm=0&catename=pcindexhot");
-            bean2.setItem(UserOrderBean.GOODS);
-            UserOrderBean bean3 = new UserOrderBean();
-            bean3.setGoodsCount(1);
-            bean3.setGoodsPrice(3398);
-            bean3.setState(type);
-            bean3.setItem(UserOrderBean.ACTION);
-            dataList.add(bean1);
-            dataList.add(bean2);
-            dataList.add(bean3);
-        }
-        if(type>1){
-            UserOrderBean bean1 = new UserOrderBean();
-            bean1.setItem(UserOrderBean.SHOP);
-            bean1.setShopName("苏宁易购官方旗舰店");
-            bean1.setState(type+1);
-            bean1.setIcon(R.drawable.t_mall);
-            bean1.setItem(UserOrderBean.SHOP);
-            UserOrderBean bean2 = new UserOrderBean();
-            bean2.setGoodsName("vivo X20全面屏手机4G全网通vivox20手机");
-            bean2.setGoodsType("机身颜色:玫瑰金，套餐类型:官方标配，存储容量:128G，版本类型:中国大陆");
-            bean2.setGoodsPrice(3398);
-            bean2.setGoodsCount(1);
-            bean2.setGoodsPic("http://image.baidu.com/search/detail?z=0&word=%E9%98%BF%E5%88%98&hs=0&pn=5&spn=0&di=0&pi=42852102935&tn=baiduimagedetail&is=0%2C0&ie=utf-8&oe=utf-8&cs=1671441058%2C2818642621&os=&simid=&adpicid=0&lpn=0&fm=&sme=&cg=&bdtype=-1&oriquery=&objurl=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F1b4c510fd9f9d72a776a0ad7dd2a2834359bbbe9.jpg&fromurl=&gsm=0&catename=pcindexhot");
-            bean2.setItem(UserOrderBean.GOODS);
-            UserOrderBean bean3 = new UserOrderBean();
-            bean3.setGoodsCount(1);
-            bean3.setGoodsPrice(3398);
-            bean3.setState(type+1);
-            bean3.setItem(UserOrderBean.ACTION);
-            dataList.add(bean1);
-            dataList.add(bean2);
-            dataList.add(bean3);
+        final String order_type;
+        switch (type) {
+            case -1:
+                order_type = "all";
+                break;
+            case 0:
+                order_type = "ordered";
+                break;
+            case 1:
+                order_type = "payed";
+                break;
+            case 2:
+                order_type = "topick";
+                break;
+            case 3:
+                order_type = "finish";
+                break;
+            case 4:
+                order_type = "canceled";
+                break;
+            default:
+                order_type = "all";
         }
 
+        MainApplication mainApplication = (MainApplication) getApplication();
+        final String userId = "A7F171027153611";
+        final String token = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJncmVlbl90cmF2ZWwiLCJpYXQiOjE1MTEzNDE1MjQsInN1YiI6IntcImF2YXRvcl91cmxcIjpcIkE3RjE3MTAyNzE1MzYxMTE3MTAzMDIyMjg1NS5wbmdcIixcImNyZWF0ZV90aW1lXCI6XCIyMDE3LTEwLTI3IDE1OjM2OjU3LjBcIixcImVtYWlsX3ZlcmlmeVwiOjAsXCJwaG9uZVwiOlwiMTg4MTEzMTk2OTNcIixcInBob25lX21zZ19zZW5kX3RpbWVcIjpcIjIwMTctMTEtMDEgMTA6MTE6NDMuMFwiLFwicGhvbmVfdmVyaWZ5XCI6MSxcInBob25lX3ZlcmlmeV9jb2RlXCI6NTU4MSxcInRva2VuX2tleVwiOlwiR3dkWTRuNDRab2ZSNjZzOVQ2RlJBaWlRYWJHSTFSXCIsXCJ1c2VyX2lkXCI6XCJBN0YxNzEwMjcxNTM2MTFcIixcInVzZXJuYW1lXCI6XCJ5eXV1YWFcIixcInVzZXJwc3dcIjpcIjEyM2J1cHRcIn0iLCJleHAiOjE1MTI1NTExMjR9.9lhIQn4VDOG95ZhpmWsPsbZiLGKCfYlkv2uaQIdhLCE";
+
+//        final String userId = mainApplication.getUser_id();
+//        final String token = mainApplication.getToken();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("user_id", userId);
+        params.put("token", token);
+        params.put("order_type", order_type);
+        RequestManager.getInstance(getBaseContext()).requestAsyn("/order/userorderlist", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
+            @Override
+            public void onReqSuccess(String result) {
+                JSONObject object = JSON.parseObject(result);
+                JSONArray orders = JSON.parseArray(object.getString("orders"));
+                for (int i = 0; i < orders.size(); i++) {
+                    JSONObject order = orders.getJSONObject(i);
+                    UserOrderBean bean1 = new UserOrderBean();
+                    UserOrderBean bean3 = new UserOrderBean();
+                    bean1.setShopName(order.getString("seller_name"));
+                    bean1.setState(order.getInteger("order_status"));
+                    bean3.setState(order.getInteger("order_status"));
+                    if (order.getInteger("order_status") == 3 && order.getInteger("receive_method") == 1) {
+                        bean1.setState(8);
+                        bean3.setState(8);
+                    }
+                    bean1.setOrderId(order.getString("order_no"));
+                    bean3.setOrderId(order.getString("order_no"));
+                    bean1.setIcon(R.drawable.t_mall);
+                    bean1.setItem(UserOrderBean.SHOP);
+                    dataList.add(bean1);
+                    JSONArray goods = order.getJSONArray("orderDetails");
+                    int count = 0;
+                    double sum = 0;
+                    for (int j = 0; j < goods.size(); j++) {
+                        JSONObject good = goods.getJSONObject(j);
+                        UserOrderBean bean2 = new UserOrderBean();
+                        bean2.setGoodsPrice(good.getDouble("product_price"));
+                        bean2.setGoodsCount(good.getInteger("product_num"));
+                        bean2.setGoodsName(good.getString("product_name"));
+                        bean2.setGoodsPic(good.getString("pic_url"));
+                        bean2.setItem(UserOrderBean.GOODS);
+                        dataList.add(bean2);
+                        count += good.getInteger("product_num");
+                        sum += bean2.getGoodsPrice() * bean2.getGoodsCount();
+                    }
+                    bean3.setGoodsCount(count);
+                    bean3.setGoodsPrice(sum);
+                    bean3.setItem(UserOrderBean.ACTION);
+                    dataList.add(bean3);
+                }
+            }
+
+            @Override
+            public void onReqFailed(String errorMsg) {
+                Log.e(TAG, errorMsg);
+            }
+        });
     }
 }
