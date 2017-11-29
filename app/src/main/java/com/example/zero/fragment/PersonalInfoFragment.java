@@ -127,7 +127,6 @@ public class PersonalInfoFragment extends Fragment implements View.OnClickListen
             register.setVisibility(View.GONE);
             user_name.setText(mainApplication.getUsername());
             String avator = mainApplication.getAvator();
-            Log.d(TAG, avator);
             if (avator != null && !avator.equals("")) {
                 avator = "http://10.108.120.91:8080/users/" + avator + "?type=0";
                 Log.d(TAG, avator);
@@ -200,6 +199,7 @@ public class PersonalInfoFragment extends Fragment implements View.OnClickListen
             }
             case R.id.address: {
                 Intent intent = new Intent();
+                intent.putExtra("type", "personalInfo");
                 intent.setClass(getActivity(), AddressActivity.class);
                 startActivity(intent);
                 break;

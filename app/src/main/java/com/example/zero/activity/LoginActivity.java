@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,8 +27,9 @@ import java.util.HashMap;
  */
 
 public class LoginActivity extends AppCompatActivity {
-    private ImageView backArrow;
-    private TextView register,reset;
+
+    private TextView backArrow;
+    private TextView register, reset;
     private SimpleTextView phone, password;
     private Button login;
 
@@ -74,6 +74,8 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
                     }
                     phone.notFocused();
+                } else {
+                    phone.isFocus();
                 }
             }
         });
@@ -82,6 +84,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onFocusChange(View view, boolean b) {
                 if (!b) {
                     password.notFocused();
+                } else {
+                    password.isFocus();
                 }
             }
         });
@@ -105,16 +109,16 @@ public class LoginActivity extends AppCompatActivity {
                         //TODO 载入头像 简化代码
                         Intent userInfo = new Intent();
                         userInfo.putExtra("username", username);
-                        userInfo.putExtra("avator",avator);
+                        userInfo.putExtra("avator", avator);
                         setResult(RESULT_OK, userInfo);
                         SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", Activity.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("phone",phone.getText().trim());
-                        editor.putString("user_id",user_id);
-                        editor.putString("token",token);
+                        editor.putString("phone", phone.getText().trim());
+                        editor.putString("user_id", user_id);
+                        editor.putString("token", token);
                         editor.commit();
                         MainApplication mainApplication = (MainApplication) getApplication();
-                        mainApplication.login(user_id,phone.getText().trim(),username,token,avator);
+                        mainApplication.login(user_id, phone.getText().trim(), username, token, avator);
 
                         Toast.makeText(getBaseContext(), "登录成功", Toast.LENGTH_SHORT).show();
                         finish();
@@ -132,10 +136,11 @@ public class LoginActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
+
     }
 
     public void innitView() {
-        backArrow = (ImageView) findViewById(R.id.login_back_arrow);
+        backArrow = (TextView) findViewById(R.id.login_back_arrow);
         register = (TextView) findViewById(R.id.login_register);
         reset = (TextView) findViewById(R.id.login_reset);
         phone = (SimpleTextView) findViewById(R.id.login_phone);
@@ -163,7 +168,8 @@ public class LoginActivity extends AppCompatActivity {
                 case START_RESETPW_ACTIVITY:
                     phone.setText(data.getStringExtra("phone"));
                     break;
-                default:break;
+                default:
+                    break;
             }
         }
     }

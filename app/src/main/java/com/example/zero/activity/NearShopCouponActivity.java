@@ -16,15 +16,14 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.example.zero.adapter.SaleHotCouponAdapter;
 import com.example.zero.bean.SaleBean;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.HttpUtil;
 import com.example.zero.util.MainApplication;
 import com.example.zero.util.RequestManager;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -151,7 +150,7 @@ public class NearShopCouponActivity extends AppCompatActivity {
                 MainApplication application = (MainApplication) getApplication();
                 uid = application.getUser_id();
                 token = application.getToken();
-                if (uid == null && token == null) {
+                if (application.isOnline() == false) {
                     Toast.makeText(context, "请您先登录再进行操作", Toast.LENGTH_SHORT).show();
                 } else {
                     HashMap<String, String> params = new HashMap<>();
@@ -161,15 +160,13 @@ public class NearShopCouponActivity extends AppCompatActivity {
                     RequestManager.getInstance(context).requestAsyn("users/me/coupons/" + coupon_id.get(position), RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
                         @Override
                         public void onReqSuccess(String result) {
-                            com.alibaba.fastjson.JSONObject jo = JSON.parseObject(result);
+                            JSONObject jo = JSON.parseObject(result);
                             Toast.makeText(context, jo.getString("userMessage"), Toast.LENGTH_SHORT).show();
-                            received_id.set(position, RECEIVED);
                         }
 
                         @Override
                         public void onReqFailed(String errorMsg) {
-                            com.alibaba.fastjson.JSONObject jo = JSON.parseObject(errorMsg);
-                            Toast.makeText(context, jo.getString("userMessage"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "领取失败", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -180,13 +177,13 @@ public class NearShopCouponActivity extends AppCompatActivity {
 
     private void parseJSONWithJSONObject(String jsonData) {
         try {
-            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONObject jsonObject = JSONObject.parseObject(jsonData);
             JSONArray array = jsonObject.getJSONObject("shopInfo").getJSONArray("coupons");
 
             coupon_id.clear();
             dataList.clear();
             dataList1.clear();
-            for (int i = 0; i < array.length(); i++) {
+            for (int i = 0; i < array.size(); i++) {
                 JSONObject jo = array.getJSONObject(i);
 //                couponHas = jo.getBoolean("owned");
 
@@ -194,7 +191,7 @@ public class NearShopCouponActivity extends AppCompatActivity {
                 coupon_id.add(jo.getString("id"));
                 received_id.add(jo.getString("id"));
                 coupon_name = jo.getString("shop_name");
-                coupon_type = jo.getInt("type");
+                coupon_type = jo.getInteger("type");
 
                 if (coupon_type == 1) {
                     String[] str = jo.getString("coupon_name").split("减");

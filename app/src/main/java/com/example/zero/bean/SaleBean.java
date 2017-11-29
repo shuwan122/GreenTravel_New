@@ -13,7 +13,7 @@ public class SaleBean {
     private String content;
     private String time;
     private String img;
-    private String isUsed;
+    private boolean isUsed;
     private TextView textView;
 
     public void setText(String name, String price, String content, String time, String imgId) {
@@ -28,16 +28,12 @@ public class SaleBean {
         this.textView = textView;
     }
 
-    public void setUseFlag(String isUsed){
+    public void setUseFlag(boolean isUsed){
         this.isUsed = isUsed;
     }
 
-    public boolean isUsed() {
-        if (isUsed.equals("yes")) {
-            return true;
-        } else {
-            return false;
-        }
+    public boolean getUseFlag() {
+        return isUsed;
     }
 
     public TextView getTextView(){

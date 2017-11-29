@@ -115,6 +115,21 @@ public class StationDisplayActivity extends AppCompatActivity {
         }
     });
 
+    private String searchType;
+
+    //定义Handler对象
+    private Handler httpHandlerRefresh = new Handler(new Handler.Callback() {
+        @Override
+        //当有消息发送出来的时候就执行Handler的这个方法
+        public boolean handleMessage(Message msg) {
+            //只要执行到这里就关闭对话框
+            pd.dismiss();
+
+            showData();
+            return false;
+        }
+    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,6 +167,21 @@ public class StationDisplayActivity extends AppCompatActivity {
         }.start();
     }
 
+    private void refreshThread() {
+        //构建一个下载进度条
+        pd = ProgressDialog.show(StationDisplayActivity.this, "加载数据", "数据加载中，请稍后......");
+
+        new Thread() {
+            @Override
+            public void run() {
+                //在新线程里执行长耗时方法
+                longTimeMethodRefresh();
+                //执行完毕后给handler发送一个空消息
+                httpHandlerRefresh.sendEmptyMessage(0);
+            }
+        }.start();
+    }
+
     //加载数据
     private void longTimeMethod() {
         try {
@@ -171,7 +201,33 @@ public class StationDisplayActivity extends AppCompatActivity {
                     Toast.makeText(context, "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
                 }
             });
-            Thread.sleep(1000);
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //加载数据
+    private void longTimeMethodRefresh() {
+        try {
+            final Bundle mBundle = new Bundle();
+            mBundle.putString("userId", "guest");
+            mBundle.putString("stationName", stationName);
+            mBundle.putString("searchType", searchType);
+            HttpUtil.sendStationDisplayRefreshOkHttpRequest(mBundle, new okhttp3.Callback() {
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String responseData = response.body().string();
+                    parseJSONWithJSONObject(responseData);
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d(TAG, "onFailure: ERROR!");
+                    Toast.makeText(context, "连接服务器失败，请重新尝试！", Toast.LENGTH_LONG).show();
+                }
+            });
+            Thread.sleep(1500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -256,6 +312,19 @@ public class StationDisplayActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 spinner1.setText(choice1.get(i));
                 popupWindow1.dismiss();
+
+                switch (choice1.get(i)) {
+                    case "距离优先":
+                        searchType = "distance";
+                        break;
+                    case "低价优先":
+                        searchType = "price";
+                        break;
+                    default:
+                        searchType = "default";
+                        break;
+                }
+                refreshThread();
             }
         });
 

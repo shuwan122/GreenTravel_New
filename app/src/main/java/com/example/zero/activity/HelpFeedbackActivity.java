@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.example.zero.fragment.HelpFeedbackFragmentController;
 import com.example.zero.greentravel_new.R;
@@ -15,7 +15,7 @@ import com.example.zero.greentravel_new.R;
  */
 
 public class HelpFeedbackActivity extends AppCompatActivity {
-    private ImageView backArrow;
+    private TextView backArrow;
     private RadioGroup radioGroup;
     private HelpFeedbackFragmentController controller;
     private View help, feedback;
@@ -61,7 +61,7 @@ public class HelpFeedbackActivity extends AppCompatActivity {
     }
 
     public void innitView() {
-        backArrow = (ImageView) findViewById(R.id.hf_back_arrow);
+        backArrow = (TextView) findViewById(R.id.hf_back_arrow);
         radioGroup = (RadioGroup) findViewById(R.id.help_feedback_rg);
         help = (View) findViewById(R.id.help_line);
         feedback = (View) findViewById(R.id.feedback_line);

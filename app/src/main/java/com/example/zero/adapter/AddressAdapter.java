@@ -5,8 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.zero.bean.AddressBean;
@@ -23,10 +23,16 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
     private Context context;
     private List<AddressBean> dataList;
     private onRecycleItemClickListener mClickListener;
+    private int lastSelectPos;
 
-    public AddressAdapter(Context context, List<AddressBean> dataList) {
+    public AddressAdapter(Context context, List<AddressBean> addrDataList) {
         this.context = context;
-        this.dataList = dataList;
+        this.dataList = addrDataList;
+        for (int i = 0; i < dataList.size(); i++) {
+            if (dataList.get(i).isSelected()) {
+                lastSelectPos = i;
+            }
+        }
     }
 
     public void setOnItemClickListener(onRecycleItemClickListener listener) {
@@ -41,10 +47,33 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
     }
 
     @Override
-    public void onBindViewHolder(AddressAdapter.AddressViewHolder holder, int position) {
+    public void onBindViewHolder(AddressAdapter.AddressViewHolder holder, final int position) {
         holder.name.setText(dataList.get(position).getName());
         holder.phone.setText(dataList.get(position).getPhone());
-        holder.addr.setText(dataList.get(position).getAddress());
+        holder.radioButton.setText(dataList.get(position).getDefaultAddr());
+        if (dataList.get(position).isSelected()) {
+            holder.radioButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.checkbox_on, 0, 0, 0);
+        } else {
+            holder.radioButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.checkbox_off, 0, 0, 0);
+        }
+        holder.radioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (AddressBean addressBean : dataList) {
+                    addressBean.setSelect(false);
+                    addressBean.setChange(false);
+                    addressBean.setDefaultAddr("设为默认");
+                }
+                if (lastSelectPos != position) {
+                    dataList.get(position).setChange(true);
+                    lastSelectPos = position;
+                }
+                dataList.get(position).setSelect(true);
+                dataList.get(position).setDefaultAddr("默认地址");
+                notifyDataSetChanged();
+                mClickListener.onRadioButton(view, position);
+            }
+        });
     }
 
     @Override
@@ -54,8 +83,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
 
     static class AddressViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private onRecycleItemClickListener mListener;
-        private TextView name, phone, addr;
-        private CheckBox checkBox;
+        private TextView name, phone;
+        private RadioButton radioButton;
         private TextView edit, delete;
         private LinearLayout address;
 
@@ -63,13 +92,11 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.address_customer_name);
             phone = (TextView) itemView.findViewById(R.id.address_customer_phone);
-            addr = (TextView) itemView.findViewById(R.id.address_detailed);
-            checkBox = (CheckBox) itemView.findViewById(R.id.address_checkbox);
+            radioButton = (RadioButton) itemView.findViewById(R.id.address_rb);
             edit = (TextView) itemView.findViewById(R.id.address_edit);
             delete = (TextView) itemView.findViewById(R.id.address_delete);
             address = (LinearLayout) itemView.findViewById(R.id.address_linearlayout);
             mListener = listener;
-            //checkBox.setOnCheckedChangeListener(this);
             address.setOnClickListener(this);
             edit.setOnClickListener(this);
             delete.setOnClickListener(this);
@@ -99,5 +126,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
         void onItem1Click(View view, int position);
 
         void onItem2Click(View view, int position);
+
+        void onRadioButton(View view, int position);
     }
 }

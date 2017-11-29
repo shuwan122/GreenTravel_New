@@ -9,7 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -19,7 +19,6 @@ import com.example.zero.adapter.MsgAdapter;
 import com.example.zero.bean.MsgBean;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.MainApplication;
-import com.example.zero.util.OnItemTouchListener;
 import com.example.zero.util.RequestManager;
 
 import java.util.ArrayList;
@@ -31,9 +30,10 @@ import java.util.List;
  * 消息activity
  */
 public class MsgActivity extends AppCompatActivity {
+
     private String TAG = "MsgActivity";
     private RecyclerView msg_recv;
-    private ImageView backArrow;
+    private TextView backArrow;
     private List<MsgBean> dataList = new ArrayList<>();
     private String uid;
     private List<Integer> msg_id = new ArrayList<>();
@@ -50,11 +50,6 @@ public class MsgActivity extends AppCompatActivity {
         uid = application.getUser_id();
         innitView();
         getMsg();
-//        MsgBean msgBean = new MsgBean();
-//        msgBean.setText("系统", "恭喜您获得15积分。", "2017-11-04 12:23:35", "http://d.hiphotos.baidu.com/image/pic/item/32fa828ba61ea8d3f6dedfce9e0a304e241f587f.jpg");
-//        dataList.add(msgBean);
-//        dataList.add(msgBean);
-//        dataList.add(msgBean);
         adapter = new MsgAdapter(this, dataList);
         msg_recv.setAdapter(adapter);
         backArrow.setOnClickListener(new View.OnClickListener() {
@@ -63,17 +58,17 @@ public class MsgActivity extends AppCompatActivity {
                 finish();
             }
         });
-        msg_recv.addOnItemTouchListener(new OnItemTouchListener(msg_recv) {
+        adapter.setOnItemClickListener(new MsgAdapter.onRecycleItemClickListener() {
             @Override
-            public void onItemClick(RecyclerView.ViewHolder vh) {
-                Uri uri = Uri.parse(msg_url.get(vh.getAdapterPosition()));
-                Log.e("urllll", uri.toString());
+            public void onItemClick(View view, int position) {
+                Uri uri = Uri.parse(msg_url.get(position));
+                Log.e(TAG, uri.toString());
                 Intent intent = new Intent();
                 // intent.setAction("android.intent.action.VIEW");
                 // intent.setData(uri);
                 intent.setClass(getApplicationContext(), AboutActivity.class);
                 startActivity(intent);
-                Toast.makeText(MsgActivity.this, "click" + vh.getAdapterPosition(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MsgActivity.this, "click" + position, Toast.LENGTH_LONG).show();
             }
         });
         ActionBar actionBar = getSupportActionBar();
@@ -85,7 +80,7 @@ public class MsgActivity extends AppCompatActivity {
     private void innitView() {
         msg_recv = (RecyclerView) findViewById(R.id.msg_recv);
         msg_recv.setLayoutManager(new LinearLayoutManager(this));
-        backArrow = (ImageView) findViewById(R.id.msg_back_arrow);
+        backArrow = (TextView) findViewById(R.id.msg_back_arrow);
     }
 
     public void sendNewMsg() {
@@ -100,7 +95,7 @@ public class MsgActivity extends AppCompatActivity {
     }
 
     public void getMsg() {
-        if (uid == null) {
+        if (application.isOnline() == false) {
             Toast.makeText(this, "请您先登录再进行查看", Toast.LENGTH_LONG).show();
         } else {
             HashMap<String, String> params = new HashMap<>();

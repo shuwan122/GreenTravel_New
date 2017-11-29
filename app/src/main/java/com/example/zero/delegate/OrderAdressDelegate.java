@@ -2,7 +2,7 @@ package com.example.zero.delegate;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import com.example.zero.bean.OrderBean;
 import com.example.zero.greentravel_new.R;
@@ -25,14 +25,14 @@ public class OrderAdressDelegate implements ItemViewDelegate<OrderBean> {
     }
 
     @Override
-    public void convert(final Context context, RecycleViewHolder holder, OrderBean orderBean, int position) {
+    public void convert(final Context context, final RecycleViewHolder holder, OrderBean orderBean, final int position) {
         holder.setText(R.id.customer_name, orderBean.getCusName());
         holder.setText(R.id.customer_phone, orderBean.getCusPhone());
-        holder.setText(R.id.customer_address, orderBean.getCusAddr());
-        holder.getView(R.id.order_cus_addr).setOnClickListener(new View.OnClickListener() {
+        final LinearLayout address = holder.getView(R.id.order_cus_addr);
+        address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "address", Toast.LENGTH_LONG).show();
+                holder.getOnInnerItemClickListener().onInnerItemClick(address, holder, position);
             }
         });
     }

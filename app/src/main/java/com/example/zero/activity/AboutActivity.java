@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.zero.greentravel_new.R;
 
@@ -17,7 +17,7 @@ import com.example.zero.greentravel_new.R;
 
 public class AboutActivity extends AppCompatActivity {
     private LinearLayout newFunction, secret, service;
-    private ImageView backArrow;
+    private TextView backArrow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     public void innitView() {
-        backArrow = (ImageView) findViewById(R.id.about_back_arrow);
+        backArrow = (TextView) findViewById(R.id.about_back_arrow);
         newFunction = (LinearLayout) findViewById(R.id.new_function);
         secret = (LinearLayout) findViewById(R.id.secret);
         service = (LinearLayout) findViewById(R.id.service_term);

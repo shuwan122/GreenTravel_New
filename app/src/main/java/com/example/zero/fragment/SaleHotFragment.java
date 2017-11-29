@@ -1,11 +1,15 @@
 package com.example.zero.fragment;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,6 +27,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.example.zero.activity.ShoppingCartActivity;
 import com.example.zero.adapter.SaleHotCouponAdapter;
 import com.example.zero.bean.SaleBean;
 import com.example.zero.greentravel_new.R;
@@ -39,7 +44,6 @@ import java.util.List;
 
 public class SaleHotFragment extends Fragment {
 
-    private static final String RECEIVED = "0";
     private String TAG = "SaleHotFragment";
     private View sale_hot_frag;
     private RecyclerView hot_recv;
@@ -55,7 +59,6 @@ public class SaleHotFragment extends Fragment {
     private String uid, token;
     private Context context;
     private ArrayList<String> coupon_id = new ArrayList<>();
-    private ArrayList<String> received_id = new ArrayList<>();
     private String coupon_name;
     private int coupon_type;
     private String shop_type;
@@ -65,17 +68,16 @@ public class SaleHotFragment extends Fragment {
     private String coupon_img;
     private RadioGroup saleHotGroup;
     private RadioButton saleHotFood, saleHotEntertainment, saleHotShopping, saleHotTravel;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    boolean isLoading;
+    private ProgressDialog pd;
+    private Handler handler = new Handler();
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         sale_hot_frag = inflater.inflate(R.layout.fragment_sale_hot, container, false);
         context = sale_hot_frag.getContext();
-        innitView();
-        saleHotFood.setCompoundDrawablesWithIntrinsicBounds(R.drawable.food_checked, 0, 0, 0);
-        saleHotEntertainment.setCompoundDrawablesWithIntrinsicBounds(R.drawable.entertainment, 0, 0, 0);
-        saleHotShopping.setCompoundDrawablesWithIntrinsicBounds(R.drawable.shopping, 0, 0, 0);
-        saleHotTravel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.travel, 0, 0, 0);
-        isLocationOpen();
+        initView();
         getCouponData();
         adapter = new SaleHotCouponAdapter(context, dataList);
         hot_recv.setAdapter(adapter);
@@ -92,8 +94,6 @@ public class SaleHotFragment extends Fragment {
                 token = application.getToken();
                 if (application.isOnline() == false) {
                     Toast.makeText(context, "请您先登录再进行操作", Toast.LENGTH_SHORT).show();
-//                } else if (received_id.get(position).equals(RECEIVED)) {
-//                    Toast.makeText(context, "该优惠券您已领取", Toast.LENGTH_SHORT).show();
                 } else {
                     HashMap<String, String> params = new HashMap<>();
                     params.put("couponId", coupon_id.get(position));
@@ -103,22 +103,34 @@ public class SaleHotFragment extends Fragment {
 
                         @Override
                         public void onReqSuccess(String result) {
-                            //System.out.println(result);
                             JSONObject jo = JSON.parseObject(result);
                             Toast.makeText(context, jo.getString("userMessage"), Toast.LENGTH_SHORT).show();
-                            received_id.set(position, RECEIVED);
                         }
 
                         @Override
                         public void onReqFailed(String errorMsg) {
-                            //System.out.println(errorMsg);
-                            JSONObject jo = JSON.parseObject(errorMsg);
-                            Toast.makeText(context, jo.getString("userMessage"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "领取失败", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             }
         });
+        return sale_hot_frag;
+    }
+
+    private void initView() {
+        hot_recv = (RecyclerView) sale_hot_frag.findViewById(R.id.sale_hot_recv);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        hot_recv.setLayoutManager(layoutManager);
+        saleHotFood = (RadioButton) sale_hot_frag.findViewById(R.id.sale_hot_food);
+        saleHotEntertainment = (RadioButton) sale_hot_frag.findViewById(R.id.sale_hot_entertainment);
+        saleHotShopping = (RadioButton) sale_hot_frag.findViewById(R.id.sale_hot_shopping);
+        saleHotTravel = (RadioButton) sale_hot_frag.findViewById(R.id.sale_hot_travel);
+        swipeRefreshLayout = (SwipeRefreshLayout) sale_hot_frag.findViewById(R.id.sale_hot_swipeRefresh);
+        saleHotFood.setCompoundDrawablesWithIntrinsicBounds(R.drawable.food_checked, 0, 0, 0);
+        saleHotEntertainment.setCompoundDrawablesWithIntrinsicBounds(R.drawable.entertainment, 0, 0, 0);
+        saleHotShopping.setCompoundDrawablesWithIntrinsicBounds(R.drawable.shopping, 0, 0, 0);
+        saleHotTravel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.travel, 0, 0, 0);
         saleHotGroup = (RadioGroup) sale_hot_frag.findViewById(R.id.sale_hot_rg);
         saleHotGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -157,16 +169,61 @@ public class SaleHotFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
-        return sale_hot_frag;
-    }
 
-    private void innitView() {
-        hot_recv = (RecyclerView) sale_hot_frag.findViewById(R.id.sale_hot_recv);
-        hot_recv.setLayoutManager(new LinearLayoutManager(context));
-        saleHotFood = (RadioButton) sale_hot_frag.findViewById(R.id.sale_hot_food);
-        saleHotEntertainment = (RadioButton) sale_hot_frag.findViewById(R.id.sale_hot_entertainment);
-        saleHotShopping = (RadioButton) sale_hot_frag.findViewById(R.id.sale_hot_shopping);
-        saleHotTravel = (RadioButton) sale_hot_frag.findViewById(R.id.sale_hot_travel);
+        swipeRefreshLayout.setColorSchemeResources(R.color.GreenTheme);
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        });
+        //下拉刷新监听
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataList.clear();
+                        getCouponData();
+                    }
+                }, 2000);
+            }
+        });
+        //上拉加载监听
+        hot_recv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            //当RecyclerView的滑动状态改变时触发
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                if (lastVisibleItemPosition + 1 == adapter.getItemCount()) {
+                    Log.d("test", "loading executed");
+                    boolean isRefreshing = swipeRefreshLayout.isRefreshing();
+                    if (isRefreshing) {
+                        adapter.notifyItemRemoved(adapter.getItemCount());
+                        return;
+                    }
+                    if (!isLoading) {
+                        isLoading = true;
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getCouponData();
+                                Log.d("test", "load more completed");
+                                isLoading = false;
+                            }
+                        }, 1000);
+                    }
+                }
+            }
+        });
     }
 
     public void isLocationOpen() {
@@ -190,6 +247,7 @@ public class SaleHotFragment extends Fragment {
     }
 
     public void getCouponData() {
+        isLocationOpen();
         mLocationClient = new LocationClient(context);
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
@@ -203,78 +261,83 @@ public class SaleHotFragment extends Fragment {
     public class MyLocationListener implements BDLocationListener {
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
-            if (bdLocation != null) {
-                latitude = bdLocation.getLatitude();
-                longitude = bdLocation.getLongitude();
-                if (mLocationClient.isStarted()) {
-                    mLocationClient.stop();
+            try {
+                swipeRefreshLayout.setRefreshing(false);
+                if (bdLocation != null) {
+                    latitude = bdLocation.getLatitude();
+                    longitude = bdLocation.getLongitude();
+                    if (mLocationClient.isStarted()) {
+                        mLocationClient.stop();
+                    }
                 }
-            }
-            HashMap<String, String> params = new HashMap<>();
-//            params.put("longitude", longitude+"");
-//            params.put("latitude", latitude+"");
+                HashMap<String, String> params = new HashMap<>();
 //            Toast.makeText(context, "纬度" + latitude, Toast.LENGTH_SHORT).show();
 //            Toast.makeText(context, "经度" + longitude, Toast.LENGTH_SHORT).show();
-            params.put("longitude", "" + 113.5333880000);
-            params.put("latitude", "" + 22.7935870000);
-            RequestManager.getInstance(context).requestAsyn("users/me/coupons/near", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
+                params.put("longitude", "" + 113.5333880000);
+                params.put("latitude", "" + 22.7935870000);
+//            params.put("longitude", "" + longitude);
+//            params.put("latitude", "" + latitude);
+                RequestManager.getInstance(context).requestAsyn("users/me/coupons/near", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
 
-                @Override
-                public void onReqSuccess(String result) {
-                    coupon_id.clear();
-                    dataList.clear();
-                    dataList1.clear();
-                    dataList2.clear();
-                    dataList3.clear();
-                    dataList4.clear();
-                    JSONArray array = JSONArray.parseArray(result);
-                    for (int i = 0; i < array.size(); i++) {
-                        String s = array.get(i).toString();
-                        JSONObject jo = JSON.parseObject(s);
-                        coupon_id.add(jo.getString("id"));
-                        received_id.add(jo.getString("id"));
-                        coupon_name = jo.getString("shop_name");
-                        coupon_type = jo.getInteger("type");
-                        if (coupon_type == 1) {
-                            String[] str = jo.getString("coupon_name").split("减");
-                            coupon_price = "¥" + str[1];
-                            coupon_content = "消费金额" + str[0] + "可用";
-                        } else if (coupon_type == 2) {
-                            coupon_price = jo.getString("coupon_name").substring(0, 2);
-                            coupon_content = "全场商品" + coupon_price + "优惠";
+                    @Override
+                    public void onReqSuccess(String result) {
+                        coupon_id.clear();
+                        dataList.clear();
+                        dataList1.clear();
+                        dataList2.clear();
+                        dataList3.clear();
+                        dataList4.clear();
+                        JSONArray array = JSONArray.parseArray(result);
+                        for (int i = 0; i < array.size(); i++) {
+                            String s = array.get(i).toString();
+                            JSONObject jo = JSON.parseObject(s);
+                            coupon_id.add(jo.getString("id"));
+                            coupon_name = jo.getString("shop_name");
+                            coupon_type = jo.getInteger("type");
+                            if (coupon_type == 1) {
+                                String[] str = jo.getString("coupon_name").split("减");
+                                coupon_price = "¥" + str[1];
+                                coupon_content = "消费金额" + str[0] + "可用";
+                            } else if (coupon_type == 2) {
+                                coupon_price = jo.getString("coupon_name").substring(0, 2);
+                                coupon_content = "全场商品" + coupon_price + "优惠";
+                            }
+                            String[] string = jo.getString("expire_at").split(" ");
+                            coupon_time = string[0] + "到期";
+                            coupon_img = jo.getString("image_url");
+                            shop_type = jo.getString("shop_tag");
+                            SaleBean saleBean = new SaleBean();
+                            saleBean.setText(coupon_name, coupon_price, coupon_content, coupon_time, coupon_img);
+                            switch (shop_type) {
+                                case "餐饮":
+                                    dataList1.add(saleBean);
+                                    break;
+                                case "娱乐":
+                                    dataList2.add(saleBean);
+                                    break;
+                                case "购物":
+                                    dataList3.add(saleBean);
+                                    break;
+                                case "旅游":
+                                    dataList4.add(saleBean);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
-                        String[] string = jo.getString("expire_at").split(" ");
-                        coupon_time = string[0] + "到期";
-                        coupon_img = jo.getString("image_url");
-                        shop_type = jo.getString("shop_tag");
-                        SaleBean saleBean = new SaleBean();
-                        saleBean.setText(coupon_name, coupon_price, coupon_content, coupon_time, coupon_img);
-                        switch (shop_type) {
-                            case "餐饮":
-                                dataList1.add(saleBean);
-                                break;
-                            case "娱乐":
-                                dataList2.add(saleBean);
-                                break;
-                            case "购物":
-                                dataList3.add(saleBean);
-                                break;
-                            case "旅游":
-                                dataList4.add(saleBean);
-                                break;
-                            default:
-                                break;
-                        }
+                        showCouponData(0);
                     }
-                    showCouponData(0);
-                }
 
-                @Override
-                public void onReqFailed(String errorMsg) {
-                    Log.e(TAG, errorMsg);
-                    Toast.makeText(context, "热门优惠券请求失败", Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onReqFailed(String errorMsg) {
+                        Log.e(TAG, errorMsg);
+                        Toast.makeText(context, "连接服务器失败，请重新尝试", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Thread.sleep(1000);//todo
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

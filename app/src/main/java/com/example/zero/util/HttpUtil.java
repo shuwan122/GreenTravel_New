@@ -18,7 +18,7 @@ public class HttpUtil {
     private static String CJF = "10.108.120.154";
     private static String ZMQ = "10.108.112.96";
 
-    private static String server = CJF;
+    private static String server = ZMQ;
 
     public static void sendSingleOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
@@ -58,6 +58,19 @@ public class HttpUtil {
                 .build();
         Request request = new Request.Builder()
                 .url("http://" + server + ":8080/shops/" + mBundle.getString("stationName") + "/near")
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
+    public static void sendStationDisplayRefreshOkHttpRequest(Bundle mBundle, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("User_id", mBundle.getString("userId"))
+                .add("stationName", mBundle.getString("stationName"))
+                .add("searchType", mBundle.getString("searchType"))
+                .build();
+        Request request = new Request.Builder()
+                .url("http://" + server + ":8080/shops/" + mBundle.getString("stationName") + "/near?searchType=" + mBundle.getString("searchType"))
                 .build();
         client.newCall(request).enqueue(callback);
     }

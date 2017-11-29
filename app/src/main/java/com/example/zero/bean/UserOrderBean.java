@@ -7,8 +7,9 @@ package com.example.zero.bean;
 public class UserOrderBean {
     private int icon;
     private int state;
-    //0--未付款 1--未发货 2--未收货 3--未取货 4--交易完成（未评价） 5--交易完成（已评价）
+    //1--未付款 2--未发货 3--未收货 8--未取货 4--交易完成 9--交易取消
     private String shop_name;
+    private String order_id;
     private String goods_name;
     private String goods_type;
     private String goods_pic;
@@ -30,6 +31,10 @@ public class UserOrderBean {
 
     public void setShopName(String name) {
         this.shop_name = name;
+    }
+
+    public void setOrderId(String id) {
+        this.order_id = id;
     }
 
     public void setGoodsName(String name) {
@@ -66,6 +71,10 @@ public class UserOrderBean {
 
     public String getShopName() {
         return shop_name;
+    }
+
+    public String getOrderId() {
+        return order_id;
     }
 
     public String getGoodsName() {

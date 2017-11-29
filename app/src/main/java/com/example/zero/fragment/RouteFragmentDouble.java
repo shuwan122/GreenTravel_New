@@ -405,7 +405,8 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                     JUD = true;
                 }
                 final Bundle mBundle = new Bundle();
-                mBundle.putString("userId", "guest");
+                MainApplication application = (MainApplication) getActivity().getApplication();
+                mBundle.putString("userId", application.getUser_id());
                 mBundle.putString("beginStation", beginStation);
                 mBundle.putString("endStation", endStation);
                 if ((!beginStation.equals("")) & (!endStation.equals(""))) {
@@ -542,7 +543,8 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
                                 JUD = true;
                             }
                             Bundle mBundle = new Bundle();
-                            mBundle.putString("userId", "guest");
+                            MainApplication application = (MainApplication) getActivity().getApplication();
+                            mBundle.putString("userId", application.getUser_id());
                             mBundle.putString("endStation", endStation);
                             mBundle.putStringArrayList("beginStationList", beginStationList);
                             mBundle.putInt("beginNum", beginNum);
@@ -1160,7 +1162,7 @@ public class RouteFragmentDouble extends Fragment implements SearchPopView.Searc
             case DATA:
                 HashMap<String, String> params = new HashMap<>();
                 params.put("userId", "guest");
-                RequestManager.getInstance(context).requestAsyn("http://10.108.120.154:8080/route/station",
+                RequestManager.getInstance(context).requestAsyn("http://10.108.112.96:8080/route/station",
                         RequestManager.TYPE_GET_Z, params, new RequestManager.ReqCallBack<String>() {
                             @Override
                             public void onReqSuccess(String result) {

@@ -1,6 +1,5 @@
 package com.example.zero.activity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,11 +12,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +28,6 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.alibaba.fastjson.JSON;
-import com.bumptech.glide.Glide;
 import com.example.zero.greentravel_new.R;
 import com.example.zero.util.CacheDataManager;
 
@@ -42,7 +37,6 @@ import com.example.zero.util.RequestManager;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by jojo on 2017/9/25.
@@ -54,7 +48,7 @@ public class SettingActivity extends AppCompatActivity {
     private LinearLayout location, map, city, about, safety, update;
     private ToggleButton apk, newMsg, pic;
     private Button clean;
-    private ImageView backArrow;
+    private TextView backArrow;
     private TextView location_text, current_ver;
     private Context mContext;
     private AlertDialog alertDialog = null;
@@ -70,7 +64,7 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
         mContext = SettingActivity.this;
         innitView();
-        checkLocationPermission();
+        //checkLocationPermission();
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,7 +214,7 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     public void innitView() {
-        backArrow = (ImageView) findViewById(R.id.setting_back_arrow);
+        backArrow = (TextView) findViewById(R.id.setting_back_arrow);
         location = (LinearLayout) findViewById(R.id.setting_location);
         location_text = (TextView) findViewById(R.id.location_text);
         map = (LinearLayout) findViewById(R.id.setting_map);
@@ -235,27 +229,27 @@ public class SettingActivity extends AppCompatActivity {
         clean = (Button) findViewById(R.id.setting_clean);
     }
 
-    /**
-     * 刷新界面
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        checkLocationPermission();
-    }
+//    /**
+//     * 刷新界面
+//     */
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        checkLocationPermission();
+//    }
 
-    /**
-     * 检查位置权限是否打开
-     */
-    public void checkLocationPermission() {
-        int network = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        int gps = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (network == PermissionChecker.PERMISSION_GRANTED && gps == PermissionChecker.PERMISSION_GRANTED) {
-            location_text.setText("已开启");
-        } else {
-            location_text.setText("去设置");
-        }
-    }
+//    /**
+//     * 检查位置权限是否打开
+//     */
+//    public void checkLocationPermission() {
+//        int network = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+//        int gps = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+//        if (network == PermissionChecker.PERMISSION_GRANTED && gps == PermissionChecker.PERMISSION_GRANTED) {
+//            location_text.setText("已开启");
+//        } else {
+//            location_text.setText("去设置");
+//        }
+//    }
 
     /**
      * 判断GPS是否开启，GPS或者AGPS开启一个就认为是开启的

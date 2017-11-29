@@ -50,8 +50,6 @@ public class SaleMyFragment extends Fragment {
     private ArrayList<String> coupon_img = new ArrayList<>();
     private int coupon_status;
     private ArrayList<String> shop_id = new ArrayList<>();
-//    private Map<String, String> map = new HashMap<>();
-//    private ArrayList<Map<String, String>> coupon = new ArrayList<>();
     private SaleMyCouponAdapter adapter;
     private String uid, token;
     private TextView textView;
@@ -128,11 +126,12 @@ public class SaleMyFragment extends Fragment {
      * 优惠券内容加载
      */
     public void getCouponData() {
+
         MainApplication application = (MainApplication) getActivity().getApplication();
         uid = application.getUser_id();
         token = application.getToken();
         if (application.isOnline() == false) {
-//            Toast.makeText(context, "请您先登录再进行操作", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "请您先登录再进行操作", Toast.LENGTH_SHORT).show();
         } else {
             dataList.clear();
             coupon_id.clear();
@@ -144,13 +143,12 @@ public class SaleMyFragment extends Fragment {
             coupon_time = "";
             coupon_img.clear();
             HashMap<String, String> params = new HashMap<>();
-            params.put("userId", uid);
-            params.put("token", token);
+            params.put("userId", "A7F171027153611");
+            params.put("token", "123");
             RequestManager.getInstance(context).requestAsyn("users/me/coupons", RequestManager.TYPE_GET, params, new RequestManager.ReqCallBack<String>() {
 
                 @Override
                 public void onReqSuccess(String result) {
-                    Log.e("AAA", result);
                     JSONArray array = JSONArray.parseArray(result);
                     for (int i = 0; i < array.size(); i++) {
                         String s = array.get(i).toString();
@@ -173,14 +171,12 @@ public class SaleMyFragment extends Fragment {
                         coupon_status = jo.getInteger("status");
                         SaleBean saleBean = new SaleBean();
                         if (coupon_status == 0) {
+                            saleBean.setUseFlag(false);
                             saleBean.setText(coupon_name.get(i), coupon_price, coupon_content, coupon_time, coupon_img.get(i));
                             dataList.add(saleBean);
                         } else if (coupon_status == 1) {
                             saleBean.setTextView(textView);
-                            saleBean.setUseFlag("yes");
-                            saleBean.setText(coupon_name.get(i), coupon_price, coupon_content, coupon_time, coupon_img.get(i));
-                            dataList.add(saleBean);
-                        }else {
+                            saleBean.setUseFlag(true);
                             saleBean.setText(coupon_name.get(i), coupon_price, coupon_content, coupon_time, coupon_img.get(i));
                             dataList.add(saleBean);
                         }

@@ -22,7 +22,8 @@ import java.util.List;
  */
 
 public class FriendActivity extends AppCompatActivity {
-    private ImageView backArrow;
+
+    private TextView backArrow;
     private ImageView friend_img;
     private TextView friend_name;
     private TextView friend_phone;
@@ -51,7 +52,7 @@ public class FriendActivity extends AppCompatActivity {
     }
 
     public void innitView() {
-        backArrow = (ImageView) findViewById(R.id.friends_back_arrow);
+        backArrow = (TextView) findViewById(R.id.friends_back_arrow);
         friend_recv = (RecyclerView) findViewById(R.id.friends_recv);
         friend_recv.setLayoutManager(new LinearLayoutManager(this));
         friend_img = (ImageView) findViewById(R.id.friends_img);

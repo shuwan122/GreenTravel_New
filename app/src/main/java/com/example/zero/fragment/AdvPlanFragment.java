@@ -210,7 +210,8 @@ public class AdvPlanFragment extends Fragment implements SearchPopView.SearchPop
                 }
 
                 final Bundle mBundle = new Bundle();
-                mBundle.putString("userId", "guest");
+                MainApplication application = (MainApplication) getActivity().getApplication();
+                mBundle.putString("userId", application.getUser_id());
                 mBundle.putString("beginStation", beginStation);
                 mBundle.putString("endStation", endStation);
                 mBundle.putString("time", textView.getText().toString().trim());

@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +21,8 @@ import java.util.HashMap;
  */
 
 public class ResetPwActivity extends AppCompatActivity {
-    private ImageView backArrow;
+
+    private TextView backArrow;
     private TextView confirm_button;
     private Button resetpw;
     private SimpleTextView phone, password, pw_confirm, confirm;
@@ -49,6 +49,8 @@ public class ResetPwActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
                     }
                     phone.notFocused();
+                } else {
+                    phone.isFocus();
                 }
             }
         });
@@ -57,6 +59,8 @@ public class ResetPwActivity extends AppCompatActivity {
             public void onFocusChange(View view, boolean b) {
                 if (!b) {
                     confirm.notFocused();
+                } else {
+                    confirm.isFocus();
                 }
             }
         });
@@ -68,6 +72,8 @@ public class ResetPwActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "密码不能少于6个字符。", Toast.LENGTH_SHORT).show();
                     }
                     password.notFocused();
+                } else {
+                    password.isFocus();
                 }
             }
         });
@@ -79,6 +85,8 @@ public class ResetPwActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "两次输入密码不一致", Toast.LENGTH_SHORT).show();
                     }
                     pw_confirm.notFocused();
+                } else {
+                    pw_confirm.isFocus();
                 }
             }
         });
@@ -88,19 +96,19 @@ public class ResetPwActivity extends AppCompatActivity {
                 String text = phone.getText().toString().trim();
                 if (RegisterActivity.isMobile(text)) {
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("type","1");
-                    params.put("phone",phone.getText());
+                    params.put("type", "1");
+                    params.put("phone", phone.getText());
                     RequestManager.getInstance(getBaseContext()).requestAsyn("/users/send_verification_code", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
                         @Override
                         public void onReqSuccess(String result) {
-                            Log.d(TAG,result);
+                            Log.d(TAG, result);
                             Toast.makeText(getBaseContext(), "已发送短信", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onReqFailed(String errorMsg) {
                             Toast.makeText(getBaseContext(), "发送失败", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG,errorMsg);
+                            Log.d(TAG, errorMsg);
                         }
                     });
                 } else {
@@ -115,19 +123,17 @@ public class ResetPwActivity extends AppCompatActivity {
                 String text = phone.getText().trim();
                 if (password.getText().toString().trim().length() < 6) {
                     Toast.makeText(getBaseContext(), "密码不能少于6个字符。", Toast.LENGTH_SHORT).show();
-                }
-                else if(!password.getText().trim().equals(pw_confirm.getText().trim())) {
+                } else if (!password.getText().trim().equals(pw_confirm.getText().trim())) {
                     Toast.makeText(getBaseContext(), "两次输入密码不一致", Toast.LENGTH_SHORT).show();
-                }
-                else if (RegisterActivity.isMobile(text)) {
+                } else if (RegisterActivity.isMobile(text)) {
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("phone",phone.getText().trim());
-                    params.put("psw",password.getText().trim());
-                    params.put("verification_code",confirm.getText().trim());
+                    params.put("phone", phone.getText().trim());
+                    params.put("psw", password.getText().trim());
+                    params.put("verification_code", confirm.getText().trim());
                     RequestManager.getInstance(getBaseContext()).requestAsyn("/users/user_reset_psw", RequestManager.TYPE_POST_JSON, params, new RequestManager.ReqCallBack<String>() {
                         @Override
                         public void onReqSuccess(String result) {
-                            Log.d(TAG,result);
+                            Log.d(TAG, result);
                             Intent userInfo = new Intent();
                             userInfo.putExtra("phone", phone.getText().trim());
                             setResult(RESULT_OK, userInfo);
@@ -138,7 +144,7 @@ public class ResetPwActivity extends AppCompatActivity {
                         @Override
                         public void onReqFailed(String errorMsg) {
                             Toast.makeText(getBaseContext(), "重置失败", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG,errorMsg);
+                            Log.d(TAG, errorMsg);
                         }
                     });
                 } else {
@@ -154,7 +160,7 @@ public class ResetPwActivity extends AppCompatActivity {
 
 
     public void innitView() {
-        backArrow = (ImageView) findViewById(R.id.resetpw_back_arrow);
+        backArrow = (TextView) findViewById(R.id.resetpw_back_arrow);
         phone = (SimpleTextView) findViewById(R.id.resetpw_phone);
         phone.setHintText(" 请输入手机号码/邮箱");
         phone.setLeftImage(R.drawable.user_fill);

@@ -73,26 +73,26 @@ public class UserOrderActionDelegate implements ItemViewDelegate<UserOrderBean> 
         });
         //TODO onclick
         switch (userOrderBean.getState()) {
-            case 0:{
-                pre.setVisibility(View.VISIBLE);
-                mid.setVisibility(View.GONE);
-                after.setVisibility(View.GONE);
-                break;
-            }
             case 1:{
-                pre.setVisibility(View.GONE);
+                pre.setVisibility(View.VISIBLE);
                 mid.setVisibility(View.GONE);
                 after.setVisibility(View.GONE);
                 break;
             }
             case 2:{
                 pre.setVisibility(View.GONE);
+                mid.setVisibility(View.GONE);
+                after.setVisibility(View.GONE);
+                break;
+            }
+            case 3:{
+                pre.setVisibility(View.GONE);
                 mid.setVisibility(View.VISIBLE);
                 after.setVisibility(View.GONE);
                 holder.setText(R.id.user_order_receive,"确认收货");
                 break;
             }
-            case 3:{
+            case 8:{
                 pre.setVisibility(View.GONE);
                 mid.setVisibility(View.VISIBLE);
                 after.setVisibility(View.GONE);
@@ -105,14 +105,20 @@ public class UserOrderActionDelegate implements ItemViewDelegate<UserOrderBean> 
                 after.setVisibility(View.VISIBLE);
                 break;
             }
-            case 5:{
+//            case 6:{
+//                pre.setVisibility(View.GONE);
+//                mid.setVisibility(View.GONE);
+//                after.setVisibility(View.VISIBLE);
+//                comment.setText("追加评价");
+//                break;
+//            }
+            case 9:{
                 pre.setVisibility(View.GONE);
                 mid.setVisibility(View.GONE);
                 after.setVisibility(View.VISIBLE);
-                comment.setText("追加评价");
                 break;
             }
-            default:holder.setText(R.id.user_order_shop_state,"服务器异常");break;
+            default:break;
         }
     }
 

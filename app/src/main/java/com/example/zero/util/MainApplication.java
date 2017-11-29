@@ -28,6 +28,7 @@ public class MainApplication extends Application {
     private boolean send_msg;
     private boolean apk;
     private boolean pic;
+    private String address_id, address_name, address_phone;
 
     private List<RouteSearchBean> stationList = new ArrayList<>();
     private List<String> busyStationList = new ArrayList<>();
@@ -189,5 +190,47 @@ public class MainApplication extends Application {
 
     public void setBusyStationList(List<String> busyStationList) {
         this.busyStationList = busyStationList;
+    }
+
+    public void setAddressId(String id) {
+        this.address_id = id;
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("default_addr_id", address_id);
+        editor.commit();
+    }
+
+    public void setAddressName(String name) {
+        this.address_name = name;
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("default_addr_name", address_name);
+        editor.commit();
+    }
+
+    public void setAddressPhone(String phone) {
+        this.address_phone = phone;
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("default_addr_phone", address_phone);
+        editor.commit();
+    }
+
+    public String getAddressName() {
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        address_name = sharedPreferences.getString("default_addr_name", "");
+        return address_name;
+    }
+
+    public String getAddressPhone() {
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        address_phone = sharedPreferences.getString("default_addr_phone", "");
+        return address_phone;
+    }
+
+    public String getAddressId() {
+        SharedPreferences sharedPreferences = getSharedPreferences("GreenTravel", MODE_PRIVATE);
+        address_id = sharedPreferences.getString("default_addr_id", "");
+        return address_id;
     }
 }

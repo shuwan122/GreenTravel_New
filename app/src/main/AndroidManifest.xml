@@ -67,8 +67,12 @@
         <activity android:name="com.example.zero.activity.FavorActivity" />
         <activity android:name="com.example.zero.activity.FriendActivity" />
         <activity android:name="com.example.zero.activity.AboutActivity" />
-        <activity android:name="com.example.zero.activity.LoginActivity" />
-        <activity android:name="com.example.zero.activity.ResetPwActivity" />
+        <activity
+            android:name="com.example.zero.activity.LoginActivity"
+            android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name="com.example.zero.activity.ResetPwActivity"
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name="com.example.zero.activity.RegisterActivity"
             android:windowSoftInputMode="stateVisible" />
@@ -77,7 +81,9 @@
         <activity android:name="com.example.zero.activity.ShoppingCartActivity" />
         <activity android:name="com.example.zero.activity.OrderConfirmActivity" />
         <activity android:name="com.example.zero.activity.AddressActivity" />
-        <activity android:name="com.example.zero.activity.AddressEditActivity" />
+        <activity
+            android:name="com.example.zero.activity.AddressEditActivity"
+            android:windowSoftInputMode="stateVisible" />
         <activity android:name="com.example.zero.activity.UserOrderActivity" />
 
         <service android:name="com.example.zero.util.NotificationService">
@@ -96,6 +102,7 @@
         <activity android:name="com.example.zero.activity.ShopOrderActivity" />
         <activity android:name="com.example.zero.activity.NearShopCouponActivity" />
         <activity android:name="com.example.zero.activity.SubwayScheduleActivity" />
+        <activity android:name="com.example.zero.activity.QRcodeActivity" />
     </application>
 
 </manifest>

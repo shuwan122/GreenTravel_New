@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/popwindow_ll"
+    android:id="@+id/popwindow_rl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,101 +10,68 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/popwindow_close"
+        android:layout_height="60dp"
+        android:layout_above="@+id/popwindow_rg"
         android:background="@color/white"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="取货方式"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
-            android:gravity="center_vertical"
-            android:text="取货方式"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginLeft="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="门店自取"
-                    android:textColor="@color/black" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/divideLine" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="自提柜取货"
-                    android:textColor="@color/black" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:orientation="vertical">
-
-                <RadioGroup
-                    android:id="@+id/popwindow_rg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-
-                    <RadioButton
-                        android:id="@+id/popwindow_rb1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1" />
-
-                    <RadioButton
-                        android:id="@+id/popwindow_rb2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1" />
-                </RadioGroup>
-            </LinearLayout>
-        </RelativeLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/popwindow_close"
+    <RadioGroup
+        android:id="@+id/popwindow_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/popwindow_line"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingTop="200dp">
+        android:paddingBottom="150dp">
+
+        <RadioButton
+            android:id="@+id/popwindow_rb1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:button="@null"
+            android:checked="true"
+            android:drawableRight="@drawable/checkbox_on"
+            android:text="门店自取" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="@color/divideLine" />
 
-        <TextView
+        <RadioButton
+            android:id="@+id/popwindow_rb2"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:gravity="center"
-            android:text="关闭"
-            android:textColor="@color/light_orange" />
-    </LinearLayout>
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableRight="@drawable/checkbox_off"
+            android:text="自提柜取货" />
+    </RadioGroup>
+
+    <View
+        android:id="@+id/popwindow_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_above="@+id/popwindow_close"
+        android:background="@color/divideLine" />
+
+    <TextView
+        android:id="@+id/popwindow_close"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="关闭"
+        android:textColor="@color/GreenTheme11" />
 </RelativeLayout>

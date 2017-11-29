@@ -9,8 +9,6 @@ import com.example.zero.greentravel_new.R;
 import com.example.zero.util.ItemViewDelegate;
 import com.example.zero.util.RecycleViewHolder;
 
-import java.util.HashMap;
-
 /**
  * Created by jojo on 2017/11/14.
  */

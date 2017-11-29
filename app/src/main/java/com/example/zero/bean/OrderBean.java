@@ -10,7 +10,7 @@ public class OrderBean {
     private int icon;
     private String goods_count1, goods_count2;
     private String goods_price1, goods_price2;
-    private String cus_name, cus_phone, cus_addr;
+    private String addr_id, cus_name, cus_phone, cus_addr;
     private String item;
     private String order_msg;
     private String discount, deliver, cus_msg;
@@ -60,6 +60,10 @@ public class OrderBean {
         this.item = item;
     }
 
+    public void setAddrId(String id) {
+        this.addr_id = id;
+    }
+
     public void setCusName(String name) {
         this.cus_name = name;
     }
@@ -76,27 +80,31 @@ public class OrderBean {
         this.order_msg = msg;
     }
 
-    public void setDiscount(String discount){
+    public void setDiscount(String discount) {
         this.discount = discount;
     }
 
-    public void setDeliver(String deliver){
+    public void setDeliver(String deliver) {
         this.deliver = deliver;
     }
 
-    public void setCusMsg(String msg){
+    public void setCusMsg(String msg) {
         this.cus_msg = msg;
     }
 
-    public String getDiscount(){
+    public String getAddrId() {
+        return addr_id;
+    }
+
+    public String getDiscount() {
         return discount;
     }
 
-    public String getDeliver(){
+    public String getDeliver() {
         return deliver;
     }
 
-    public String getCusMsg(){
+    public String getCusMsg() {
         return cus_msg;
     }
 
