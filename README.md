@@ -286,6 +286,10 @@ Android App GreenTravel
 	 	<th>增加下拉刷新和上拉加载功能，修改部分逻辑上的bug</th>
 	 	<th>商户扫一扫</th>
 	 </tr>
+    <tr>
+		<th>171129</th>
+		<th colspan="3">第十次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -571,6 +575,10 @@ Android App GreenTravel
 	 	<th>无</th>
 	 	<th>无</th>
 	 	<th>输入框软键盘回车键会清空输入框</th>
+	</tr>
+    <tr>
+		<th>171129</th>
+		<th colspan="3">暂时没有发现bug</th>
 	</tr>
 </table>
 
@@ -862,5 +870,9 @@ Android App GreenTravel
 	 	<th>无</th>
 	 	<th>http://blog.csdn.net/leoleohan/article/details/50989549<br>http://blog.csdn.net/anyfive/article/details/53020321</th>
 	 	<th>http://blog.csdn.net/Iceshow0428/article/details/24428417</th>
+	</tr>
+    <tr>
+		<th>171129</th>
+		<th colspan="3">无</th>
 	</tr>
 </table>
