@@ -312,6 +312,10 @@ Android App GreenTravel
 		<th>无法添加查询支付结果接口，一添加就崩溃，暂时以微信返回的errCode为准</th>
 		<th>我的订单继续调试</th>
 	</tr>
+    <tr>
+		<th>171212</th>
+		<th colspan="3">第十二次程序合并</th>
+	</tr>
 </table>
 
 ## 遇到bug或难点
@@ -623,6 +627,10 @@ Android App GreenTravel
 		<th>创新点</th>
 		<th>无法添加查询支付结果接口，一添加就崩溃，暂时以微信返回的errCode为准</th>
 		<th>无</th>
+	</tr>
+    <tr>
+		<th>171212</th>
+		<th colspan="3">暂时没有发现bug</th>
 	</tr>
 </table>
 
@@ -940,5 +948,9 @@ Android App GreenTravel
 		<th>无</th>
 		<th>无</th>
 		<th>无</th>
+	</tr>
+    <tr>
+		<th>171212</th>
+		<th colspan="3">无</th>
 	</tr>
 </table>
